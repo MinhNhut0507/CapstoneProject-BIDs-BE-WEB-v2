@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Business_Logic</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Data-Access\Data-Access.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="11.4.0" />
+	</ItemGroup>
+
+</Project>
