@@ -9,6 +9,7 @@ using Business_Logic.Modules.UserModule.Response;
 using Data_Access.Entities;
 using Data_Access.Enum;
 using Business_Logic.Modules.DescriptionModule.Response;
+using Business_Logic.Modules.BookingItemModule.Response;
 
 namespace BIDs_API.Mapper
 {
@@ -152,6 +153,23 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.UserName, d => d.MapFrom(s => s.User.Name))
                 .ForMember(x => x.Reason, d => d.MapFrom(s => s.Reason))
                 .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
+                .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
+                .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
+
+            CreateMap<BookingItem, BookingItemResponseAdminAndStaff>()
+                .ForMember(x => x.BookingItemId, d => d.MapFrom(s => s.Id))
+                .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Item.Id))
+                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
+                .ForMember(x => x.UserId, d => d.MapFrom(s => s.User.Id))
+                .ForMember(x => x.UserName, d => d.MapFrom(s => s.User.Name))
+                .ForMember(x => x.StaffName, d => d.MapFrom(s => s.Staff.Name))
+                .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
+                .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
+                .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
+
+            CreateMap<BookingItem, BookingItemResponseUser>()
+                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
+                .ForMember(x => x.UserName, d => d.MapFrom(s => s.User.Name))
                 .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
         }

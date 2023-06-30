@@ -14,13 +14,15 @@ namespace Business_Logic.Modules.SessionModule.Interface
 
         public Task<Session> UpdateSession(UpdateSessionRequest SessionUpdate);
 
+        public Task<Session> UpdateSessionStatus(UpdateSessionStatusRequest SessionUpdate);
+
         public Task<Session> DeleteSession(Guid? SessionDeleteID);
 
         public Task<ICollection<Session>> GetAll();
 
-        public Task<Session> GetSessionByID(Guid? id);
+        public Task<ICollection<Session>> GetSessionByID(Guid? id);
 
-        public Task<Session> GetSessionByName(string Name);
+        public Task<ICollection<Session>> GetSessionByName(string Name);
 
         public Task<ICollection<Session>> GetSessionsIsNotStart();
 

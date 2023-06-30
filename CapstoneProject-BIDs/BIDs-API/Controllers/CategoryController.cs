@@ -35,14 +35,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _CategoryService.GetAll();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Category, CategoryResponseAdmin>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch

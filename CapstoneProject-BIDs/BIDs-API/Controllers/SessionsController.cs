@@ -41,14 +41,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetAll();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch
@@ -93,6 +93,23 @@ namespace BIDs_API.Controllers
             try
             {
                 var session = await _SessionService.UpdateSession(updateSessionRequest);
+                await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT api/<ValuesController>/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("session_status")]
+        public async Task<IActionResult> PutSessionStatus([FromBody] UpdateSessionStatusRequest updateSessionRequest)
+        {
+            try
+            {
+                var session = await _SessionService.UpdateSessionStatus(updateSessionRequest);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 return Ok();
             }

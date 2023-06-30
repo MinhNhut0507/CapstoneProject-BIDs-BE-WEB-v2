@@ -114,5 +114,13 @@
             public readonly static string AUCTION_HISTORY_EXISTED = "Lịch sử đấu giá đã tồn tại";
         }
         #endregion
+
+        #region Booking Item error message
+        public static class BookingItemError
+        {
+            public readonly static string BOOKING_ITEM_NOT_FOUND = "Đơn đăng ký sản phẩm không tồn tại";
+            public readonly static string BOOKING_ITEM_EXISTED = "Đơn đăng ký sản phẩm đã tồn tại";
+        }
+        #endregion
     }
 }

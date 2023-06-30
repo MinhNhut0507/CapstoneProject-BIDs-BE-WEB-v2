@@ -18,7 +18,7 @@ namespace Business_Logic.Modules.SessionDetailModule.Interface
 
         public Task<ICollection<SessionDetail>> GetAll();
 
-        public Task<SessionDetail> GetSessionDetailByID(Guid? id);
+        public Task<ICollection<SessionDetail>> GetSessionDetailByID(Guid? id);
 
         public Task<ICollection<SessionDetail>> GetSessionDetailIsActive();
 

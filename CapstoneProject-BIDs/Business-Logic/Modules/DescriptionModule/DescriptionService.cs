@@ -27,16 +27,18 @@ namespace Business_Logic.Modules.DescriptionModule
 
         public Task<ICollection<Description>> GetDescriptionsIsValid()
         {
-            return _DescriptionRepository.GetDescriptionsBy(x => x.Status == true);
+            return _DescriptionRepository.GetAll(includeProperties: "Category"
+                , options: o => o.Where(x => x.Status == true).ToList());
         }
 
-        public async Task<Description> GetDescriptionByID(Guid? id)
+        public async Task<ICollection<Description>> GetDescriptionByID(Guid? id)
         {
             if (id == null)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Description = await _DescriptionRepository.GetFirstOrDefaultAsync(x => x.Id == id);
+            var Description = await _DescriptionRepository.GetAll(includeProperties: "Category"
+                , options: o => o.Where(x => x.Id == id).ToList());
             if (Description == null)
             {
                 throw new Exception(ErrorMessage.DescriptionError.DESCRIPTION_NOT_FOUND);
@@ -44,14 +46,15 @@ namespace Business_Logic.Modules.DescriptionModule
             return Description;
         }
 
-        public async Task<Description> GetDescriptionByCategoryName(string CategoryName)
+        public async Task<ICollection<Description>> GetDescriptionByCategoryName(string CategoryName)
         {
             if (CategoryName == null)
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
             var Category = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Name == CategoryName);
-            var Description = await _DescriptionRepository.GetFirstOrDefaultAsync(x => x.CategoryId == Category.Id);
+            var Description = await _DescriptionRepository.GetAll(includeProperties: "Category"
+                , options: o => o.Where(x => x.CategoryId == Category.Id).ToList());
             if (Description == null)
             {
                 throw new Exception(ErrorMessage.DescriptionError.DESCRIPTION_NOT_FOUND);
@@ -91,7 +94,7 @@ namespace Business_Logic.Modules.DescriptionModule
         {
             try
             {
-                var DescriptionUpdate = GetDescriptionByID(DescriptionRequest.DescriptionId).Result;
+                var DescriptionUpdate = await _DescriptionRepository.GetFirstOrDefaultAsync(x => x.Id == DescriptionRequest.DescriptionId);
 
                 if (DescriptionUpdate == null)
                 {

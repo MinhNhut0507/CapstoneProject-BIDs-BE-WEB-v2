@@ -25,6 +25,7 @@ namespace Data_Access.Entities
         public virtual DbSet<Description> Descriptions { get; set; }
         public virtual DbSet<Fee> Fees { get; set; }
         public virtual DbSet<Item> Items { get; set; }
+        public virtual DbSet<ItemDescription> ItemDescriptions { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<NotificationType> NotificationTypes { get; set; }
         public virtual DbSet<PaymentMethodStaff> PaymentMethodStaffs { get; set; }
@@ -148,6 +149,8 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.ItemId).HasColumnName("ItemID");
 
                 entity.Property(e => e.StaffId).HasColumnName("StaffID");
@@ -266,6 +269,35 @@ namespace Data_Access.Entities
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Item__UserID__37A5467C");
+            });
+
+            modelBuilder.Entity<ItemDescription>(entity =>
+            {
+                entity.ToTable("ItemDescription");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.ItemId).HasColumnName("ItemID");
+
+                entity.Property(e => e.DescriptionId).HasColumnType("DescriptionID");
+
+                entity.Property(e => e.Detail)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.Description)
+                    .WithMany(p => p.ItemDescriptions)
+                    .HasForeignKey(d => d.DescriptionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemDescription_Description");
+
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.ItemDescriptions)
+                    .HasForeignKey(d => d.ItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemDescription_Item");
             });
 
             modelBuilder.Entity<Notification>(entity =>
