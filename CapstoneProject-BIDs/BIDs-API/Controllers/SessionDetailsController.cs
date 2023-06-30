@@ -35,13 +35,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionDetailService.GetAll();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<SessionDetail, SessionDetailResponseStaffAndAdmin>(emp)
                            );
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch

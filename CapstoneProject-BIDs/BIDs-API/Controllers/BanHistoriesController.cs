@@ -35,14 +35,15 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _BanHistoryService.GetAll();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<BanHistory, BanHistoryResponseUser>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
+                
                 return Ok(response);
             }
             catch
@@ -58,14 +59,15 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _BanHistoryService.GetBanHistoryByUserID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<BanHistory, BanHistoryResponseUser>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
+                
                 return Ok(response);
             }
             catch
@@ -81,14 +83,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _BanHistoryService.GetBanHistoryByUserName(name);
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<BanHistory, BanHistoryResponseUser>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch

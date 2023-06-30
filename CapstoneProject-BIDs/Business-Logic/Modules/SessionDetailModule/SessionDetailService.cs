@@ -22,26 +22,30 @@ namespace Business_Logic.Modules.SessionDetailModule
 
         public async Task<ICollection<SessionDetail>> GetAll()
         {
-            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item");
+            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+                , options: o => o.OrderByDescending(x => x.CreateDate).ToList());
         }
 
         public async Task<ICollection<SessionDetail>> GetSessionDetailIsActive()
         {
-            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item", options: x => x.OrderBy(o => o.Status == true).ToList());
+            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+                , options: x => x.Where(o => o.Status == true).ToList());
         }
 
         public async Task<ICollection<SessionDetail>> GetSessionDetailsIsInActive()
         {
-            return await _SessionDetailRepository.GetSessionDetailsBy(x => x.Status == false);
+            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+                , options: x => x.Where(o => o.Status == false).ToList());
         }
 
-        public async Task<SessionDetail> GetSessionDetailByID(Guid? id)
+        public async Task<ICollection<SessionDetail>> GetSessionDetailByID(Guid? id)
         {
             if (id == null)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var SessionDetail = await _SessionDetailRepository.GetFirstOrDefaultAsync(x => x.Id == id);
+            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+                , options: x => x.Where(o => o.Id == id).ToList());
             if (SessionDetail == null)
             {
                 throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);
@@ -55,7 +59,8 @@ namespace Business_Logic.Modules.SessionDetailModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var SessionDetail = await _SessionDetailRepository.GetSessionDetailsBy(x => x.UserId == id);
+            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+                , options: x => x.Where(o => o.UserId == id).ToList());
             if (SessionDetail == null)
             {
                 throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);
@@ -69,7 +74,8 @@ namespace Business_Logic.Modules.SessionDetailModule
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var SessionDetail = await _SessionDetailRepository.GetSessionDetailsBy(x => x.SessionId == id);
+            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+                , options: x => x.Where(o => o.SessionId == id).ToList());
             if (SessionDetail == null)
             {
                 throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);
@@ -119,7 +125,7 @@ namespace Business_Logic.Modules.SessionDetailModule
         {
             try
             {
-                var SessionDetailUpdate = GetSessionDetailByID(SessionDetailRequest.SessionDetailId).Result;
+                var SessionDetailUpdate = await _SessionDetailRepository.GetFirstOrDefaultAsync(x => x.Id == SessionDetailRequest.SessionDetailId);
 
                 if (SessionDetailUpdate == null)
                 {

@@ -28,36 +28,42 @@ namespace Business_Logic.Modules.SessionModule
 
         public async Task<ICollection<Session>> GetSessionsIsNotStart()
         {
-            return await _SessionRepository.GetSessionsBy(x => x.Status == (int)SessionStatusEnum.NotStart, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item"
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.NotStart).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsInStage()
         {
-            return await _SessionRepository.GetSessionsBy(x => x.Status == (int)SessionStatusEnum.InStage, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item"
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.InStage).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsComplete()
         {
-            return await _SessionRepository.GetSessionsBy(x => x.Status == (int)SessionStatusEnum.Complete, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item"
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.Complete).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsHaventPay()
         {
-            return await _SessionRepository.GetSessionsBy(x => x.Status == (int)SessionStatusEnum.HaventTranferYet, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item"
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.HaventTranferYet).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsOutOfDate()
         {
-            return await _SessionRepository.GetSessionsBy(x => x.Status == (int)SessionStatusEnum.OutOfDate, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item"
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.OutOfDate).ToList());
         }
 
-        public async Task<Session> GetSessionByID(Guid? id)
+        public async Task<ICollection<Session>> GetSessionByID(Guid? id)
         {
             if (id == null)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Session = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == id);
+            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item"
+                , options: o => o.Where(x => x.Id == id).ToList());
             if (Session == null)
             {
                 throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
@@ -65,13 +71,14 @@ namespace Business_Logic.Modules.SessionModule
             return Session;
         }
 
-        public async Task<Session> GetSessionByName(string SessionName)
+        public async Task<ICollection<Session>> GetSessionByName(string SessionName)
         {
             if (SessionName == null)
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var Session = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Name == SessionName);
+            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item"
+                , options: o => o.Where(x => x.Name == SessionName).ToList());
             if (Session == null)
             {
                 throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
@@ -123,7 +130,8 @@ namespace Business_Logic.Modules.SessionModule
         {
             try
             {
-                var SessionUpdate = GetSessionByID(SessionRequest.SessionID).Result;
+                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == SessionRequest.SessionID 
+                && x.Status == (int)SessionStatusEnum.NotStart);
 
                 if (SessionUpdate == null)
                 {
@@ -149,7 +157,36 @@ namespace Business_Logic.Modules.SessionModule
                 SessionUpdate.AuctionTime = SessionRequest.AuctionTime;
                 SessionUpdate.EndTime = SessionRequest.EndTime;
                 SessionUpdate.UpdateDate = DateTime.Now;
+
+                await _SessionRepository.UpdateAsync(SessionUpdate);
+                return SessionUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Session> UpdateSessionStatus(UpdateSessionStatusRequest SessionRequest)
+        {
+            try
+            {
+                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == SessionRequest.SessionID);
+
+                if (SessionUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
+                }
+
+                ValidationResult result = new UpdateSessionStatusRequestValidator().Validate(SessionRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
                 SessionUpdate.Status = SessionRequest.Status;
+                SessionUpdate.UpdateDate = DateTime.Now;
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
                 return SessionUpdate;

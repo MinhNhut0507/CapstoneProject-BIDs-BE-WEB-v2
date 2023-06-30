@@ -10,6 +10,7 @@ namespace Data_Access.Entities
         public Item()
         {
             BookingItems = new BookingItem();
+            ItemDescriptions = new HashSet<ItemDescription>();
             Sessions = new Session();
         }
 
@@ -30,6 +31,7 @@ namespace Data_Access.Entities
         public virtual Category Category { get; set; }
         public virtual User User { get; set; }
         public virtual BookingItem BookingItems { get; set; }
+        public virtual ICollection<ItemDescription> ItemDescriptions { get; set; }
         public virtual Session Sessions { get; set; }
     }
 }

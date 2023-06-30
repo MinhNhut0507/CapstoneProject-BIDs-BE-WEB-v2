@@ -17,21 +17,24 @@ namespace Business_Logic.Modules.CategoryModule
 
         public async Task<ICollection<Category>> GetAll()
         {
-            return await _CategoryRepository.GetAll(includeProperties: "Descriptions", options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _CategoryRepository.GetAll(includeProperties: "Descriptions"
+                , options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
         public Task<ICollection<Category>> GetCategorysIsValid()
         {
-            return _CategoryRepository.GetCategorysBy(x => x.Status == true, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return _CategoryRepository.GetAll(includeProperties: "Descriptions"
+                , options: o => o.OrderByDescending(x => x.Status == true).ToList());
         }
 
-        public async Task<Category> GetCategoryByID(Guid? id)
+        public async Task<ICollection<Category>> GetCategoryByID(Guid? id)
         {
             if (id == null)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Category = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Id == id);
+            var Category = await _CategoryRepository.GetAll(includeProperties: "Descriptions"
+                , options: o => o.OrderByDescending(x => x.Id == id).ToList());
             if (Category == null)
             {
                 throw new Exception(ErrorMessage.CategoryError.CATEGORY_NOT_FOUND);
@@ -39,13 +42,14 @@ namespace Business_Logic.Modules.CategoryModule
             return Category;
         }
 
-        public async Task<Category> GetCategoryByName(string CategoryName)
+        public async Task<ICollection<Category>> GetCategoryByName(string CategoryName)
         {
             if (CategoryName == null)
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var Category = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Name == CategoryName);
+            var Category = await _CategoryRepository.GetAll(includeProperties: "Descriptions"
+                , options: o => o.OrderByDescending(x => x.Name == CategoryName).ToList());
             if (Category == null)
             {
                 throw new Exception(ErrorMessage.CategoryError.CATEGORY_NOT_FOUND);
@@ -83,7 +87,7 @@ namespace Business_Logic.Modules.CategoryModule
         {
             try
             {
-                var CategoryUpdate = GetCategoryByID(CategoryRequest.CategoryId).Result;
+                var CategoryUpdate = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Id == CategoryRequest.CategoryId);
 
                 if (CategoryUpdate == null)
                 {

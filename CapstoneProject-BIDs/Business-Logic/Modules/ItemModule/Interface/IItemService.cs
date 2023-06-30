@@ -14,15 +14,15 @@ namespace Business_Logic.Modules.ItemModule.Interface
 
         public Task<Item> UpdateItem(UpdateItemRequest ItemUpdate);
 
-        public Task<Item> DeleteItem(Guid? ItemDeleteID);
+        public Task<Item> DeleteItem(Guid ItemDeleteID);
 
         public Task<ICollection<Item>> GetAll();
 
-        public Task<Item> GetItemByID(Guid? id);
+        public Task<ICollection<Item>> GetItemByID(Guid? id);
 
-        public Task<Item> GetItemByName(string Name);
+        public Task<ICollection<Item>> GetItemByName(string Name);
 
-        public Task<ICollection<Item>> GetItemByTypeName(string TypeName);
+        public Task<ICollection<Item>> GetItemByCategoryName(string CategoryName);
 
         public Task<ICollection<Item>> GetItemByUserID(Guid? id);
 

@@ -46,14 +46,14 @@ namespace BIDs_API.Controllers
             {
                 
                 var list = await _StaffService.GetAll();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Staff, StaffResponseAdmin>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch

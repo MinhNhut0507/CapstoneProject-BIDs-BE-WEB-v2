@@ -4,6 +4,9 @@ using Business_Logic.Modules.CategoryModule.Interface;
 using Data_Access.Constant;
 using Data_Access.Entities;
 using FluentValidation.Results;
+using Business_Logic.Modules.BookingItemModule.Request;
+using Business_Logic.Modules.BookingItemModule.Interface;
+using Data_Access.Enum;
 
 namespace Business_Logic.Modules.ItemModule
 {
@@ -11,29 +14,37 @@ namespace Business_Logic.Modules.ItemModule
     {
         private readonly IItemRepository _ItemRepository;
         private readonly ICategoryService _CategoryService;
-        public ItemService(IItemRepository ItemRepository, ICategoryService CategoryService)
+        private readonly IBookingItemService _BookingItemService;
+
+        public ItemService(IItemRepository ItemRepository
+            , ICategoryService CategoryService
+            , IBookingItemService BookingItemService)
         {
             _ItemRepository = ItemRepository;
             _CategoryService = CategoryService;
+            _BookingItemService = BookingItemService;
         }
 
         public async Task<ICollection<Item>> GetAll()
         {
-            return await _ItemRepository.GetAll(includeProperties: "User,Category",options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _ItemRepository.GetAll(includeProperties: "User,Category"
+                ,options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
         public Task<ICollection<Item>> GetItemsIsValid()
         {
-            return _ItemRepository.GetItemsBy(x => x.Status == true, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return _ItemRepository.GetAll(includeProperties: "User,Category"
+                , options: o => o.Where(x => x.Status == true).ToList());
         }
 
-        public async Task<Item> GetItemByID(Guid? id)
+        public async Task<ICollection<Item>> GetItemByID(Guid? id)
         {
             if (id == null)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Item = await _ItemRepository.GetFirstOrDefaultAsync(x => x.Id == id);
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category"
+                , options: o => o.Where(x => x.Id == id).ToList());
             if (Item == null)
             {
                 throw new Exception(ErrorMessage.ItemError.ITEM_NOT_FOUND);
@@ -41,13 +52,14 @@ namespace Business_Logic.Modules.ItemModule
             return Item;
         }
 
-        public async Task<Item> GetItemByName(string ItemName)
+        public async Task<ICollection<Item>> GetItemByName(string ItemName)
         {
             if (ItemName == null)
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var Item = await _ItemRepository.GetFirstOrDefaultAsync(x => x.Name == ItemName);
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category"
+                , options: o => o.Where(x => x.Name == ItemName).ToList());
             if (Item == null)
             {
                 throw new Exception(ErrorMessage.ItemError.ITEM_NOT_FOUND);
@@ -61,7 +73,8 @@ namespace Business_Logic.Modules.ItemModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Item = await _ItemRepository.GetItemsBy(x => x.UserId == id);
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category"
+                , options: o => o.Where(x => x.UserId == id).ToList());
             if (Item == null)
             {
                 throw new Exception(ErrorMessage.ItemError.ITEM_NOT_FOUND);
@@ -69,14 +82,15 @@ namespace Business_Logic.Modules.ItemModule
             return Item;
         }
 
-        public async Task<ICollection<Item>> GetItemByTypeName(string TypeName)
+        public async Task<ICollection<Item>> GetItemByCategoryName(string CategoryName)
         {
-            if (TypeName == null)
+            if (CategoryName == null)
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            Category TypeCheck = await _CategoryService.GetCategoryByName(TypeName);
-            var Item = await _ItemRepository.GetItemsBy(x => x.CategoryId == TypeCheck.Id);
+            Category CategoryCheck = await _CategoryService.GetCategoryByName(CategoryName);
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category"
+                , options: o => o.Where(x => x.CategoryId == CategoryCheck.Id).ToList());
             if (Item == null)
             {
                 throw new Exception(ErrorMessage.ItemError.ITEM_NOT_FOUND);
@@ -111,6 +125,13 @@ namespace Business_Logic.Modules.ItemModule
             newItem.Status = false;
 
             await _ItemRepository.AddAsync(newItem);
+
+            CreateBookingItemRequest bookingItemRequest = new CreateBookingItemRequest()
+            {
+                ItemId = newItem.Id,
+                UserId = newItem.UserId,
+            };
+            await _BookingItemService.AddNewBookingItem(bookingItemRequest);
             return newItem;
         }
 
@@ -118,7 +139,7 @@ namespace Business_Logic.Modules.ItemModule
         {
             try
             {
-                var ItemUpdate = GetItemByID(ItemRequest.ItemId).Result;
+                var ItemUpdate = await _ItemRepository.GetFirstOrDefaultAsync(x => x.Id == ItemRequest.ItemId);
 
                 if (ItemUpdate == null)
                 {
@@ -158,7 +179,7 @@ namespace Business_Logic.Modules.ItemModule
 
         }
 
-        public async Task<Item> DeleteItem(Guid? ItemDeleteID)
+        public async Task<Item> DeleteItem(Guid ItemDeleteID)
         {
             try
             {
@@ -176,6 +197,13 @@ namespace Business_Logic.Modules.ItemModule
 
                 ItemDelete.Status = false;
                 await _ItemRepository.UpdateAsync(ItemDelete);
+                ICollection<BookingItem> bookingItem = await _BookingItemService.GetBookingItemByItem(ItemDeleteID);
+                UpdateBookingItemRequest bookingItemRequest = new UpdateBookingItemRequest()
+                {
+                    Id = bookingItem.First().Id,
+                    Status = (int)BookingItemEnum.Unactive
+                };
+                await _BookingItemService.UpdateStatusBookingItem(bookingItemRequest);
                 return ItemDelete;
             }
             catch (Exception ex)

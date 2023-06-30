@@ -18,9 +18,9 @@ namespace Business_Logic.Modules.CategoryModule.Interface
 
         public Task<ICollection<Category>> GetAll();
 
-        public Task<Category> GetCategoryByID(Guid? id);
+        public Task<ICollection<Category>> GetCategoryByID(Guid? id);
 
-        public Task<Category> GetCategoryByName(string Name);
+        public Task<ICollection<Category>> GetCategoryByName(string Name);
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BIDs_API.SignalR;
+using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.ItemModule.Request;
 using Business_Logic.Modules.ItemModule.Response;
@@ -18,14 +19,20 @@ namespace BIDs_API.Controllers
         private readonly IItemService _ItemService;
         public readonly IMapper _mapper;
         private readonly IHubContext<ItemHub> _hubContext;
+        private readonly IHubContext<BookingItemHub> _hubBookingContext;
+        private readonly IBookingItemService _BookingItemService;
 
         public ItemsController(IItemService ItemService
             , IMapper mapper
-            , IHubContext<ItemHub> hubContext)
+            , IHubContext<ItemHub> hubContext
+            , IHubContext<BookingItemHub> hubBookingContext
+            , IBookingItemService BookingItemService)
         {
             _ItemService = ItemService;
             _mapper = mapper;
             _hubContext = hubContext;
+            _hubBookingContext = hubBookingContext;
+            _BookingItemService = BookingItemService;
         }
 
         // GET api/<ValuesController>
@@ -35,14 +42,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _ItemService.GetAll();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Item, ItemResponseStaffAndAdmin>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch
@@ -86,14 +93,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _ItemService.GetItemByTypeName(name);
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Item, ItemResponseStaffAndAdmin>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch
@@ -109,14 +116,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _ItemService.GetItemByUserID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Item, ItemResponseUser>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch
@@ -150,7 +157,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var Item = await _ItemService.AddNewItem(createItemRequest);
+                var BookingItem = await _BookingItemService.GetBookingItemByItem(Item.Id);
                 await _hubContext.Clients.All.SendAsync("ReceiveItemAdd", Item);
+                await _hubBookingContext.Clients.All.SendAsync("ReceiveBookingItemAdd", BookingItem.First());
+
                 return Ok(_mapper.Map<ItemResponseUser>(Item));
             }
             catch (Exception ex)
@@ -161,12 +171,14 @@ namespace BIDs_API.Controllers
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteItem([FromRoute] Guid? id)
+        public async Task<IActionResult> DeleteItem([FromRoute] Guid id)
         {
             try
             {
                 var Item = await _ItemService.DeleteItem(id);
+                var BookingItem = await _BookingItemService.GetBookingItemByItem(Item.Id);
                 await _hubContext.Clients.All.SendAsync("ReceiveItemDelete", Item);
+                await _hubBookingContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem.First());
                 return Ok();
             }
             catch (Exception ex)

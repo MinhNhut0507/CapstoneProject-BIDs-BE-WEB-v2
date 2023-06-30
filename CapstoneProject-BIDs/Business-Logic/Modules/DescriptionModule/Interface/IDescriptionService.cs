@@ -18,9 +18,9 @@ namespace Business_Logic.Modules.DescriptionModule.Interface
 
         public Task<ICollection<Description>> GetAll();
 
-        public Task<Description> GetDescriptionByID(Guid? id);
+        public Task<ICollection<Description>> GetDescriptionByID(Guid? id);
 
-        public Task<Description> GetDescriptionByCategoryName(string Name);
+        public Task<ICollection<Description>> GetDescriptionByCategoryName(string Name);
 
     }
 }

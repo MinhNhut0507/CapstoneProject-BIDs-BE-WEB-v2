@@ -35,14 +35,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _userService.GetAll();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<User, UserResponseStaffAndAdmin>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch
@@ -58,14 +58,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _userService.GetUsersIsActive();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<User, UserResponseStaffAndAdmin>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch
@@ -81,14 +81,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _userService.GetUsersIsWaitting();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<User, UserResponseStaffAndAdmin>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch
@@ -104,14 +104,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _userService.GetUsersIsBan();
+                if (list == null)
+                {
+                    return NotFound();
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<User, UserResponseStaffAndAdmin>(emp)
                            );
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
             catch
