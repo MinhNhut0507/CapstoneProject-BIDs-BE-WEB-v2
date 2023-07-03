@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.UserModule.Interface
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository : IRepository<Users>
     {
-        public Task<ICollection<User>> GetUsersBy(
-               Expression<Func<User, bool>> filter = null,
-               Func<IQueryable<User>, ICollection<User>> options = null,
+        public Task<ICollection<Users>> GetUsersBy(
+               Expression<Func<Users, bool>> filter = null,
+               Func<IQueryable<Users>, ICollection<Users>> options = null,
                string includeProperties = null
            );
     }

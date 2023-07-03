@@ -12,6 +12,8 @@ using Business_Logic.Modules.DescriptionModule;
 using Business_Logic.Modules.DescriptionModule.Interface;
 using Business_Logic.Modules.FeeModule;
 using Business_Logic.Modules.FeeModule.Interface;
+using Business_Logic.Modules.ItemDescriptionModule;
+using Business_Logic.Modules.ItemDescriptionModule.Interface;
 using Business_Logic.Modules.ItemModule;
 using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.LoginModule;
@@ -151,9 +153,12 @@ namespace BIDs_API
             //Session Detail Module
             services.AddScoped<ISessionDetailRepository, SessionDetailRepository>();
             services.AddScoped<ISessionDetailService, SessionDetailService>();
-            //Session Detail Module
+            //Booking Item Module
             services.AddScoped<IBookingItemRepository, BookingItemRepository>();
             services.AddScoped<IBookingItemService, BookingItemService>();
+            //Item Description Module
+            services.AddScoped<IItemDescriptionRepository, ItemDescriptionRepository>();
+            services.AddScoped<IItemDescriptionService, ItemDescriptionService>();
             //Login Module
             services.AddScoped<ILoginService, LoginService>();
 
@@ -201,6 +206,7 @@ namespace BIDs_API
                 endpoints.MapHub<CategoryHub>("/categoryhub");
                 endpoints.MapHub<BanHistoryHub>("/banhistoryhub");
                 endpoints.MapHub<BookingItemHub>("/bookingitemhub");
+                endpoints.MapHub<ItemDescriptionHub>("/itemdescriptionhub");
             });
         }
 

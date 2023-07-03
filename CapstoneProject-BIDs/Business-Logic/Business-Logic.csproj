@@ -16,8 +16,4 @@
 		<PackageReference Include="FluentValidation" Version="11.4.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Modules\ItemDescriptionModule\" />
-	</ItemGroup>
-
 </Project>

@@ -4,6 +4,7 @@ using Data_Access.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -19,6 +20,18 @@ namespace Business_Logic.Modules.ItemModule
         {
             _db = db;
         }
+
+        //public async Task<ICollection<Item>> GetAll()
+        //{
+        //    var items = await _db.Items
+        //        .Include(i => i.User)
+        //        .Include(i => i.Category)
+        //        .Include(i => i.ItemDescriptions)
+        //        .Include(i => i.BookingItems)
+        //        .ToListAsync();
+
+        //    return items;
+        //}
 
         public async Task<ICollection<Item>> GetItemsBy(
             Expression<Func<Item, bool>> filter = null,
@@ -41,10 +54,13 @@ namespace Business_Logic.Modules.ItemModule
                 }
             }
 
-            query = query.Include(s => s.User);
-            query = query.Include(s => s.Category);
+            query = query.Include(s => s.User)
+                .Include(s => s.Category)
+                .Include(s => s.BookingItems)
+                .Include(s => s.ItemDescriptions)
+                .ThenInclude(s => s.Description);
 
-            return options != null ? options(query).ToList() : await query.ToListAsync();
+            return options != null ? options(query).ToImmutableList() : await query.ToListAsync();
         }
     }
 }

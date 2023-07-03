@@ -122,5 +122,13 @@
             public readonly static string BOOKING_ITEM_EXISTED = "Đơn đăng ký sản phẩm đã tồn tại";
         }
         #endregion
+
+        #region Item Description error message
+        public static class ItemDescriptionError
+        {
+            public readonly static string ITEM_DESCRIPTION_NOT_FOUND = "Mô tả sản phẩm không tồn tại";
+            public readonly static string ITEM_DESCRIPTION_EXISTED = "Mô tả sản phẩm đã tồn tại";
+        }
+        #endregion
     }
 }

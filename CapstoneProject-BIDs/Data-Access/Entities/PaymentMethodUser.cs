@@ -19,7 +19,7 @@ namespace Data_Access.Entities
         public string OwnerName { get; set; }
         public bool Status { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual Users User { get; set; }
         public virtual ICollection<PaymentUser> PaymentUsers { get; set; }
     }
 }

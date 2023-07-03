@@ -1,0 +1,156 @@
+-- User 1
+INSERT INTO Users (ID, Name, Role, Address, CreateDate, DateOfBirth, UpdateDate, Avatar, Email, Cccdnumber, CccdbackImage, CccdfrontImage, Password, Phone, Status)
+VALUES ('8776e6d7-442d-4b19-9fe8-63b6f8d48d8f', 'User seed 1', 1, '115/4/2 đường số 11 thành phố Thủ Đức', GETDATE(), '2003-07-07', GETDATE(), 'Avater mẫu', 'minhnhut05072003@gmail.com', '077201000702', 'CCCD mặt sau mẫu', 'CCCD mặt trước mẫu', '07072001', '0933403844', 0);
+
+-- User 2
+INSERT INTO Users (ID, Name, Role, Address, CreateDate, DateOfBirth, UpdateDate, Avatar, Email, Cccdnumber, CccdbackImage, CccdfrontImage, Password, Phone, Status)
+VALUES ('051e3ac9-8299-4f85-b56e-d0f3cfc1fead', 'User seed 2', 2, '115/4/2 đường số 11 thành phố Thủ Đức', GETDATE(), '2003-07-07', GETDATE(), 'Avater mẫu', 'minhnhut05072001@gmail.com', '077201000702', 'CCCD mặt sau mẫu', 'CCCD mặt trước mẫu', '07072001', '0933403842', 1);
+
+-- User 3
+INSERT INTO Users (ID, Name, Role, Address, CreateDate, DateOfBirth, UpdateDate, Avatar, Email, Cccdnumber, CccdbackImage, CccdfrontImage, Password, Phone, Status)
+VALUES ('c8e6ab5d-4f53-4f3d-ae4d-9d98e3fbb5b1', 'User seed 3', 1, '115/4/2 đường số 11 thành phố Thủ Đức', GETDATE(), '2003-07-07', GETDATE(), 'Avater mẫu', 'minhnhut05072004@gmail.com', '077201000702', 'CCCD mặt sau mẫu', 'CCCD mặt trước mẫu', '07072001', '0933403844', 1);
+
+-- User 4
+INSERT INTO Users (ID, Name, Role, Address, CreateDate, DateOfBirth, UpdateDate, Avatar, Email, Cccdnumber, CccdbackImage, CccdfrontImage, Password, Phone, Status)
+VALUES ('f48be102-62b9-4de5-a927-7dca3ad4e8a9', 'User seed 4', 2, '115/4/2 đường số 11 thành phố Thủ Đức', GETDATE(), '2003-07-07', GETDATE(), 'Avater mẫu', 'nhutdmse151298@fpt.edu.vn', '077201000702', 'CCCD mặt sau mẫu', 'CCCD mặt trước mẫu', '07072001', '0933403844', 2);
+
+-- User 5
+INSERT INTO Users (ID, Name, Role, Address, CreateDate, DateOfBirth, UpdateDate, Avatar, Email, Cccdnumber, CccdbackImage, CccdfrontImage, Password, Phone, Status)
+VALUES ('a2c10d33-9847-40b9-9c6f-1dc8558c5d03', 'User seed 5', 2, '115/4/2 đường số 11 thành phố Thủ Đức', GETDATE(), '2003-07-07', GETDATE(), 'Avater mẫu', 'nhutdmse1512910@fpt.edu.vn', '077201000702', 'CCCD mặt sau mẫu', 'CCCD mặt trước mẫu', '07072001', '0933403844', -1);
+-- Staff
+INSERT INTO Staff (ID, Address, CreateDate, DateOfBirth, UpdateDate, Email, Password, Phone, Name, Status)
+VALUES ('9b20198e-9c70-4f22-8714-52a7b6e034d8', '115/4/2 đường số 11 thành phố Thủ Đức', GETDATE(), '2001-07-05', GETDATE(), 'seedstaff@gmail.com', '05072001', '0933403842', 'Seed Staff', 1);
+-- Admin
+INSERT INTO Admin (ID, Address, Email, Password, Phone, Name, Status)
+VALUES ('d25f5e0c-efb3-435e-8bea-8f4df5e308a5', '115/4/2 đường số 11 thành phố Thủ Đức', 'seedadmin@gmail.com', '05072001', '0933403842', 'Seed Admin', 1);
+-- Ban history
+INSERT INTO BanHistory (ID, Reason, UserID, CreateDate, UpdateDate, Status)
+VALUES ('3873d218-2b43-4180-8950-67879f271db1', 'Dữ liệu khóa tài khoản mẫu', 'a2c10d33-9847-40b9-9c6f-1dc8558c5d03', GETDATE(), GETDATE(), 1);
+-- Chèn dữ liệu vào bảng Fee
+INSERT INTO Fee (Name, Min, Max, DepositFee, ParticipationFee, Surcharge, CreateDate, UpdateDate, Status)
+VALUES ('Phân khúc vừa và nhỏ', 1000000, 10000000, 0, 0.005, 0.1, GETDATE(), GETDATE(), 1);
+
+-- Chèn dữ liệu vào bảng Fee
+INSERT INTO Fee (Name, Min, Max, DepositFee, ParticipationFee, Surcharge, CreateDate, UpdateDate, Status)
+VALUES ('Phân khúc trung bình và cao', 10000000, 30000000, 0.15, 0.004, 0.1, GETDATE(), GETDATE(), 1);
+
+-- Chèn dữ liệu vào bảng Fee
+INSERT INTO Fee (Name, Min, Max, DepositFee, ParticipationFee, Surcharge, CreateDate, UpdateDate, Status)
+VALUES ('Phân khúc cao cấp', 30000000, 1000000000, 0.25, 0.003, 0.1, GETDATE(), GETDATE(), 1);
+-- Chèn dữ liệu vào bảng Category
+INSERT INTO Category (ID, Name, CreateDate, UpdateDate, Status)
+VALUES ('f345f47b-83c3-42f7-9f0d-2342fb4567b4', 'Đồ công nghệ', GETDATE(), GETDATE(), 1);
+
+-- Chèn dữ liệu vào bảng Category
+INSERT INTO Category (ID, Name, CreateDate, UpdateDate, Status)
+VALUES ('7d534f13-1d22-4baf-9d67-590d3ae4d07d', 'Xe máy', GETDATE(), GETDATE(), 1);
+
+-- Chèn dữ liệu vào bảng Category
+INSERT INTO Category (ID, Name, CreateDate, UpdateDate, Status)
+VALUES ('890fca36-29ab-4a50-a99e-51f9d3db3ae2', 'Xe đạp', GETDATE(), GETDATE(), 1);
+
+-- Chèn dữ liệu vào bảng Category
+INSERT INTO Category (ID, Name, CreateDate, UpdateDate, Status)
+VALUES ('6d2e3f84-4e39-41e2-99eb-cba4de0d2e44', 'Đồ cổ', GETDATE(), GETDATE(), 1);
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('e2d739f8-ef82-471a-b5a9-98dd3e3a976e', '7d534f13-1d22-4baf-9d67-590d3ae4d07d', 'Màu sắc', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('52bc7b17-3820-42e9-a775-aa729f2dd4ef', '7d534f13-1d22-4baf-9d67-590d3ae4d07d', 'Biển số', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('8e9e6a68-3a45-4135-92d4-85d7ae4e7c82', '7d534f13-1d22-4baf-9d67-590d3ae4d07d', 'Hãng xe', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('b0f5b80d-ff41-4b2f-84db-1530b6018e76', '7d534f13-1d22-4baf-9d67-590d3ae4d07d', 'Mua vào năm', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('4b25a648-32c6-4a95-96d0-9cb02f2da01a', '890fca36-29ab-4a50-a99e-51f9d3db3ae2', 'Màu sắc', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('c87ee0b6-96e1-4bbf-8e8e-4f09fe46a4a8', '890fca36-29ab-4a50-a99e-51f9d3db3ae2', 'Nhãn hiệu', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('3e6d3540-c9e9-493d-a01b-64a6c7b07f88', '890fca36-29ab-4a50-a99e-51f9d3db3ae2', 'Mua vào năm', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('9053c700-35d1-4d46-9c5d-6e3288d6ce15', 'f345f47b-83c3-42f7-9f0d-2342fb4567b4', 'Loại sản phẩm cụ thể', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('b79a7df5-af17-4a75-8a4b-ef21c51e9d46', 'f345f47b-83c3-42f7-9f0d-2342fb4567b4', 'Nhãn hiệu', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('2fb11c2d-2b3c-41a9-82c1-8e1a2445f5c3', 'f345f47b-83c3-42f7-9f0d-2342fb4567b4', 'Màu sắc', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('7a41a429-ba57-4d34-92d6-48a12ad0c98c', 'f345f47b-83c3-42f7-9f0d-2342fb4567b4', 'Mua vào năm', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('f6a6c63f-56a0-4164-979b-1c6a5f69c512', '6d2e3f84-4e39-41e2-99eb-cba4de0d2e44', 'Loại sản phẩm cụ thể', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('8d91b4f0-8b59-4ea9-9e42-49c6dd7e098a', '6d2e3f84-4e39-41e2-99eb-cba4de0d2e44', 'Nhãn hiệu(Nếu có)', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('6340b24d-9257-4d4a-940f-2e34a9e42830', '6d2e3f84-4e39-41e2-99eb-cba4de0d2e44', 'Niên đại(đã tồn tại bao lâu)', 1);
+
+-- Chèn dữ liệu vào bảng Description
+INSERT INTO Description (ID, CategoryID, Name, Status)
+VALUES ('b20e94ce-05f6-41ff-b9de-4fc748dabce0', '6d2e3f84-4e39-41e2-99eb-cba4de0d2e44', 'Độ hư hại', 1);
+-- Chèn dữ liệu vào bảng Item
+INSERT INTO Item (ID, Name, DescriptionDetail, Image, Quantity, FirstPrice, StepPrice, Deposit, CategoryID, UserID, CreateDate, UpdateDate)
+VALUES ('67b21edf-2b92-4f26-9e0c-8e1ef41c01e4', 'Laptop ASUS', 'NVIDIA 930, intel core i7 8th Gen', 'Image mẫu', 1, 25000000, 1000000, 0, 'f345f47b-83c3-42f7-9f0d-2342fb4567b4', '051e3ac9-8299-4f85-b56e-d0f3cfc1fead', GETDATE(), GETDATE());
+
+-- Chèn dữ liệu vào bảng Item
+INSERT INTO Item (ID, Name, DescriptionDetail, Image, Quantity, FirstPrice, StepPrice, Deposit, CategoryID, UserID, CreateDate, UpdateDate)
+VALUES ('f827f124-741c-4f82-8c92-ba8f8edc21c5', 'XSR 155R', 'Xe máy xsr 155r của yamaha', 'Image mẫu', 1, 50000000, 2000000, 0, '7d534f13-1d22-4baf-9d67-590d3ae4d07d', 'c8e6ab5d-4f53-4f3d-ae4d-9d98e3fbb5b1', GETDATE(), GETDATE());
+
+INSERT INTO ItemDescription (ID, DescriptionID, ItemID, Detail, Status)
+VALUES ('5c5644b3-480a-4081-8aa9-1c6e6700e15b', '9053c700-35d1-4d46-9c5d-6e3288d6ce15', '67b21edf-2b92-4f26-9e0c-8e1ef41c01e4', 'Laptop', 1);
+
+INSERT INTO ItemDescription (ID, DescriptionID, ItemID, Detail, Status)
+VALUES ('0a273a1d-c202-4f68-9b67-37f4d79c7585', 'b79a7df5-af17-4a75-8a4b-ef21c51e9d46', '67b21edf-2b92-4f26-9e0c-8e1ef41c01e4', 'Asus', 1);
+
+INSERT INTO ItemDescription (ID, DescriptionID, ItemID, Detail, Status)
+VALUES ('8e15a7d9-46c5-468a-bd95-5b228cb518d2', '2fb11c2d-2b3c-41a9-82c1-8e1a2445f5c3', '67b21edf-2b92-4f26-9e0c-8e1ef41c01e4', 'Đen nhám', 1);
+
+INSERT INTO ItemDescription (ID, DescriptionID, ItemID, Detail, Status)
+VALUES ('1f13e9b6-543d-4bfb-81f9-ef2e6e190e2b', '7a41a429-ba57-4d34-92d6-48a12ad0c98c', '67b21edf-2b92-4f26-9e0c-8e1ef41c01e4', '2018', 1);
+
+INSERT INTO ItemDescription (ID, DescriptionID, ItemID, Detail, Status)
+VALUES ('7c48668c-7c2e-4d26-934e-c4b8b7f65492', 'e2d739f8-ef82-471a-b5a9-98dd3e3a976e', 'f827f124-741c-4f82-8c92-ba8f8edc21c5', 'Bạc và nâu', 1);
+
+INSERT INTO ItemDescription (ID, DescriptionID, ItemID, Detail, Status)
+VALUES ('d2f49117-d4b2-404d-9a69-208c47ed926f', '52bc7b17-3820-42e9-a775-aa729f2dd4ef', 'f827f124-741c-4f82-8c92-ba8f8edc21c5', '72K109144', 1);
+
+INSERT INTO ItemDescription (ID, DescriptionID, ItemID, Detail, Status)
+VALUES ('95fd3353-3d5d-4c9a-816a-2af6f2a8c45e', '8e9e6a68-3a45-4135-92d4-85d7ae4e7c82', 'f827f124-741c-4f82-8c92-ba8f8edc21c5', 'Yamaha', 1);
+
+INSERT INTO ItemDescription (ID, DescriptionID, ItemID, Detail, Status)
+VALUES ('e15e4f65-163e-4b75-b63d-881a50832772', 'b0f5b80d-ff41-4b2f-84db-1530b6018e76', 'f827f124-741c-4f82-8c92-ba8f8edc21c5', '2023', 1);
+
+-- Chèn dữ liệu cho bookingItem
+INSERT INTO BookingItem (ID, ItemID, StaffID, CreateDate, UpdateDate, Status)
+VALUES ('1ac16a74-6d6e-4be9-9d39-df29f4c8afef', '67b21edf-2b92-4f26-9e0c-8e1ef41c01e4', '9b20198e-9c70-4f22-8714-52a7b6e034d8', GETDATE(), GETDATE(), 1);
+
+-- Chèn dữ liệu cho bookingItem2
+INSERT INTO BookingItem (ID, ItemID, StaffID, CreateDate, UpdateDate, Status)
+VALUES ('43ebe25e-0d94-4319-99e2-864bc9b8977c', 'f827f124-741c-4f82-8c92-ba8f8edc21c5', '9b20198e-9c70-4f22-8714-52a7b6e034d8', GETDATE(), GETDATE(), 1);
+
+
+
+

@@ -41,7 +41,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<User, UserResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Users, UserResponseStaffAndAdmin>(emp)
                            );
                 return Ok(response);
             }
@@ -64,7 +64,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<User, UserResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Users, UserResponseStaffAndAdmin>(emp)
                            );
                 return Ok(response);
             }
@@ -87,7 +87,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<User, UserResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Users, UserResponseStaffAndAdmin>(emp)
                            );
                 return Ok(response);
             }
@@ -110,7 +110,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<User, UserResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Users, UserResponseStaffAndAdmin>(emp)
                            );
                 return Ok(response);
             }
@@ -150,7 +150,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<User>> GetUserByEmail([FromRoute] string email)
+        public async Task<ActionResult<Users>> GetUserByEmail([FromRoute] string email)
         {
             var User = await _userService.GetUserByEmail(email);
 

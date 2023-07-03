@@ -20,27 +20,27 @@ namespace Business_Logic.Modules.UserModule
             _UserRepository = UserRepository;
         }
 
-        public async Task<ICollection<User>> GetAll()
+        public async Task<ICollection<Users>> GetAll()
         {
             return await _UserRepository.GetAll(options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
-        public async Task<ICollection<User>> GetUsersIsActive()
+        public async Task<ICollection<Users>> GetUsersIsActive()
         {
             return await _UserRepository.GetUsersBy(x => x.Status == (int)UserStatusEnum.Acctive, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
-        public async Task<ICollection<User>> GetUsersIsBan()
+        public async Task<ICollection<Users>> GetUsersIsBan()
         {
             return await _UserRepository.GetUsersBy(x => x.Status == (int)UserStatusEnum.Ban, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
-        public async Task<ICollection<User>> GetUsersIsWaitting()
+        public async Task<ICollection<Users>> GetUsersIsWaitting()
         {
             return await _UserRepository.GetUsersBy(x => x.Status == (int)UserStatusEnum.Waitting, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
-        public async Task<User> GetUserByID(Guid? id)
+        public async Task<Users> GetUserByID(Guid? id)
         {
             if (id == null)
             {
@@ -54,7 +54,7 @@ namespace Business_Logic.Modules.UserModule
             return user;
         }
 
-        public async Task<User> GetUserByName(string userName)
+        public async Task<Users> GetUserByName(string userName)
         {
             if (userName == null)
             {
@@ -68,7 +68,7 @@ namespace Business_Logic.Modules.UserModule
             return user;
         }
 
-        public async Task<User> GetUserByEmail(string email)
+        public async Task<Users> GetUserByEmail(string email)
         {
             if (email == null)
             {
@@ -82,7 +82,7 @@ namespace Business_Logic.Modules.UserModule
             return user;
         }
 
-        public async Task<User> AddNewUser(CreateUserRequest userRequest)
+        public async Task<Users> AddNewUser(CreateUserRequest userRequest)
         {
 
             ValidationResult result = new CreateUserRequestValidator().Validate(userRequest);
@@ -91,17 +91,17 @@ namespace Business_Logic.Modules.UserModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
-            User userCheckEmail = _UserRepository.GetFirstOrDefaultAsync(x => x.Email == userRequest.Email).Result;
+            Users userCheckEmail = _UserRepository.GetFirstOrDefaultAsync(x => x.Email == userRequest.Email).Result;
             if (userCheckEmail != null)
             {
                 throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
             }
-            User userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
+            Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
             if (userCheckPhone != null)
             {
                 throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
             }
-            User userCheckCCCDNumber = _UserRepository.GetFirstOrDefaultAsync(x => x.Cccdnumber == userRequest.Cccdnumber).Result;
+            Users userCheckCCCDNumber = _UserRepository.GetFirstOrDefaultAsync(x => x.Cccdnumber == userRequest.Cccdnumber).Result;
             if (userCheckCCCDNumber != null)
             {
                 throw new Exception(ErrorMessage.CommonError.CCCD_NUMBER_IS_EXITED);
@@ -126,7 +126,7 @@ namespace Business_Logic.Modules.UserModule
                 throw new Exception(ErrorMessage.CommonError.WRONG_CCCD_NUMBER_FORMAT);
             }
 
-            var newUser = new User();
+            var newUser = new Users();
 
             newUser.Id = Guid.NewGuid();
             newUser.Name = userRequest.UserName;
@@ -175,7 +175,7 @@ namespace Business_Logic.Modules.UserModule
             return newUser;
         }
 
-        public async Task<User> UpdateUser(UpdateUserRequest userRequest)
+        public async Task<Users> UpdateUser(UpdateUserRequest userRequest)
         {
             try
             {
@@ -192,12 +192,12 @@ namespace Business_Logic.Modules.UserModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                User userCheckEmail = _UserRepository.GetFirstOrDefaultAsync(x => x.Email == userRequest.Email).Result;
+                Users userCheckEmail = _UserRepository.GetFirstOrDefaultAsync(x => x.Email == userRequest.Email).Result;
                 if (userCheckEmail != null)
                 {
                     throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
                 }
-                User userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
+                Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
                 if (userCheckPhone != null)
                 {
                     throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);

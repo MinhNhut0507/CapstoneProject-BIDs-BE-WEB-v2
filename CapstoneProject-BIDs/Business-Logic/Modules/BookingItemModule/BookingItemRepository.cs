@@ -43,7 +43,6 @@ namespace Business_Logic.Modules.BookingItemModule
 
             query = query.Include(s => s.Item);
             query = query.Include(s => s.Staff);
-            query = query.Include(s => s.User);
 
             return options != null ? options(query).ToList() : await query.ToListAsync();
         }

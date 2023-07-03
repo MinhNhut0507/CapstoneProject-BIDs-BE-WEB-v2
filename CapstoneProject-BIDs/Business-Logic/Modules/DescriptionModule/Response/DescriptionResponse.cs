@@ -9,6 +9,5 @@ namespace Business_Logic.Modules.DescriptionModule.Response
     public class DescriptionResponse
     {
         public string Name { get; set; }
-        public string Detail { get; set; }
     }
 }

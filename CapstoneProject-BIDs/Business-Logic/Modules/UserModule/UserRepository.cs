@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.UserModule
 {
-    public class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository : Repository<Users>, IUserRepository
     {
         private readonly BIDsContext _db;
 
@@ -20,13 +20,13 @@ namespace Business_Logic.Modules.UserModule
             _db = db;
         }
 
-        public async Task<ICollection<User>> GetUsersBy(
-            Expression<Func<User, bool>> filter = null,
-            Func<IQueryable<User>, ICollection<User>> options = null,
+        public async Task<ICollection<Users>> GetUsersBy(
+            Expression<Func<Users, bool>> filter = null,
+            Func<IQueryable<Users>, ICollection<Users>> options = null,
             string includeProperties = null
         )
         {
-            IQueryable<User> query = DbSet;
+            IQueryable<Users> query = DbSet;
 
             if (filter != null)
             {

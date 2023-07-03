@@ -13,7 +13,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ItemsController : ControllerBase
     {
         private readonly IItemService _ItemService;
@@ -92,7 +92,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var list = await _ItemService.GetItemByTypeName(name);
+                var list = await _ItemService.GetItemByCategoryName(name);
                 if (list == null)
                 {
                     return NotFound();
@@ -151,6 +151,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Auctioneer")]
         [HttpPost]
         public async Task<ActionResult<ItemResponseUser>> PostItem([FromBody] CreateItemRequest createItemRequest)
         {
@@ -169,22 +170,22 @@ namespace BIDs_API.Controllers
             }
         }
 
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteItem([FromRoute] Guid id)
-        {
-            try
-            {
-                var Item = await _ItemService.DeleteItem(id);
-                var BookingItem = await _BookingItemService.GetBookingItemByItem(Item.Id);
-                await _hubContext.Clients.All.SendAsync("ReceiveItemDelete", Item);
-                await _hubBookingContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem.First());
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //// DELETE api/<ValuesController>/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteItem([FromRoute] Guid id)
+        //{
+        //    try
+        //    {
+        //        var Item = await _ItemService.DeleteItem(id);
+        //        var BookingItem = await _BookingItemService.GetBookingItemByItem(Item.Id);
+        //        await _hubContext.Clients.All.SendAsync("ReceiveItemDelete", Item);
+        //        await _hubBookingContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem.First());
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
     }
 }
