@@ -134,6 +134,58 @@ namespace Business_Logic.Modules.BookingItemModule
 
         }
 
+        public async Task<BookingItem> AcceptStatusBookingItem(Guid id)
+        {
+            try
+            {
+                var BookingItemUpdate = _BookingItemRepository.GetFirstOrDefaultAsync(x => x.Id == id).Result;
+
+                if (BookingItemUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+                }
+
+
+                BookingItemUpdate.UpdateDate = DateTime.Now;
+                BookingItemUpdate.Status = (int)BookingItemEnum.Accepted;
+
+                await _BookingItemRepository.UpdateAsync(BookingItemUpdate);
+                return BookingItemUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public async Task<BookingItem> DenyStatusBookingItem(Guid id)
+        {
+            try
+            {
+                var BookingItemUpdate = _BookingItemRepository.GetFirstOrDefaultAsync(x => x.Id == id).Result;
+
+                if (BookingItemUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+                }
+
+
+                BookingItemUpdate.UpdateDate = DateTime.Now;
+                BookingItemUpdate.Status = (int)BookingItemEnum.Denied;
+
+                await _BookingItemRepository.UpdateAsync(BookingItemUpdate);
+                return BookingItemUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+
+        }
+
 
     }
 }

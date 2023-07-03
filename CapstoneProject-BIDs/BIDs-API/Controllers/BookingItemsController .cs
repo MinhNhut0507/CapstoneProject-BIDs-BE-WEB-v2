@@ -140,5 +140,36 @@ namespace BIDs_API.Controllers
             }
         }
 
+        [HttpPut("accept{id}")]
+        public async Task<IActionResult> AcceptBookingItem([FromHeader] Guid id)
+        {
+            try
+            {
+                var BookingItem = await _BookingItemService.AcceptStatusBookingItem(id);
+                await _hubContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("deny{id}")]
+        public async Task<IActionResult> DenyBookingItem([FromHeader] Guid id)
+        {
+            try
+            {
+                var BookingItem = await _BookingItemService.DenyStatusBookingItem(id);
+                await _hubContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
     }
 }

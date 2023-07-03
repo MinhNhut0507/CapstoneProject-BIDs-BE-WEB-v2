@@ -17,5 +17,7 @@ namespace Business_Logic.Modules.ItemModule.Interface
                string includeProperties = null
            );
         //public Task<ICollection<Item>> GetAll();
+
+        public Task SaveChangesAsync();
     }
 }

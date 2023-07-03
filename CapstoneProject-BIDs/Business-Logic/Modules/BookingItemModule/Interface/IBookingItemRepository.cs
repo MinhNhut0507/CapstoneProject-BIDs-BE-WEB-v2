@@ -16,5 +16,6 @@ namespace Business_Logic.Modules.BookingItemModule.Interface
                Func<IQueryable<BookingItem>, ICollection<BookingItem>> options = null,
                string includeProperties = null
            );
+        public Task SaveChangesAsync();
     }
 }

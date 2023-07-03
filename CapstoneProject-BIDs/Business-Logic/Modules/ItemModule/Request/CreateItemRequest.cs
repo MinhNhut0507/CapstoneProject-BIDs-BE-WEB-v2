@@ -12,7 +12,7 @@ namespace Business_Logic.Modules.ItemModule.Request
         public int Quantity { get; set; }
         public string Image { get; set; }
         public bool Deposit { get; set; }
-        public double FristPrice { get; set; }
+        public double FirstPrice { get; set; }
         public double StepPrice { get; set; }
     }
     public class CreateItemRequestValidator : AbstractValidator<CreateItemRequest>
@@ -23,10 +23,10 @@ namespace Business_Logic.Modules.ItemModule.Request
             RuleFor(x => x.ItemName).NotEmpty().NotNull();
             RuleFor(x => x.Description).NotEmpty().NotNull();
             RuleFor(x => x.CategoryId).NotEmpty().NotNull();
-            RuleFor(x => x.Deposit).NotEmpty().NotNull();
             RuleFor(x => x.Quantity).NotEmpty().NotNull();
             RuleFor(x => x.Image).NotEmpty().NotNull();
-            RuleFor(x => x.FristPrice).NotEmpty().NotNull();
+            RuleFor(x => x.Deposit).NotNull();
+            RuleFor(x => x.FirstPrice).NotEmpty().NotNull();
             RuleFor(x => x.StepPrice).NotEmpty().NotNull();
         }
     }

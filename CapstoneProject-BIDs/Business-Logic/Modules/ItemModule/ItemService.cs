@@ -7,6 +7,7 @@ using FluentValidation.Results;
 using Business_Logic.Modules.BookingItemModule.Request;
 using Business_Logic.Modules.BookingItemModule.Interface;
 using Data_Access.Enum;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business_Logic.Modules.ItemModule
 {
@@ -98,7 +99,7 @@ namespace Business_Logic.Modules.ItemModule
             return Item;
         }
 
-        public async Task<Item> AddNewItem(CreateItemRequest ItemRequest)
+        public async Task<ICollection<Item>> AddNewItem(CreateItemRequest ItemRequest)
         {
 
             ValidationResult result = new CreateItemRequestValidator().Validate(ItemRequest);
@@ -110,12 +111,12 @@ namespace Business_Logic.Modules.ItemModule
 
             var newItem = new Item();
 
-            newItem.Id = new Guid();
+            newItem.Id = Guid.NewGuid();
             newItem.Name = ItemRequest.ItemName;
             newItem.DescriptionDetail = ItemRequest.Description;
             newItem.UserId = ItemRequest.UserId;
             newItem.Quantity = ItemRequest.Quantity;
-            newItem.FirstPrice = ItemRequest.FristPrice;
+            newItem.FirstPrice = ItemRequest.FirstPrice;
             newItem.StepPrice = ItemRequest.StepPrice;
             newItem.Image = ItemRequest.Image;
             newItem.CategoryId = ItemRequest.CategoryId;
@@ -124,13 +125,14 @@ namespace Business_Logic.Modules.ItemModule
             newItem.CreateDate = DateTime.Now;
 
             await _ItemRepository.AddAsync(newItem);
-
             CreateBookingItemRequest bookingItemRequest = new CreateBookingItemRequest()
             {
                 ItemId = newItem.Id,
             };
             await _BookingItemService.AddNewBookingItem(bookingItemRequest);
-            return newItem;
+            var items = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+                , options: o => o.Where(x => x.Id == newItem.Id).ToList());
+            return items;
         }
 
         public async Task<Item> UpdateItem(UpdateItemRequest ItemRequest)
@@ -160,7 +162,7 @@ namespace Business_Logic.Modules.ItemModule
                 ItemUpdate.Name = ItemRequest.ItemName;
                 ItemUpdate.DescriptionDetail = ItemRequest.Description;
                 ItemUpdate.Quantity = ItemRequest.Quantity;
-                ItemUpdate.FirstPrice = ItemRequest.FristPrice;
+                ItemUpdate.FirstPrice = ItemRequest.FirstPrice;
                 ItemUpdate.StepPrice = ItemRequest.StepPrice;
                 ItemUpdate.Image = ItemRequest.Image;
                 ItemUpdate.Deposit = ItemRequest.Deposit;

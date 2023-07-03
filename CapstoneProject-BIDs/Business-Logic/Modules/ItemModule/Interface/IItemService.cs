@@ -10,7 +10,7 @@ namespace Business_Logic.Modules.ItemModule.Interface
 {
     public interface IItemService
     {
-        public Task<Item> AddNewItem(CreateItemRequest ItemCreate);
+        public Task<ICollection<Item>> AddNewItem(CreateItemRequest ItemCreate);
 
         public Task<Item> UpdateItem(UpdateItemRequest ItemUpdate);
 

@@ -3,12 +3,10 @@ using Business_Logic.Modules.StaffModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
 using Data_Access.Constant;
 using Data_Access.Entities;
-using FluentValidation.Results;
-using System.Net.Mail;
-using System.Net;
-using static System.Net.WebRequestMethods;
-using System.Text;
 using Data_Access.Enum;
+using FluentValidation.Results;
+using System.Net;
+using System.Net.Mail;
 
 namespace Business_Logic.Modules.StaffModule
 {

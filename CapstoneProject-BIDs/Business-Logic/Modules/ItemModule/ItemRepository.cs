@@ -62,5 +62,10 @@ namespace Business_Logic.Modules.ItemModule
 
             return options != null ? options(query).ToImmutableList() : await query.ToListAsync();
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
     }
 }

@@ -1,4 +1,4 @@
-using Data_Access.Entities;
+﻿using Data_Access.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,16 +12,21 @@ namespace BIDs_API
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            host.MigrateDbContext<BIDsContext>((context, services) => 
-            {
-                var logger = services.GetService<ILogger<BIDsContextSeed>>(); 
-                new BIDsContextSeed().SeedAsync(context, logger).Wait();
-            });
+            ////host.MigrateDbContext<BIDsContext>((context, services) => 
+            ////{
+            ////    var logger = services.GetService<ILogger<BIDsContextSeed>>(); 
+            ////    new BIDsContextSeed().SeedAsync(context, logger).Wait();
+            ////});
             host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole(); // Thêm nhà cung cấp log Console
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
