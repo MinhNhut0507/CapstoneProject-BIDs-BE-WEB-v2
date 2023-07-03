@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
 
 #nullable disable
 
@@ -43,9 +44,18 @@ namespace Data_Access.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server =MINHNHUT\\NHUT57; database = BIDs;uid=sa;pwd=05072001;");
+                // Set up logging to log the inner exceptions for debugging purposes
+                ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+                {
+                    builder
+                        .AddConsole()
+                        .AddFilter(level => level >= LogLevel.Warning); // Adjust log level as needed
+                });
+
+                optionsBuilder.UseSqlServer("server=MINHNHUT\\NHUT57; database=BIDs; uid=sa; pwd=05072001;")
+                              .UseLoggerFactory(loggerFactory); // Use the created loggerFactory
             }
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -163,8 +173,8 @@ namespace Data_Access.Entities
 
 
                 entity.HasOne(d => d.Item)
-                    .WithOne(p => p.BookingItems)
-                    .HasForeignKey<BookingItem>(d => d.ItemId)
+                    .WithMany(p => p.BookingItems)
+                    .HasForeignKey(d => d.ItemId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__BookingIt__ItemI__3B75D760");
 
@@ -525,8 +535,8 @@ namespace Data_Access.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Session__FeeID__4222D4EF");
                 entity.HasOne(d => d.Item)
-                    .WithOne(p => p.Sessions)
-                    .HasForeignKey<Session>(d => d.ItemId)
+                    .WithMany(p => p.Sessions)
+                    .HasForeignKey(d => d.ItemId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Session__Item");
             });

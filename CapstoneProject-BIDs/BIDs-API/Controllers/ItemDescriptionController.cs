@@ -12,7 +12,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ItemDescriptionsController : ControllerBase
     {
         private readonly IItemDescriptionService _ItemDescriptionService;

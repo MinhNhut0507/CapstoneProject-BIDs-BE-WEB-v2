@@ -20,6 +20,10 @@ namespace Business_Logic.Modules.BookingItemModule
             _db = db;
         }
 
+        public async Task SaveChangesAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
         public async Task<ICollection<BookingItem>> GetBookingItemsBy(
             Expression<Func<BookingItem, bool>> filter = null,
             Func<IQueryable<BookingItem>, ICollection<BookingItem>> options = null,

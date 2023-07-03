@@ -8,12 +8,13 @@ using Data_Access.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Collections.Generic;
 
 namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ItemsController : ControllerBase
     {
         private readonly IItemService _ItemService;
@@ -158,11 +159,15 @@ namespace BIDs_API.Controllers
             try
             {
                 var Item = await _ItemService.AddNewItem(createItemRequest);
-                var BookingItem = await _BookingItemService.GetBookingItemByItem(Item.Id);
+                var BookingItem = await _BookingItemService.GetBookingItemByItem(Item.ElementAt(0).Id);
                 await _hubContext.Clients.All.SendAsync("ReceiveItemAdd", Item);
                 await _hubBookingContext.Clients.All.SendAsync("ReceiveBookingItemAdd", BookingItem.First());
 
-                return Ok(_mapper.Map<ItemResponseUser>(Item));
+                var response = Item.Select
+                           (
+                             emp => _mapper.Map<Item, ItemResponseUser>(emp)
+                           );
+                return Ok(response);
             }
             catch (Exception ex)
             {
