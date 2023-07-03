@@ -14,6 +14,6 @@ namespace Data_Access.Entities
 
         public virtual Notification Notification { get; set; }
         public virtual NotificationType Type { get; set; }
-        public virtual User User { get; set; }
+        public virtual Users User { get; set; }
     }
 }

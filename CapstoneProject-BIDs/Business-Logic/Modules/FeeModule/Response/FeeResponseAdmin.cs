@@ -8,7 +8,7 @@ namespace Business_Logic.Modules.FeeModule.Response
 {
     public class FeeResponseAdmin
     {
-        public Guid FeeId { get; set; }
+        public int FeeId { get; set; }
         public string FeeName { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }

@@ -5,12 +5,11 @@ using System.Collections.Generic;
 
 namespace Data_Access.Entities
 {
-    public partial class User
+    public partial class Users
     {
-        public User()
+        public Users()
         {
             BanHistories = new HashSet<BanHistory>();
-            BookingItems = new HashSet<BookingItem>();
             Items = new HashSet<Item>();
             PaymentMethodUsers = new HashSet<PaymentMethodUser>();
             PaymentUsers = new HashSet<PaymentUser>();
@@ -33,7 +32,6 @@ namespace Data_Access.Entities
         public int Status { get; set; }
 
         public virtual ICollection<BanHistory> BanHistories { get; set; }
-        public virtual ICollection<BookingItem> BookingItems { get; set; }
         public virtual ICollection<Item> Items { get; set; }
         public virtual ICollection<PaymentMethodUser> PaymentMethodUsers { get; set; }
         public virtual ICollection<PaymentUser> PaymentUsers { get; set; }

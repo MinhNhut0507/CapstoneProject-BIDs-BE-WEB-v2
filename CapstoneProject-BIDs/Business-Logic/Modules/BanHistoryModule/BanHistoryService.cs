@@ -68,7 +68,7 @@ namespace Business_Logic.Modules.BanHistoryModule
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            User user = await _UserService.GetUserByName(userName);
+            Users user = await _UserService.GetUserByName(userName);
             var BanHistory = await _BanHistoryRepository.GetAll(includeProperties: "User"
                 , options: o => o.OrderByDescending(x => x.UserId == user.Id).ToList());
             if (BanHistory == null)

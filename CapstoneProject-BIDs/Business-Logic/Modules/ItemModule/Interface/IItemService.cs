@@ -14,7 +14,7 @@ namespace Business_Logic.Modules.ItemModule.Interface
 
         public Task<Item> UpdateItem(UpdateItemRequest ItemUpdate);
 
-        public Task<Item> DeleteItem(Guid ItemDeleteID);
+        //public Task<Item> DeleteItem(Guid ItemDeleteID);
 
         public Task<ICollection<Item>> GetAll();
 

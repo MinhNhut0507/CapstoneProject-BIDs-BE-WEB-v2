@@ -19,6 +19,6 @@ namespace Data_Access.Entities
 
         public virtual PaymentMethodUser Method { get; set; }
         public virtual Session Session { get; set; }
-        public virtual User User { get; set; }
+        public virtual Users User { get; set; }
     }
 }

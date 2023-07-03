@@ -213,7 +213,7 @@ namespace Business_Logic.Modules.StaffModule
             }
         }
 
-        public async Task<User> AcceptCreateAccount(Guid? accountCreateID)
+        public async Task<Users> AcceptCreateAccount(Guid? accountCreateID)
         {
             try
             {
@@ -222,7 +222,7 @@ namespace Business_Logic.Modules.StaffModule
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
 
-                User UserCreate = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == accountCreateID && x.Status == 0).Result;
+                Users UserCreate = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == accountCreateID && x.Status == 0).Result;
 
                 if (UserCreate == null)
                 {
@@ -266,7 +266,7 @@ namespace Business_Logic.Modules.StaffModule
             }
         }
 
-        public async Task<User> DenyCreate(Guid? accountCreateID)
+        public async Task<Users> DenyCreate(Guid? accountCreateID)
         {
             try
             {
@@ -275,7 +275,7 @@ namespace Business_Logic.Modules.StaffModule
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
 
-                User UserCreate = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == accountCreateID && x.Status == 0).Result;
+                Users UserCreate = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == accountCreateID && x.Status == 0).Result;
 
                 if (UserCreate == null)
                 {
@@ -318,7 +318,7 @@ namespace Business_Logic.Modules.StaffModule
             }
         }
 
-        public async Task<User> BanUser(Guid? UserBanID)
+        public async Task<Users> BanUser(Guid? UserBanID)
         {
             try
             {
@@ -370,7 +370,7 @@ namespace Business_Logic.Modules.StaffModule
             }
         }
 
-        public async Task<User> UnbanUser(Guid? UserUnbanID)
+        public async Task<Users> UnbanUser(Guid? UserUnbanID)
         {
             try
             {
@@ -379,7 +379,7 @@ namespace Business_Logic.Modules.StaffModule
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
 
-                User UserUnban = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == UserUnbanID && x.Status == 0).Result;
+                Users UserUnban = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == UserUnbanID && x.Status == 0).Result;
 
                 if (UserUnban == null)
                 {

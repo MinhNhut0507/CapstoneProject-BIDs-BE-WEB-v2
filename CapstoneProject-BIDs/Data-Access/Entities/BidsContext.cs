@@ -35,7 +35,7 @@ namespace Data_Access.Entities
         public virtual DbSet<Session> Sessions { get; set; }
         public virtual DbSet<SessionDetail> SessionDetails { get; set; }
         public virtual DbSet<StaffNotificationDetail> StaffNotificationDetails { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<UserNotificationDetail> UserNotificationDetails { get; set; }
         public virtual DbSet<Staff> Staff { get; set; }
 
@@ -62,23 +62,28 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Address)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Address");
 
                 entity.Property(e => e.Email)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Email");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Name");
 
                 entity.Property(e => e.Password)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Password");
 
                 entity.Property(e => e.Phone)
                     .IsRequired()
-                    .HasMaxLength(20);
+                    .HasMaxLength(20)
+                    .HasColumnName("Phone");
             });
 
             modelBuilder.Entity<AdminNotificationDetail>(entity =>
@@ -89,7 +94,7 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.AdminId).HasColumnName("AdminID");
 
-                entity.Property(e => e.Messages).IsRequired();
+                entity.Property(e => e.Messages).IsRequired().HasColumnName("Messages");
 
                 entity.Property(e => e.NotificationId).HasColumnName("NotificationID");
 
@@ -126,7 +131,8 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Reason)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Reason");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
@@ -155,7 +161,6 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.StaffId).HasColumnName("StaffID");
 
-                entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.HasOne(d => d.Item)
                     .WithOne(p => p.BookingItems)
@@ -169,11 +174,6 @@ namespace Data_Access.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__BookingIt__Staff__3D5E1FD2");
 
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.BookingItems)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__BookingIt__UserI__3C69FB99");
             });
 
             modelBuilder.Entity<Category>(entity =>
@@ -188,7 +188,8 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Name");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             });
@@ -202,9 +203,6 @@ namespace Data_Access.Entities
                     .HasColumnName("ID");
 
                 entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
-
-                entity.Property(e => e.Detail)
-                    .HasMaxLength(50);
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -227,9 +225,20 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
+                entity.Property(e => e.Min).IsRequired().HasColumnName("Min");
+
+                entity.Property(e => e.Max).IsRequired().HasColumnName("Max");
+
+                entity.Property(e => e.DepositFee).IsRequired().HasColumnName("DepositFee");
+
+                entity.Property(e => e.ParticipationFee).IsRequired().HasColumnName("ParticipationFee");
+
+                entity.Property(e => e.Surcharge).IsRequired().HasColumnName("Surcharge");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Name");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             });
@@ -246,13 +255,24 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.DescriptionDetail).IsRequired();
+                entity.Property(e => e.DescriptionDetail).IsRequired()
+                    .HasMaxLength(int.MaxValue).HasColumnName("DescriptionDetail");
 
-                entity.Property(e => e.Image).IsRequired();
+                entity.Property(e => e.StepPrice).IsRequired().HasColumnName("StepPrice");
+
+                entity.Property(e => e.Quantity).IsRequired().HasColumnName("Quantity");
+
+                entity.Property(e => e.FirstPrice).IsRequired().HasColumnName("FirstPrice");
+
+                entity.Property(e => e.Deposit).IsRequired().HasColumnName("Deposit");
+
+                entity.Property(e => e.Image).IsRequired()
+                    .HasMaxLength(int.MaxValue).HasColumnName("Image");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Name");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
@@ -279,13 +299,14 @@ namespace Data_Access.Entities
                     .ValueGeneratedNever()
                     .HasColumnName("ID");
 
-                entity.Property(e => e.ItemId).HasColumnName("ItemID");
+                entity.Property(e => e.ItemId).IsRequired().HasColumnName("ItemID");
 
-                entity.Property(e => e.DescriptionId).HasColumnType("DescriptionID");
+                entity.Property(e => e.DescriptionId).IsRequired().HasColumnName("DescriptionID");
 
                 entity.Property(e => e.Detail)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Detail");
 
                 entity.HasOne(d => d.Description)
                     .WithMany(p => p.ItemDescriptions)
@@ -493,7 +514,8 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Name");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
@@ -571,9 +593,9 @@ namespace Data_Access.Entities
                     .HasConstraintName("FK__StaffNoti__TypeI__59063A47");
             });
 
-            modelBuilder.Entity<User>(entity =>
+            modelBuilder.Entity<Users>(entity =>
             {
-                entity.ToTable("User");
+                entity.ToTable("Users");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever()
@@ -581,7 +603,17 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Address)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Address");
+
+                entity.Property(e => e.Avatar)
+                    .IsRequired()
+                    .HasMaxLength(int.MaxValue)
+                    .HasColumnName("Avatar");
+
+                entity.Property(e => e.Role)
+                    .IsRequired()
+                    .HasColumnName("Role");
 
                 entity.Property(e => e.CccdbackImage)
                     .IsRequired()
@@ -602,19 +634,23 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Email)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Email");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Name");
 
                 entity.Property(e => e.Password)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Password");
 
                 entity.Property(e => e.Phone)
                     .IsRequired()
-                    .HasMaxLength(20);
+                    .HasMaxLength(20)
+                    .HasColumnName("Phone");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             });
@@ -662,7 +698,8 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Address)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Address");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -670,19 +707,23 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Email)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Email");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Name");
 
                 entity.Property(e => e.Password)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasColumnName("Password");
 
                 entity.Property(e => e.Phone)
                     .IsRequired()
-                    .HasMaxLength(20);
+                    .HasMaxLength(20)
+                    .HasColumnName("Phone");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             });

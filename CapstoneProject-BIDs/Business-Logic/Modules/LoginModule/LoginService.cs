@@ -204,7 +204,7 @@ namespace Business_Logic.Modules.LoginModule
             SmtpServer.Send(mail);
         }
 
-        public async Task<User> CreateAccount(CreateUserRequest userRequest)
+        public async Task<Users> CreateAccount(CreateUserRequest userRequest)
         {
 
             ValidationResult result = new CreateUserRequestValidator().Validate(userRequest);
@@ -213,17 +213,17 @@ namespace Business_Logic.Modules.LoginModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
-            User userCheckEmail = _UserRepository.GetFirstOrDefaultAsync(x => x.Email == userRequest.Email).Result;
+            Users userCheckEmail = _UserRepository.GetFirstOrDefaultAsync(x => x.Email == userRequest.Email).Result;
             if (userCheckEmail != null)
             {
                 throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
             }
-            User userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
+            Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
             if (userCheckPhone != null)
             {
                 throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
             }
-            User userCheckCCCDNumber = _UserRepository.GetFirstOrDefaultAsync(x => x.Cccdnumber == userRequest.Cccdnumber).Result;
+            Users userCheckCCCDNumber = _UserRepository.GetFirstOrDefaultAsync(x => x.Cccdnumber == userRequest.Cccdnumber).Result;
             if (userCheckCCCDNumber != null)
             {
                 throw new Exception(ErrorMessage.CommonError.CCCD_NUMBER_IS_EXITED);
@@ -248,7 +248,7 @@ namespace Business_Logic.Modules.LoginModule
                 throw new Exception(ErrorMessage.CommonError.WRONG_CCCD_NUMBER_FORMAT);
             }
 
-            var newUser = new User();
+            var newUser = new Users();
 
             newUser.Id = Guid.NewGuid();
             newUser.Name = userRequest.UserName;

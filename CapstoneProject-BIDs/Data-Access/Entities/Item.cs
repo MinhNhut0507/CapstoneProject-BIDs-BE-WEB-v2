@@ -21,15 +21,14 @@ namespace Data_Access.Entities
         public string DescriptionDetail { get; set; }
         public int Quantity { get; set; }
         public string Image { get; set; }
-        public double FristPrice { get; set; }
+        public double FirstPrice { get; set; }
         public double StepPrice { get; set; }
         public bool Deposit { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
-        public bool Status { get; set; }
 
         public virtual Category Category { get; set; }
-        public virtual User User { get; set; }
+        public virtual Users User { get; set; }
         public virtual BookingItem BookingItems { get; set; }
         public virtual ICollection<ItemDescription> ItemDescriptions { get; set; }
         public virtual Session Sessions { get; set; }

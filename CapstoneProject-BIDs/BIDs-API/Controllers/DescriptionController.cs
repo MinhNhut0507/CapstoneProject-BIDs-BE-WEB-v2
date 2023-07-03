@@ -9,19 +9,29 @@ using Data_Access.Entities;
 using Business_Logic.Modules.DescriptionModule.Interface;
 using Business_Logic.Modules.DescriptionModule.Request;
 using Microsoft.AspNetCore.Authorization;
+using Business_Logic.Modules.DescriptionModule.Response;
+using AutoMapper;
+using BIDs_API.SignalR;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class DescriptionController : ControllerBase
     {
         private readonly IDescriptionService _DescriptionService;
+        public readonly IMapper _mapper;
+        private readonly IHubContext<DescriptionHub> _hubContext;
 
-        public DescriptionController(IDescriptionService DescriptionService)
+        public DescriptionController(IDescriptionService DescriptionService
+            , IMapper mapper
+            , IHubContext<DescriptionHub> hubContext)
         {
             _DescriptionService = DescriptionService;
+            _mapper = mapper;
+            _hubContext = hubContext;
         }
 
         // GET api/<ValuesController>
@@ -30,11 +40,15 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var response = await _DescriptionService.GetAll();
-                if (response == null)
+                var list = await _DescriptionService.GetAll();
+                if (list == null)
                 {
                     return NotFound();
                 }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Description, DescriptionResponseAdmin>(emp)
+                           );
                 return Ok(response);
             }
             catch
@@ -45,30 +59,48 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Description>> GetDescriptionByID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<Description>>> GetDescriptionByID([FromRoute] Guid? id)
         {
-            var Description = await _DescriptionService.GetDescriptionByID(id);
-
-            if (Description == null)
+            try
             {
-                return NotFound();
+                var list = await _DescriptionService.GetDescriptionByID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Description, DescriptionResponseAdmin>(emp)
+                           );
+                return Ok(response);
             }
-
-            return Description;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_category_name/{name}")]
-        public async Task<ActionResult<Description>> GetDescriptionByCategoryName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<Description>>> GetDescriptionByCategoryName([FromRoute] string name)
         {
-            var Description = await _DescriptionService.GetDescriptionByCategoryName(name);
-
-            if (Description == null)
+            try
             {
-                return NotFound();
+                var list = await _DescriptionService.GetDescriptionByCategoryName(name);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Description, DescriptionResponseAdmin>(emp)
+                           );
+                return Ok(response);
             }
-
-            return Description;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // PUT api/<ValuesController>/5
@@ -78,7 +110,8 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                await _DescriptionService.UpdateDescription(updateDescriptionRequest);
+                var description = await _DescriptionService.UpdateDescription(updateDescriptionRequest);
+                await _hubContext.Clients.All.SendAsync("ReceiveDescriptionUpdate", description);
                 return Ok();
             }
             catch (Exception ex)
@@ -94,7 +127,9 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                return Ok(await _DescriptionService.AddNewDescription(createDescriptionRequest));
+                var description = await _DescriptionService.AddNewDescription(createDescriptionRequest);
+                await _hubContext.Clients.All.SendAsync("ReceiveDescriptionAdd", description);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -108,7 +143,8 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                await _DescriptionService.DeleteDescription(id);
+                var description = await _DescriptionService.DeleteDescription(id);
+                await _hubContext.Clients.All.SendAsync("ReceiveDescriptionDelete", description);
                 return Ok();
             }
             catch (Exception ex)

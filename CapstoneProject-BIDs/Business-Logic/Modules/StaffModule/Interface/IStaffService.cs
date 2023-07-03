@@ -24,13 +24,13 @@ namespace Business_Logic.Modules.StaffModule.Interface
 
         public Task<Staff> GetStaffByEmail(string Email);
 
-        public Task<User> AcceptCreateAccount(Guid? CreateAccountID);
+        public Task<Users> AcceptCreateAccount(Guid? CreateAccountID);
 
-        public Task<User> DenyCreate(Guid? CreateAccountID);
+        public Task<Users> DenyCreate(Guid? CreateAccountID);
 
-        public Task<User> BanUser(Guid? BanUserID);
+        public Task<Users> BanUser(Guid? BanUserID);
 
-        public Task<User> UnbanUser(Guid? UnbanUserID);
+        public Task<Users> UnbanUser(Guid? UnbanUserID);
 
     }
 }

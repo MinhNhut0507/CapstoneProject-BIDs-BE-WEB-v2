@@ -9,7 +9,6 @@ namespace Data_Access.Entities
     {
         public Guid Id { get; set; }
         public Guid ItemId { get; set; }
-        public Guid UserId { get; set; }
         public Guid StaffId { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
@@ -17,6 +16,5 @@ namespace Data_Access.Entities
 
         public virtual Item Item { get; set; }
         public virtual Staff Staff { get; set; }
-        public virtual User User { get; set; }
     }
 }

@@ -16,5 +16,6 @@ namespace Business_Logic.Modules.ItemModule.Interface
                Func<IQueryable<Item>, ICollection<Item>> options = null,
                string includeProperties = null
            );
+        //public Task<ICollection<Item>> GetAll();
     }
 }

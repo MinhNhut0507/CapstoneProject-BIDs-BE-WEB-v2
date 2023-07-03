@@ -22,12 +22,12 @@ namespace Business_Logic.Modules.DescriptionModule
 
         public async Task<ICollection<Description>> GetAll()
         {
-            return await _DescriptionRepository.GetAll(includeProperties: "Category");
+            return await _DescriptionRepository.GetAll(includeProperties: "Category,ItemDescriptions");
         }
 
         public Task<ICollection<Description>> GetDescriptionsIsValid()
         {
-            return _DescriptionRepository.GetAll(includeProperties: "Category"
+            return _DescriptionRepository.GetAll(includeProperties: "Category,ItemDescriptions"
                 , options: o => o.Where(x => x.Status == true).ToList());
         }
 
@@ -37,7 +37,7 @@ namespace Business_Logic.Modules.DescriptionModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Description = await _DescriptionRepository.GetAll(includeProperties: "Category"
+            var Description = await _DescriptionRepository.GetAll(includeProperties: "Category,ItemDescriptions"
                 , options: o => o.Where(x => x.Id == id).ToList());
             if (Description == null)
             {
@@ -53,7 +53,7 @@ namespace Business_Logic.Modules.DescriptionModule
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
             var Category = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Name == CategoryName);
-            var Description = await _DescriptionRepository.GetAll(includeProperties: "Category"
+            var Description = await _DescriptionRepository.GetAll(includeProperties: "Category,ItemDescriptions"
                 , options: o => o.Where(x => x.CategoryId == Category.Id).ToList());
             if (Description == null)
             {
@@ -83,7 +83,7 @@ namespace Business_Logic.Modules.DescriptionModule
 
             newDescription.Id = Guid.NewGuid();
             newDescription.CategoryId = DescriptionRequest.CategoryId;
-            newDescription.Detail = DescriptionRequest.Detail;
+            newDescription.Name = DescriptionRequest.Detail;
             newDescription.Status = true;
 
             await _DescriptionRepository.AddAsync(newDescription);
@@ -107,7 +107,7 @@ namespace Business_Logic.Modules.DescriptionModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                DescriptionUpdate.Detail = DescriptionRequest.Detail;
+                DescriptionUpdate.Name = DescriptionRequest.Detail;
                 DescriptionUpdate.Status = DescriptionRequest.Status;
 
                 await _DescriptionRepository.UpdateAsync(DescriptionUpdate);

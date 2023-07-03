@@ -9,7 +9,6 @@ namespace Business_Logic.Modules.BookingItemModule.Response
     public class BookingItemResponseUser
     {
         public string ItemName { get; set; }
-        public string UserName { get; set; }
         public DateTime UpdateDate { get; set; }
         public int Status { get; set; }
     }

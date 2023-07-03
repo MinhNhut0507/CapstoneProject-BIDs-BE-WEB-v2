@@ -41,7 +41,8 @@ namespace Business_Logic.Modules.DescriptionModule
                 }
             }
 
-            query = query.Include(d => d.Category);
+            query = query.Include(s => s.Category)
+                .Include(s => s.ItemDescriptions);
 
             return options != null ? options(query).ToList() : await query.ToListAsync();
         }

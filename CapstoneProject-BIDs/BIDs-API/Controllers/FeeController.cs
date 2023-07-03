@@ -12,6 +12,9 @@ using BIDs_API.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using AutoMapper;
+using Business_Logic.Modules.FeeModule.Response;
+using Business_Logic.Modules.UserModule.Response;
 
 namespace BIDs_API.Controllers
 {
@@ -21,25 +24,33 @@ namespace BIDs_API.Controllers
     public class FeeController : ControllerBase
     {
         private readonly IFeeService _FeeService;
-        private readonly IHubContext<FeeHub> _hubFeeContext;
+        public readonly IMapper _mapper;
+        private readonly IHubContext<FeeHub> _hubContext;
+
         public FeeController(IFeeService FeeService
-            , IHubContext<FeeHub> hubFeeContext)
+            , IMapper mapper
+            , IHubContext<FeeHub> hubContext)
         {
             _FeeService = FeeService;
-            _hubFeeContext = hubFeeContext;
+            _mapper = mapper;
+            _hubContext = hubContext;
         }
 
         // GET api/<ValuesController>
         [HttpGet]       
-        public async Task<ActionResult<IEnumerable<Fee>>> GetFeesForAdmin()
+        public async Task<ActionResult<IEnumerable<FeeResponseAdmin>>> GetFeesForAdmin()
         {
             try
             {
-                var response = await _FeeService.GetAll();
-                if(response == null)
+                var list = await _FeeService.GetAll();
+                if (list == null)
                 {
                     return NotFound();
                 }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Fee, FeeResponseAdmin>(emp)
+                           );
                 return Ok(response);
             }
             catch
@@ -50,9 +61,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Fee>> GetFeeByID([FromRoute] int id)
+        public async Task<ActionResult<FeeResponseAdmin>> GetFeeByID([FromRoute] int id)
         {
-            var Fee = await _FeeService.GetFeeByID(id);
+            var Fee = _mapper.Map<FeeResponseAdmin>(await _FeeService.GetFeeByID(id));
 
             if (Fee == null)
             {
@@ -64,9 +75,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<Fee>> GetFeeByName([FromRoute] string name)
+        public async Task<ActionResult<FeeResponseStaff>> GetFeeByName([FromRoute] string name)
         {
-            var Fee = await _FeeService.GetFeeByName(name);
+            var Fee = _mapper.Map<FeeResponseStaff>(await _FeeService.GetFeeByName(name));
 
             if (Fee == null)
             {
@@ -84,7 +95,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var Fee = await _FeeService.UpdateFee(updateFeeRequest);
-                await _hubFeeContext.Clients.All.SendAsync("ReceiveFeeUpdate", Fee);
+                await _hubContext.Clients.All.SendAsync("ReceiveFeeUpdate", Fee);
                 return Ok();
             }
             catch (Exception ex)
@@ -96,13 +107,13 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Fee>> PostFee([FromBody] CreateFeeRequest createFeeRequest)
+        public async Task<ActionResult<FeeResponseAdmin>> PostFee([FromBody] CreateFeeRequest createFeeRequest)
         {
             try
             {
                 var Fee = await _FeeService.AddNewFee(createFeeRequest);
-                await _hubFeeContext.Clients.All.SendAsync("ReceiveFeeAdd", Fee);
-                return Ok(Fee);
+                await _hubContext.Clients.All.SendAsync("ReceiveFeeAdd", Fee);
+                return Ok(_mapper.Map<FeeResponseAdmin>(Fee));
             }
             catch (Exception ex)
             {
@@ -117,7 +128,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var Fee = await _FeeService.DeleteFee(id);
-                await _hubFeeContext.Clients.All.SendAsync("ReceiveFeeDelete", Fee);
+                await _hubContext.Clients.All.SendAsync("ReceiveFeeDelete", Fee);
                 return Ok();
             }
             catch (Exception ex)
