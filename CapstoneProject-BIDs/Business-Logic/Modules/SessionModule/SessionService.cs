@@ -1,5 +1,6 @@
 ﻿using Business_Logic.Modules.CategoryModule;
 using Business_Logic.Modules.CategoryModule.Interface;
+using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.SessionModule.Interface;
 using Business_Logic.Modules.SessionModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
@@ -15,10 +16,14 @@ namespace Business_Logic.Modules.SessionModule
     {
         private readonly ISessionRepository _SessionRepository;
         private readonly ICategoryRepository _CategoryRepository;
-        public SessionService(ISessionRepository SessionRepository, ICategoryRepository CategoryRepository)
+        private readonly IItemService _ItemService;
+        public SessionService(ISessionRepository SessionRepository
+            , ICategoryRepository CategoryRepository
+            , IItemService ItemService)
         {
             _SessionRepository = SessionRepository;
             _CategoryRepository = CategoryRepository;
+            _ItemService = ItemService;
         }
 
         public async Task<ICollection<Session>> GetAll()
@@ -110,14 +115,33 @@ namespace Business_Logic.Modules.SessionModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
+            if(SessionRequest.EndTime < SessionRequest.BeginTime)
+            {
+                throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_END_ERROR);
+            }
+
+            if (SessionRequest.BeginTime < DateTime.UtcNow)
+            {
+                throw new Exception(ErrorMessage.SessionError.DATE_TIME_LATE_ERROR);
+            }
+
+            if (SessionRequest.BeginTime <  DateTime.UtcNow.AddDays(1))
+            {
+                throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
+            }
+
+            var item = await _ItemService.GetItemByID(SessionRequest.ItemId);
+
             var newSession = new Session();
 
             newSession.Id = Guid.NewGuid();
+            newSession.ItemId = SessionRequest.ItemId;
             newSession.Name = SessionRequest.SessionName;
             newSession.FeeId = SessionRequest.FeeId;
             newSession.BeginTime = SessionRequest.BeginTime;
-            newSession.AuctionTime = SessionRequest.AuctionTime;
+            newSession.AuctionTime = SessionRequest.EndTime - SessionRequest.BeginTime;
             newSession.EndTime = SessionRequest.EndTime;
+            newSession.FinalPrice = item.ElementAt(0).FirstPrice;
             newSession.CreateDate = DateTime.Now;
             newSession.UpdateDate = DateTime.Now;
             newSession.Status = (int)SessionStatusEnum.NotStart;
@@ -148,13 +172,29 @@ namespace Business_Logic.Modules.SessionModule
 
                 if (SessionCheck != null)
                 {
-                    throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
+                    if(SessionCheck.Id != SessionRequest.SessionID)
+                        throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
+                }
+
+                if (SessionRequest.EndTime < SessionRequest.BeginTime)
+                {
+                    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_END_ERROR);
+                }
+
+                if (SessionRequest.BeginTime < DateTime.UtcNow)
+                {
+                    throw new Exception(ErrorMessage.SessionError.DATE_TIME_LATE_ERROR);
+                }
+
+                if (SessionRequest.BeginTime < DateTime.UtcNow.AddDays(1))
+                {
+                    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
                 }
 
                 SessionUpdate.Name = SessionRequest.SessionName;
                 SessionUpdate.FeeId = SessionRequest.FeeId;
                 SessionUpdate.BeginTime = SessionRequest.BeginTime;
-                SessionUpdate.AuctionTime = SessionRequest.AuctionTime;
+                SessionUpdate.AuctionTime = SessionRequest.EndTime - SessionRequest.BeginTime;
                 SessionUpdate.EndTime = SessionRequest.EndTime;
                 SessionUpdate.UpdateDate = DateTime.Now;
 
@@ -168,7 +208,7 @@ namespace Business_Logic.Modules.SessionModule
             }
         }
 
-        public async Task<Session> UpdateSessionStatus(UpdateSessionStatusRequest SessionRequest)
+        public async Task<Session> UpdateSessionStatusNotStart(UpdateSessionStatusRequest SessionRequest)
         {
             try
             {
@@ -185,7 +225,97 @@ namespace Business_Logic.Modules.SessionModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                SessionUpdate.Status = SessionRequest.Status;
+                SessionUpdate.Status = (int)SessionStatusEnum.InStage;
+                SessionUpdate.UpdateDate = DateTime.Now;
+
+                await _SessionRepository.UpdateAsync(SessionUpdate);
+                return SessionUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Session> UpdateSessionStatusInStage(UpdateSessionStatusRequest SessionRequest)
+        {
+            try
+            {
+                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == SessionRequest.SessionID);
+
+                if (SessionUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
+                }
+
+                ValidationResult result = new UpdateSessionStatusRequestValidator().Validate(SessionRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                SessionUpdate.Status = (int)SessionStatusEnum.HaventTranferYet;
+                SessionUpdate.UpdateDate = DateTime.Now;
+
+                await _SessionRepository.UpdateAsync(SessionUpdate);
+                return SessionUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Session> UpdateSessionStatusHaventTranfer(UpdateSessionStatusRequest SessionRequest)
+        {
+            try
+            {
+                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == SessionRequest.SessionID);
+
+                if (SessionUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
+                }
+
+                ValidationResult result = new UpdateSessionStatusRequestValidator().Validate(SessionRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                SessionUpdate.Status = (int)SessionStatusEnum.OutOfDate;
+                SessionUpdate.UpdateDate = DateTime.Now;
+
+                await _SessionRepository.UpdateAsync(SessionUpdate);
+                return SessionUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Session> UpdateSessionStatusComplete(UpdateSessionStatusRequest SessionRequest)
+        {
+            try
+            {
+                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == SessionRequest.SessionID);
+
+                if (SessionUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
+                }
+
+                ValidationResult result = new UpdateSessionStatusRequestValidator().Validate(SessionRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                SessionUpdate.Status = (int)SessionStatusEnum.Complete;
                 SessionUpdate.UpdateDate = DateTime.Now;
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);

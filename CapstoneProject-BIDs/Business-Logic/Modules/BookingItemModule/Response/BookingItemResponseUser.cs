@@ -10,6 +10,6 @@ namespace Business_Logic.Modules.BookingItemModule.Response
     {
         public string ItemName { get; set; }
         public DateTime UpdateDate { get; set; }
-        public int Status { get; set; }
+        public string Status { get; set; }
     }
 }

@@ -27,11 +27,6 @@ namespace Business_Logic.Modules.BookingItemModule
                 , options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
-        public Task<ICollection<BookingItem>> GetBookingItemsIsWatting()
-        {
-            return _BookingItemRepository.GetAll(includeProperties: "Staff,Item"
-                , options: o => o.Where(x => x.Status == (int)BookingItemEnum.Watting).ToList());
-        }
 
         public async Task<ICollection<BookingItem>> GetBookingItemByID(Guid id)
         {
@@ -56,6 +51,21 @@ namespace Business_Logic.Modules.BookingItemModule
             }
             var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item"
                 , options: o => o.Where(x => x.StaffId == id).ToList());
+            if (BookingItem == null)
+            {
+                throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+            }
+            return BookingItem;
+        }
+
+        public async Task<ICollection<BookingItem>> GetBookingItemByStaffIsWatting(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item"
+                , options: o => o.Where(x => x.StaffId == id && x.Status == (int)BookingItemEnum.Watting).ToList());
             if (BookingItem == null)
             {
                 throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
@@ -106,7 +116,8 @@ namespace Business_Logic.Modules.BookingItemModule
         {
             try
             {
-                var BookingItemUpdate = _BookingItemRepository.GetFirstOrDefaultAsync(x => x.Id == BookingItemRequest.Id).Result;
+                var BookingItemUpdate = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item"
+                , options: o => o.Where(x => x.Id == BookingItemRequest.Id).ToList());
 
                 if (BookingItemUpdate == null)
                 {
@@ -119,12 +130,13 @@ namespace Business_Logic.Modules.BookingItemModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
+                var bookingAccept = BookingItemUpdate.ElementAt(0);
 
-                BookingItemUpdate.UpdateDate = DateTime.Now;
-                BookingItemUpdate.Status = BookingItemRequest.Status;
+                bookingAccept.UpdateDate = DateTime.Now;
+                bookingAccept.Status = BookingItemRequest.Status;
 
-                await _BookingItemRepository.UpdateAsync(BookingItemUpdate);
-                return BookingItemUpdate;
+                await _BookingItemRepository.UpdateAsync(bookingAccept);
+                return bookingAccept;
             }
             catch (Exception ex)
             {
@@ -138,19 +150,20 @@ namespace Business_Logic.Modules.BookingItemModule
         {
             try
             {
-                var BookingItemUpdate = _BookingItemRepository.GetFirstOrDefaultAsync(x => x.Id == id).Result;
+                var BookingItemUpdate = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item"
+                , options: o => o.Where(x => x.Id == id).ToList());
 
                 if (BookingItemUpdate == null)
                 {
                     throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
                 }
 
+                var bookingAccept = BookingItemUpdate.ElementAt(0);
+                bookingAccept.UpdateDate = DateTime.Now;
+                bookingAccept.Status = (int)BookingItemEnum.Accepted;
 
-                BookingItemUpdate.UpdateDate = DateTime.Now;
-                BookingItemUpdate.Status = (int)BookingItemEnum.Accepted;
-
-                await _BookingItemRepository.UpdateAsync(BookingItemUpdate);
-                return BookingItemUpdate;
+                await _BookingItemRepository.UpdateAsync(bookingAccept);
+                return bookingAccept;
             }
             catch (Exception ex)
             {
@@ -164,19 +177,20 @@ namespace Business_Logic.Modules.BookingItemModule
         {
             try
             {
-                var BookingItemUpdate = _BookingItemRepository.GetFirstOrDefaultAsync(x => x.Id == id).Result;
+                var BookingItemUpdate = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item"
+                , options: o => o.Where(x => x.Id == id).ToList());
 
                 if (BookingItemUpdate == null)
                 {
                     throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
                 }
 
+                var bookingAccept = BookingItemUpdate.ElementAt(0);
+                bookingAccept.UpdateDate = DateTime.Now;
+                bookingAccept.Status = (int)BookingItemEnum.Denied;
 
-                BookingItemUpdate.UpdateDate = DateTime.Now;
-                BookingItemUpdate.Status = (int)BookingItemEnum.Denied;
-
-                await _BookingItemRepository.UpdateAsync(BookingItemUpdate);
-                return BookingItemUpdate;
+                await _BookingItemRepository.UpdateAsync(bookingAccept);
+                return bookingAccept;
             }
             catch (Exception ex)
             {

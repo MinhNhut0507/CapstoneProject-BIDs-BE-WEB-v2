@@ -18,9 +18,9 @@ namespace Data_Access.Entities
         public int FeeId { get; set; }
         public string Name { get; set; }
         public DateTime BeginTime { get; set; }
-        public DateTime AuctionTime { get; set; }
+        public TimeSpan AuctionTime { get; set; }
         public DateTime EndTime { get; set; }
-        public double FinailPrice { get; set; }
+        public double FinalPrice { get; set; }
         public DateTime UpdateDate { get; set; }
         public DateTime CreateDate { get; set; }
         public int Status { get; set; }

@@ -1,12 +1,15 @@
 ﻿using Business_Logic.Modules.CategoryModule;
 using Business_Logic.Modules.CategoryModule.Interface;
+using Business_Logic.Modules.SessionModule.Interface;
 using Business_Logic.Modules.SessionDetailModule.Interface;
 using Business_Logic.Modules.SessionDetailModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
 using Data_Access.Constant;
 using Data_Access.Entities;
 using Data_Access.Enum;
+using FluentValidation;
 using FluentValidation.Results;
+using Business_Logic.Modules.ItemModule.Interface;
 
 namespace Business_Logic.Modules.SessionDetailModule
 {
@@ -14,10 +17,17 @@ namespace Business_Logic.Modules.SessionDetailModule
     {
         private readonly ISessionDetailRepository _SessionDetailRepository;
         private readonly ICategoryRepository _CategoryRepository;
-        public SessionDetailService(ISessionDetailRepository SessionDetailRepository, ICategoryRepository CategoryRepository)
+        private readonly ISessionService _SessionService;
+        private readonly IItemService _ItemService;
+        public SessionDetailService(ISessionDetailRepository SessionDetailRepository
+            , ICategoryRepository CategoryRepository
+            , ISessionService SessionService
+            , IItemService ItemService)
         {
             _SessionDetailRepository = SessionDetailRepository;
             _CategoryRepository = CategoryRepository;
+            _SessionService = SessionService;
+            _ItemService = ItemService;
         }
 
         public async Task<ICollection<SessionDetail>> GetAll()
@@ -114,6 +124,37 @@ namespace Business_Logic.Modules.SessionDetailModule
             newSessionDetail.UserId = SessionDetailRequest.UserId;
             newSessionDetail.SessionId = SessionDetailRequest.SessionId;
             newSessionDetail.Price = SessionDetailRequest.Price;
+            newSessionDetail.CreateDate = DateTime.Now;
+            newSessionDetail.Status = true;
+
+            await _SessionDetailRepository.AddAsync(newSessionDetail);
+            return newSessionDetail;
+        }
+
+        public async Task<SessionDetail> Jonning(JonningRequest jonningRequest)
+        {
+
+            ValidationResult result = new JonningRequestValidator().Validate(jonningRequest);
+            if (!result.IsValid)
+            {
+                throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+            }
+
+            var Session = await _SessionService.GetSessionByID(jonningRequest.SessionId);
+
+            if(Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
+            {
+                throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
+            }
+
+            var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
+
+            var newSessionDetail = new SessionDetail();
+
+            newSessionDetail.Id = Guid.NewGuid();
+            newSessionDetail.UserId = jonningRequest.UserId;
+            newSessionDetail.SessionId = jonningRequest.SessionId;
+            newSessionDetail.Price = Item.ElementAt(0).FirstPrice;
             newSessionDetail.CreateDate = DateTime.Now;
             newSessionDetail.Status = true;
 
