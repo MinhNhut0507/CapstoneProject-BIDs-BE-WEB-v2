@@ -80,6 +80,10 @@
         {
             public readonly static string SESSION_NOT_FOUND = "Phiên đấu giá không tồn tại";
             public readonly static string SESSION_EXISTED = "Phiên đấu giá đã tồn tại";
+            public readonly static string DATE_TIME_BEGIN_END_ERROR = "Sai thông tin ngày đấu giá(Ngày bắt đầu sau ngày kết thúc)";
+            public readonly static string DATE_TIME_LATE_ERROR = "Sai thông tin ngày đấu giá(Ngày bắt đầu trong quá khứ)";
+            public readonly static string DATE_TIME_BEGIN_ERROR = "Sai thông tin ngày đấu giá(Ngày bắt đầu phải cách ngày tạo ít nhất 1 ngày)";
+            public readonly static string OUT_OF_DATE_BEGIN_ERROR = "Đã quá hạn đăng ký tham gia đấu giá";
         }
         #endregion
 

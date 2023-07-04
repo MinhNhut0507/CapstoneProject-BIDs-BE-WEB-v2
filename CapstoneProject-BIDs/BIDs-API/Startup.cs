@@ -63,7 +63,7 @@ namespace BIDs_API
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "BIDs", Version = "v1" });
+                c.SwaggerDoc("v2", new OpenApiInfo { Title = "BIDs", Version = "v2" });
 
                 // hiển thị khung authorize điền token
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -177,7 +177,7 @@ namespace BIDs_API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BIDs v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v2/swagger.json", "BIDs v2"));
             }
 
             app.UseSwagger();

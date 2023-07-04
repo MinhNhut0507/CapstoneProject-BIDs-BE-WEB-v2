@@ -19,7 +19,7 @@ namespace Business_Logic.Modules.SessionModule.Response
         public DateTime BeginTime { get; set; }
         public DateTime AuctionTime { get; set; }
         public DateTime EndTime { get; set; }
-        public double? FinailPrice { get; set; }
+        public double FinalPrice { get; set; }
         public int Status { get; set; }
     }
 }

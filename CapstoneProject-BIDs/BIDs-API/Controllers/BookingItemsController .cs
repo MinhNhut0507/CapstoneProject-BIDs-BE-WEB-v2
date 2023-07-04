@@ -53,21 +53,30 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("by_item/{id}")]
-        public async Task<ActionResult<BookingItemResponseUser>> GetBookingItemByItem([FromRoute] Guid id)
+        public async Task<ActionResult<ICollection<BookingItemResponseUser>>> GetBookingItemByItem([FromRoute] Guid id)
         {
-            var BookingItem = _mapper.Map<BookingItemResponseUser>(await _BookingItemService.GetBookingItemByItem(id));
-
-            if (BookingItem == null)
+            try
             {
-                return NotFound();
+                var list = await _BookingItemService.GetBookingItemByItem(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponseUser>(emp)
+                           );
+                return Ok(response);
             }
-
-            return BookingItem;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_staff/{id}")]
-        public async Task<ActionResult<BookingItemResponseAdminAndStaff>> GetBookingItemByStaff([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaff([FromRoute] Guid id)
         {
             try
             {
@@ -89,19 +98,53 @@ namespace BIDs_API.Controllers
             }
         }
 
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_staff_watting/{id}")]
+        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaffIsWatting([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _BookingItemService.GetBookingItemByStaffIsWatting(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponseAdminAndStaff>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_id/{id}")]
-        public async Task<ActionResult<BookingItemResponseAdminAndStaff>> GetBookingItemByID([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByID([FromRoute] Guid id)
         {
-            var BookingItem = _mapper.Map<BookingItemResponseAdminAndStaff>(await _BookingItemService.GetBookingItemByID(id));
-
-            if (BookingItem == null)
+            try
             {
-                return NotFound();
-            }
+                var list = await _BookingItemService.GetBookingItemByID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
 
-            return BookingItem;
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponseAdminAndStaff>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // PUT api/<ValuesController>/5
@@ -140,8 +183,8 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [HttpPut("accept{id}")]
-        public async Task<IActionResult> AcceptBookingItem([FromHeader] Guid id)
+        [HttpPut("accept/{id}")]
+        public async Task<IActionResult> AcceptBookingItem([FromRoute] Guid id)
         {
             try
             {
@@ -155,8 +198,8 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [HttpPut("deny{id}")]
-        public async Task<IActionResult> DenyBookingItem([FromHeader] Guid id)
+        [HttpPut("deny/{id}")]
+        public async Task<IActionResult> DenyBookingItem([FromRoute] Guid id)
         {
             try
             {

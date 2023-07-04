@@ -14,6 +14,6 @@ namespace Business_Logic.Modules.BookingItemModule.Response
         public string StaffName { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
-        public int Status { get; set; }
+        public string Status { get; set; }
     }
 }

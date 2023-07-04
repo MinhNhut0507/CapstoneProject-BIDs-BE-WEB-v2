@@ -19,6 +19,6 @@ namespace Business_Logic.Modules.UserModule.Response
         public string Cccdnumber { get; set; }
         public string CccdfrontImage { get; set; }
         public string CccdbackImage { get; set; }
-        public int Status { get; set; }
+        public string Status { get; set; }
     }
 }

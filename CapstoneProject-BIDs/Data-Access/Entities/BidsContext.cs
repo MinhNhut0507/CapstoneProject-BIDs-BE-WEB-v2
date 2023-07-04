@@ -510,7 +510,7 @@ namespace Data_Access.Entities
                     .ValueGeneratedNever()
                     .HasColumnName("ID");
 
-                entity.Property(e => e.AuctionTime).HasColumnType("datetime");
+                entity.Property(e => e.AuctionTime).HasColumnName("AuctionTime");
 
                 entity.Property(e => e.BeginTime).HasColumnType("datetime");
 
@@ -519,6 +519,8 @@ namespace Data_Access.Entities
                 entity.Property(e => e.EndTime).HasColumnType("datetime");
 
                 entity.Property(e => e.FeeId).HasColumnName("FeeID");
+
+                entity.Property(e => e.FinalPrice).HasColumnName("FinalPrice");
 
                 entity.Property(e => e.ItemId).HasColumnName("ItemID");
 

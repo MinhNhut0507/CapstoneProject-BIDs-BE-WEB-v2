@@ -14,7 +14,11 @@ namespace Business_Logic.Modules.SessionModule.Interface
 
         public Task<Session> UpdateSession(UpdateSessionRequest SessionUpdate);
 
-        public Task<Session> UpdateSessionStatus(UpdateSessionStatusRequest SessionUpdate);
+        public Task<Session> UpdateSessionStatusInStage(UpdateSessionStatusRequest SessionUpdate);
+
+        public Task<Session> UpdateSessionStatusNotStart(UpdateSessionStatusRequest SessionUpdate);
+        public Task<Session> UpdateSessionStatusHaventTranfer(UpdateSessionStatusRequest SessionUpdate);
+        public Task<Session> UpdateSessionStatusComplete(UpdateSessionStatusRequest SessionUpdate);
 
         public Task<Session> DeleteSession(Guid? SessionDeleteID);
 

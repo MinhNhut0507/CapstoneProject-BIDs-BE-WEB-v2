@@ -19,5 +19,6 @@ namespace Business_Logic.Modules.UserModule.Response
         public string CCCDNumber { get; set; }
         public string CCCDFrontImage { get; set; }
         public string CCCDBackImage { get; set; }
+        public string Status { get; set; }
     }
 }
