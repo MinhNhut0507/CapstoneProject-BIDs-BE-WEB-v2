@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Modules\SessionRuleModule\Response\SessionRuleResponseStaff.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Data-Access\Data-Access.csproj" />
   </ItemGroup>

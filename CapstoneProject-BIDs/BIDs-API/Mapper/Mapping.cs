@@ -12,6 +12,7 @@ using Business_Logic.Modules.DescriptionModule.Response;
 using Business_Logic.Modules.BookingItemModule.Response;
 using Business_Logic.Modules.ItemDescriptionModule.Response;
 using Business_Logic.Modules.FeeModule.Response;
+using Business_Logic.Modules.SessionRuleModule.Response;
 
 namespace BIDs_API.Mapper
 {
@@ -225,6 +226,17 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.ParticipationFee, d => d.MapFrom(s => s.ParticipationFee))
                 .ForMember(x => x.DepositFee, d => d.MapFrom(s => s.DepositFee))
                 .ForMember(x => x.Surcharge, d => d.MapFrom(s => s.Surcharge));
+
+            CreateMap<SessionRule, SessionRuleResponseAdmin>()
+                .ForMember(x => x.SessionRuleId, d => d.MapFrom(s => s.Id))
+                .ForMember(x => x.Name, d => d.MapFrom(s => s.Name))
+                .ForMember(x => x.IncreaseTime, d => d.MapFrom(s => s.IncreaseTime))
+                .ForMember(x => x.FreeTime, d => d.MapFrom(s => s.FreeTime))
+                .ForMember(x => x.DelayTime, d => d.MapFrom(s => s.DelayTime))
+                .ForMember(x => x.DelayFreeTime, d => d.MapFrom(s => s.DelayFreeTime))
+                .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
+                .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
+                .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
         }
 
         public class RoleEnumConverter : IValueConverter<int, string>

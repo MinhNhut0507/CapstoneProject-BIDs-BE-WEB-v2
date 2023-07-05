@@ -127,7 +127,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var SessionDetail = await _SessionDetailService.AddNewSessionDetail(createSessionDetailRequest);
+                var SessionDetail = await _SessionDetailService.IncreasePrice(createSessionDetailRequest);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
                 return Ok(_mapper.Map<SessionDetailResponseStaffAndAdmin>(SessionDetail));
             }
