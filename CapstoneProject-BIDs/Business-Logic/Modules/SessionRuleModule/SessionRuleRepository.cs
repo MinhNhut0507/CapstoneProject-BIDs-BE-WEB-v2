@@ -1,4 +1,4 @@
-﻿using Business_Logic.Modules.SessionDetailModule.Interface;
+﻿using Business_Logic.Modules.SessionRuleModule.Interface;
 using Common.Utils.Repository;
 using Data_Access.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -9,24 +9,24 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business_Logic.Modules.SessionDetailModule
+namespace Business_Logic.Modules.SessionRuleModule
 {
-    public class SessionDetailRepository : Repository<SessionDetail>, ISessionDetailRepository
+    public class SessionRuleRepository : Repository<SessionRule>, ISessionRuleRepository
     {
         private readonly BIDsContext _db;
 
-        public SessionDetailRepository(BIDsContext db) : base(db)
+        public SessionRuleRepository(BIDsContext db) : base(db)
         {
             _db = db;
         }
 
-        public async Task<ICollection<SessionDetail>> GetSessionDetailsBy(
-            Expression<Func<SessionDetail, bool>> filter = null,
-            Func<IQueryable<SessionDetail>, ICollection<SessionDetail>> options = null,
+        public async Task<ICollection<SessionRule>> GetSessionRulesBy(
+            Expression<Func<SessionRule, bool>> filter = null,
+            Func<IQueryable<SessionRule>, ICollection<SessionRule>> options = null,
             string includeProperties = null
         )
         {
-            IQueryable<SessionDetail> query = DbSet;
+            IQueryable<SessionRule> query = DbSet;
 
             if (filter != null)
             {
@@ -40,12 +40,6 @@ namespace Business_Logic.Modules.SessionDetailModule
                     query = query.Include(includeProp);
                 }
             }
-
-            query = query.Include(s => s.User)
-     .Include(s => s.Session.Item)
-     .Include(s => s.Session.SessionRule);
-
-
 
             return options != null ? options(query).ToList() : await query.ToListAsync();
         }

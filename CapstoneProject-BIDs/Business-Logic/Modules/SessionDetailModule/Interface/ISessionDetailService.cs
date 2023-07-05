@@ -10,7 +10,7 @@ namespace Business_Logic.Modules.SessionDetailModule.Interface
 {
     public interface ISessionDetailService
     {
-        public Task<SessionDetail> AddNewSessionDetail(CreateSessionDetailRequest SessionDetailCreate);
+        public Task<SessionDetail> IncreasePrice(CreateSessionDetailRequest SessionDetailCreate);
 
         public Task<SessionDetail> UpdateSessionDetail(UpdateSessionDetailRequest SessionDetailUpdate);
 

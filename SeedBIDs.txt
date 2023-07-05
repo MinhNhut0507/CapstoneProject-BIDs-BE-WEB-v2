@@ -151,6 +151,10 @@ VALUES ('1ac16a74-6d6e-4be9-9d39-df29f4c8afef', '67b21edf-2b92-4f26-9e0c-8e1ef41
 INSERT INTO BookingItem (ID, ItemID, StaffID, CreateDate, UpdateDate, Status)
 VALUES ('43ebe25e-0d94-4319-99e2-864bc9b8977c', 'f827f124-741c-4f82-8c92-ba8f8edc21c5', '9b20198e-9c70-4f22-8714-52a7b6e034d8', GETDATE(), GETDATE(), 1);
 
+-- Chèn dữ liệu cho SessionRule
+INSERT INTO SessionRule(ID, Name, IncreaseTime, FreeTime, DelayTime, DelayFreeTime, CreateDate, UpdateDate, Status)
+VALUES ('b7370eb2-3fff-4b91-f31b-08db7d91cd0c', 'First Price', 20, '00:05:00', '00:10:00', '00:00:15', GETDATE(), GETDATE(), 1);
+
 
 
 

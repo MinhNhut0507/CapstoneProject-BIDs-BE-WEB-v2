@@ -10,6 +10,7 @@ using Data_Access.Enum;
 using FluentValidation;
 using FluentValidation.Results;
 using Business_Logic.Modules.ItemModule.Interface;
+using Business_Logic.Modules.SessionRuleModule.Interface;
 
 namespace Business_Logic.Modules.SessionDetailModule
 {
@@ -18,33 +19,36 @@ namespace Business_Logic.Modules.SessionDetailModule
         private readonly ISessionDetailRepository _SessionDetailRepository;
         private readonly ICategoryRepository _CategoryRepository;
         private readonly ISessionService _SessionService;
+        private readonly ISessionRuleService _SessionRuleService;
         private readonly IItemService _ItemService;
         public SessionDetailService(ISessionDetailRepository SessionDetailRepository
             , ICategoryRepository CategoryRepository
             , ISessionService SessionService
-            , IItemService ItemService)
+            , IItemService ItemService
+            , ISessionRuleService SessionRuleService)
         {
             _SessionDetailRepository = SessionDetailRepository;
             _CategoryRepository = CategoryRepository;
             _SessionService = SessionService;
             _ItemService = ItemService;
+            _SessionRuleService = SessionRuleService;
         }
 
         public async Task<ICollection<SessionDetail>> GetAll()
         {
-            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: o => o.OrderByDescending(x => x.CreateDate).ToList());
         }
 
         public async Task<ICollection<SessionDetail>> GetSessionDetailIsActive()
         {
-            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: x => x.Where(o => o.Status == true).ToList());
         }
 
         public async Task<ICollection<SessionDetail>> GetSessionDetailsIsInActive()
         {
-            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+            return await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: x => x.Where(o => o.Status == false).ToList());
         }
 
@@ -54,7 +58,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: x => x.Where(o => o.Id == id).ToList());
             if (SessionDetail == null)
             {
@@ -69,7 +73,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: x => x.Where(o => o.UserId == id).ToList());
             if (SessionDetail == null)
             {
@@ -84,7 +88,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item"
+            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: x => x.Where(o => o.SessionId == id).ToList());
             if (SessionDetail == null)
             {
@@ -108,7 +112,7 @@ namespace Business_Logic.Modules.SessionDetailModule
         //    return SessionDetail;
         //}
 
-        public async Task<SessionDetail> AddNewSessionDetail(CreateSessionDetailRequest SessionDetailRequest)
+        public async Task<SessionDetail> IncreasePrice(CreateSessionDetailRequest SessionDetailRequest)
         {
 
             ValidationResult result = new CreateSessionDetailRequestValidator().Validate(SessionDetailRequest);
@@ -117,6 +121,23 @@ namespace Business_Logic.Modules.SessionDetailModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
+            var Session = await _SessionService.GetSessionByID(SessionDetailRequest.SessionId);
+            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
+                , options: x => x.Where(o => o.UserId == SessionDetailRequest.UserId).ToList());
+            var SessionRule = await _SessionRuleService.GetSessionRuleByID(Session.ElementAt(0).SessionRuleId);
+
+            if((SessionDetail.Count() >= (SessionRule.IncreaseTime)) 
+                && ((Session.ElementAt(0).EndTime - DateTime.Now) > TimeSpan.FromMinutes(5)))
+            {
+                throw new Exception(ErrorMessage.SessionError.OUT_OF_TIME_ERROR);
+            }
+
+            if (((DateTime.Now - SessionDetail.ElementAt(0).CreateDate) < TimeSpan.FromMinutes(10))
+                || (((Session.ElementAt(0).EndTime - DateTime.Now) > TimeSpan.FromMinutes(5)) 
+                    && (DateTime.Now - SessionDetail.ElementAt(0).CreateDate) < TimeSpan.FromSeconds(15)))
+            {
+                throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
+            }
 
             var newSessionDetail = new SessionDetail();
 

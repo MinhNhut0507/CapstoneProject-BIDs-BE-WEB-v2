@@ -84,6 +84,10 @@
             public readonly static string DATE_TIME_LATE_ERROR = "Sai thông tin ngày đấu giá(Ngày bắt đầu trong quá khứ)";
             public readonly static string DATE_TIME_BEGIN_ERROR = "Sai thông tin ngày đấu giá(Ngày bắt đầu phải cách ngày tạo ít nhất 1 ngày)";
             public readonly static string OUT_OF_DATE_BEGIN_ERROR = "Đã quá hạn đăng ký tham gia đấu giá";
+            public readonly static string OUT_OF_TIME_ERROR = "Đã quá số lượt tăng giá(Có thể đợi tới lúc sắp kết thúc đấu giá)";
+            public readonly static string TIME_ERROR = "Bạn vừa tăng giá, vui lòng đợi một thời gian";
+
+
         }
         #endregion
 
@@ -132,6 +136,14 @@
         {
             public readonly static string ITEM_DESCRIPTION_NOT_FOUND = "Mô tả sản phẩm không tồn tại";
             public readonly static string ITEM_DESCRIPTION_EXISTED = "Mô tả sản phẩm đã tồn tại";
+        }
+        #endregion
+
+        #region Session Rule error message
+        public static class SessionRuleError
+        {
+            public readonly static string SESSION_RULE_NOT_FOUND = "Quy định đấu giá không tài tại";
+            public readonly static string SESSION_RULE_EXISTED = "Quy định đấu giá đã tồn tại";
         }
         #endregion
     }

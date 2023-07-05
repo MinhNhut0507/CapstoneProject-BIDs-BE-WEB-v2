@@ -35,6 +35,7 @@ namespace Data_Access.Entities
         public virtual DbSet<PaymentUser> PaymentUsers { get; set; }
         public virtual DbSet<Session> Sessions { get; set; }
         public virtual DbSet<SessionDetail> SessionDetails { get; set; }
+        public virtual DbSet<SessionRule> SessionRules { get; set; }
         public virtual DbSet<StaffNotificationDetail> StaffNotificationDetails { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<UserNotificationDetail> UserNotificationDetails { get; set; }
@@ -520,6 +521,8 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.FeeId).HasColumnName("FeeID");
 
+                entity.Property(e => e.SessionRuleId).HasColumnName("SessionRuleID");
+
                 entity.Property(e => e.FinalPrice).HasColumnName("FinalPrice");
 
                 entity.Property(e => e.ItemId).HasColumnName("ItemID");
@@ -536,6 +539,11 @@ namespace Data_Access.Entities
                     .HasForeignKey(d => d.FeeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Session__FeeID__4222D4EF");
+                entity.HasOne(d => d.SessionRule)
+                    .WithMany(p => p.Sessions)
+                    .HasForeignKey(d => d.SessionRuleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Session_SessionRule");
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.ItemId)
@@ -570,6 +578,32 @@ namespace Data_Access.Entities
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__SessionDe__UserI__440B1D61");
+            });
+
+            modelBuilder.Entity<SessionRule>(entity =>
+            {
+                entity.ToTable("SessionRule");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.IncreaseTime).IsRequired().HasColumnName("IncreaseTime");
+
+                entity.Property(e => e.FreeTime).IsRequired().HasColumnName("FreeTime");
+
+                entity.Property(e => e.DelayTime).IsRequired().HasColumnName("DelayTime");
+
+                entity.Property(e => e.DelayFreeTime).IsRequired().HasColumnName("DelayFreeTime");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("Name");
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<StaffNotificationDetail>(entity =>

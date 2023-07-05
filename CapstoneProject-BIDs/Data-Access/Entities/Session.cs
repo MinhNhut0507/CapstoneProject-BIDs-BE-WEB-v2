@@ -16,6 +16,7 @@ namespace Data_Access.Entities
         public Guid Id { get; set; }
         public Guid ItemId { get; set; }
         public int FeeId { get; set; }
+        public Guid SessionRuleId { get; set; }
         public string Name { get; set; }
         public DateTime BeginTime { get; set; }
         public TimeSpan AuctionTime { get; set; }
@@ -27,6 +28,7 @@ namespace Data_Access.Entities
 
         public virtual Fee Fee { get; set; }
         public virtual Item Item { get; set; }
+        public virtual SessionRule SessionRule { get; set; }
         public virtual ICollection<PaymentStaff> PaymentStaffs { get; set; }
         public virtual ICollection<PaymentUser> PaymentUsers { get; set; }
     }
