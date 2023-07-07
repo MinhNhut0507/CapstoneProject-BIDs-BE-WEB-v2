@@ -1,28 +1,22 @@
-﻿using Business_Logic.Modules.CategoryModule;
-using Business_Logic.Modules.CategoryModule.Interface;
-using Business_Logic.Modules.ItemModule.Interface;
+﻿using Business_Logic.Modules.ItemModule.Interface;
+using Business_Logic.Modules.SendEmailModule.Interface;
 using Business_Logic.Modules.SessionModule.Interface;
 using Business_Logic.Modules.SessionModule.Request;
-using Business_Logic.Modules.UserModule.Interface;
 using Data_Access.Constant;
 using Data_Access.Entities;
 using Data_Access.Enum;
 using FluentValidation.Results;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace Business_Logic.Modules.SessionModule
 {
     public class SessionService : ISessionService
     {
         private readonly ISessionRepository _SessionRepository;
-        private readonly ICategoryRepository _CategoryRepository;
         private readonly IItemService _ItemService;
         public SessionService(ISessionRepository SessionRepository
-            , ICategoryRepository CategoryRepository
             , IItemService ItemService)
         {
             _SessionRepository = SessionRepository;
-            _CategoryRepository = CategoryRepository;
             _ItemService = ItemService;
         }
 
@@ -97,7 +91,7 @@ namespace Business_Logic.Modules.SessionModule
         //    {
         //        throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
         //    }
-        //    var type = _CategoryRepository.GetFirstOrDefaultAsync(x => x.CategoryName == Category).Result;
+        //    var type = _UserService.GetFirstOrDefaultAsync(x => x.CategoryName == Category).Result;
         //    var Session = await _SessionRepository.GetFirstOrDefaultAsync(x => x.CategoryId == type.CategoryId);
         //    if (Session == null)
         //    {
@@ -202,6 +196,29 @@ namespace Business_Logic.Modules.SessionModule
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
                 return SessionUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task UpdatePriceSession(Guid id, double Price)
+        {
+            try
+            {
+                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == id
+                && x.Status == (int)SessionStatusEnum.InStage);
+                if (SessionUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
+                }
+
+                SessionUpdate.FinalPrice = Price;
+                SessionUpdate.UpdateDate = DateTime.Now;
+
+                await _SessionRepository.UpdateAsync(SessionUpdate);
             }
             catch (Exception ex)
             {

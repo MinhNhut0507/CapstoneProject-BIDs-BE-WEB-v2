@@ -11,6 +11,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.SessionRuleModule.Interface;
+using System.Net.Mail;
+using System.Net;
 
 namespace Business_Logic.Modules.SessionDetailModule
 {
@@ -21,17 +23,21 @@ namespace Business_Logic.Modules.SessionDetailModule
         private readonly ISessionService _SessionService;
         private readonly ISessionRuleService _SessionRuleService;
         private readonly IItemService _ItemService;
+        private readonly IUserService _UserService;
+
         public SessionDetailService(ISessionDetailRepository SessionDetailRepository
             , ICategoryRepository CategoryRepository
             , ISessionService SessionService
             , IItemService ItemService
-            , ISessionRuleService SessionRuleService)
+            , ISessionRuleService SessionRuleService
+            , IUserService UserService)
         {
             _SessionDetailRepository = SessionDetailRepository;
             _CategoryRepository = CategoryRepository;
             _SessionService = SessionService;
             _ItemService = ItemService;
             _SessionRuleService = SessionRuleService;
+            _UserService = UserService;
         }
 
         public async Task<ICollection<SessionDetail>> GetAll()
@@ -97,6 +103,30 @@ namespace Business_Logic.Modules.SessionDetailModule
             return SessionDetail;
         }
 
+        public async Task<ICollection<SessionDetail>> GetSessionDetailBySessionForAuction(Guid? id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
+            }
+            var SessionDetail = await _SessionDetailRepository.GetAll(options: o => o.OrderBy(x => x.SessionId == id).ToList());
+            if (SessionDetail == null)
+            {
+                throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);
+            }
+            return SessionDetail;
+        }
+
+        public async Task<SessionDetail> Getwinner()
+        {
+            var SessionDetail = await _SessionDetailRepository.GetAll(options: o => o.OrderByDescending(x => x.CreateDate).ToList());
+            if (SessionDetail == null)
+            {
+                throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);
+            }
+            return SessionDetail.ElementAt(0);
+        }
+
         //public async Task<SessionDetail> GetSessionDetailByType(string Category)
         //{
         //    if (Category == null)
@@ -149,6 +179,9 @@ namespace Business_Logic.Modules.SessionDetailModule
             newSessionDetail.Status = true;
 
             await _SessionDetailRepository.AddAsync(newSessionDetail);
+
+            await _SessionService.UpdatePriceSession(SessionDetailRequest.SessionId, SessionDetailRequest.Price);
+
             return newSessionDetail;
         }
 
@@ -180,6 +213,40 @@ namespace Business_Logic.Modules.SessionDetailModule
             newSessionDetail.Status = true;
 
             await _SessionDetailRepository.AddAsync(newSessionDetail);
+
+            var item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
+            var user = await _UserService.GetUserByID(newSessionDetail.UserId);
+
+            string _gmail = "bidauctionfloor@gmail.com";
+            string _password = "gnauvhbfubtgxjow";
+
+            string sendto = user.Email;
+            string subject = "BIDs - Đấu Giá";
+
+            string content = "Tài khoản " 
+                + user.Email 
+                + " đã đăng ký tham giá vào buổi đấu giá của sản phẩm "
+                + item.ElementAt(0).Name
+                + " thành công. Vui lòng đợi tới khi cuộc đấu giá bắt đầu.";
+
+            MailMessage mail = new MailMessage();
+            SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+
+            mail.From = new MailAddress(_gmail);
+            mail.To.Add(user.Email);
+            mail.Subject = subject;
+            mail.IsBodyHtml = true;
+            mail.Body = content;
+
+            mail.Priority = MailPriority.High;
+
+            SmtpServer.Port = 587;
+            SmtpServer.UseDefaultCredentials = false;
+            SmtpServer.Credentials = new NetworkCredential(_gmail, _password);
+            SmtpServer.EnableSsl = true;
+
+            SmtpServer.Send(mail);
+
             return newSessionDetail;
         }
 

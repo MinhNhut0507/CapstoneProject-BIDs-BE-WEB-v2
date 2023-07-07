@@ -145,7 +145,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [HttpPost("create-account")]
+        [HttpPost("register")]
         public async Task<ActionResult<UserResponseUser>> PostUser([FromBody] CreateUserRequest createUserRequest)
         {
             try

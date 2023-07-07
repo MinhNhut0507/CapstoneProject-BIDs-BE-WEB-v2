@@ -20,7 +20,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Staff,Admin")]
+    //[Authorize(Roles = "Staff,Admin")]
     public class StaffsController : ControllerBase
     {
         private readonly IStaffService _StaffService;

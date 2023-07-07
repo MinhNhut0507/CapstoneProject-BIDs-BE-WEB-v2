@@ -52,20 +52,21 @@ namespace BIDs_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
+            services.AddCors(options =>
             {
-                builder
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowAnyOrigin()
-                .AllowCredentials()
-                .WithOrigins("http://localhost:4200");
-            }));
+                options.AddPolicy("AllowReact", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .WithExposedHeaders("Authorization");
+                });
+            });
             services.AddSignalR();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v2", new OpenApiInfo { Title = "BIDs", Version = "v2" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "BIDs", Version = "v1" });
 
                 // hiển thị khung authorize điền token
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -80,7 +81,7 @@ namespace BIDs_API
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-     {
+                { 
                     {
                       new OpenApiSecurityScheme
                       {
@@ -95,7 +96,7 @@ namespace BIDs_API
                         },
                         new List<string>()
                     }
-    });
+                });
                 c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
@@ -107,11 +108,8 @@ namespace BIDs_API
                     Configuration.GetConnectionString("DefaultConnection")
                 )
             );
-            
 
-            //services.AddIdentity<Staff, Role>()
-            //    .AddEntityFrameworkStores<BIDsContext>()
-            //    .AddDefaultTokenProviders(); ;
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(otp =>
                 {
@@ -124,7 +122,8 @@ namespace BIDs_API
                         ClockSkew = TimeSpan.Zero
                     };
                 });
-         
+            services.AddAuthorization();
+
             //Admin Module
             services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddScoped<IAdminService, AdminService>();
@@ -182,19 +181,19 @@ namespace BIDs_API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v2/swagger.json", "BIDs v2"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BIDs v1"));
             }
 
             app.UseSwagger();
 
             app.UseSwaggerUI();
 
-            app.UseHttpsRedirection();           
+            app.UseHttpsRedirection();
 
             app.UseAuthentication();
 
             app.UseRouting();
-
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -192,21 +192,12 @@ namespace Business_Logic.Modules.UserModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                Users userCheckEmail = _UserRepository.GetFirstOrDefaultAsync(x => x.Email == userRequest.Email).Result;
-                if (userCheckEmail != null)
-                {
-                    throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
-                }
                 Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
                 if (userCheckPhone != null)
                 {
                     throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
                 }
 
-                if (!userRequest.Email.Contains("@"))
-                {
-                    throw new Exception(ErrorMessage.CommonError.WRONG_EMAIL_FORMAT);
-                }
                 if ((!userRequest.Phone.StartsWith("09")
                     && !userRequest.Phone.StartsWith("08")
                     && !userRequest.Phone.StartsWith("07")
@@ -219,7 +210,6 @@ namespace Business_Logic.Modules.UserModule
 
                 userUpdate.Name = userRequest.UserName;
                 userUpdate.Password = userRequest.Password;
-                userUpdate.Email = userRequest.Email;
                 userUpdate.Address = userRequest.Address;
                 userUpdate.Phone = userRequest.Phone;
                 userUpdate.Avatar = userRequest.Avatar;
@@ -237,33 +227,51 @@ namespace Business_Logic.Modules.UserModule
 
         }
 
-        //public async Task NotiForUser(NotiForUserRequest notiForUser)
-        //{
-        //    try
-        //    {
-        //        var notiUser = GetUserByID(notiForUser.UserId).Result;
-
-        //        if (notiUser == null)
-        //        {
-        //            throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
-        //        }
-
-        //        ValidationResult result = new NotiForUserRequestValidator().Validate(notiForUser);
-        //        if (!result.IsValid)
-        //        {
-        //            throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
-        //        }
+        public async Task<Users> UpdateRoleAccount(Guid id)
+        {
 
 
-        //        notiUser.Notification = notiForUser.Notification;
-        //        await _UserRepository.UpdateAsync(notiUser);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Error at delete type: " + ex.Message);
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
+            Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id && x.Status == 0);
+            if (user != null)
+            {
+                throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
+            }
+
+
+            user.Role = (int)RoleEnum.Auctioneer;
+            user.CreateDate = DateTime.Now;
+            user.UpdateDate = DateTime.Now;
+
+            await _UserRepository.UpdateAsync(user);
+
+            string _gmail = "bidauctionfloor@gmail.com";
+            string _password = "gnauvhbfubtgxjow";
+
+            string sendto = user.Email;
+            string subject = "BIDs - Nâng Cấp Tài Khoản";
+
+            string content = "Tài khoản " + user.Email + " đã được nâng cấp. Bây giờ bạn có thể bán đấu giá các sản phẩm trên hệ thống";
+
+            MailMessage mail = new MailMessage();
+            SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+
+            mail.From = new MailAddress(_gmail);
+            mail.To.Add(user.Email);
+            mail.Subject = subject;
+            mail.IsBodyHtml = true;
+            mail.Body = content;
+
+            mail.Priority = MailPriority.High;
+
+            SmtpServer.Port = 587;
+            SmtpServer.UseDefaultCredentials = false;
+            SmtpServer.Credentials = new NetworkCredential(_gmail, _password);
+            SmtpServer.EnableSsl = true;
+
+            SmtpServer.Send(mail);
+
+            return user;
+        }
 
     }
 }

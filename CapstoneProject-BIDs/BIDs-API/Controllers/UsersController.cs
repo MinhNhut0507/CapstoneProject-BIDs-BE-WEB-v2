@@ -12,7 +12,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -30,7 +30,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserResponseStaffAndAdmin>>> GetUsersForUser()
+        public async Task<ActionResult<IEnumerable<UserResponseStaffAndAdmin>>> GetUsersForAdmin()
         {
             try
             {
@@ -150,16 +150,16 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<Users>> GetUserByEmail([FromRoute] string email)
+        public async Task<ActionResult<UserResponseUser>> GetUserByEmail([FromRoute] string email)
         {
-            var User = await _userService.GetUserByEmail(email);
+            var user = _mapper.Map<UserResponseUser>(await _userService.GetUserByEmail(email));
 
             if (User == null)
             {
                 return NotFound();
             }
 
-            return User;
+            return user;
         }
 
         // PUT api/<ValuesController>/5

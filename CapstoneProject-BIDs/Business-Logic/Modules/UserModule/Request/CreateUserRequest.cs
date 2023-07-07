@@ -5,7 +5,6 @@ namespace Business_Logic.Modules.UserModule.Request
 {
     public class CreateUserRequest
     {
-        public string AccountName { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Avatar { get; set; }
@@ -21,7 +20,6 @@ namespace Business_Logic.Modules.UserModule.Request
     {
         public CreateUserRequestValidator()
         {
-            RuleFor(x => x.AccountName).NotEmpty().NotNull();
             RuleFor(x => x.UserName).NotEmpty().NotNull();
             RuleFor(x => x.Email).NotEmpty().NotNull();
             RuleFor(x => x.Avatar).NotEmpty().NotNull();
