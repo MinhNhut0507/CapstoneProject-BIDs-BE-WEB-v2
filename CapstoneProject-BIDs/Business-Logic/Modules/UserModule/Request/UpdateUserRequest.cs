@@ -10,8 +10,6 @@ namespace Business_Logic.Modules.UserModule.Request
 
         public string UserName { get; set; }
 
-        public string Email { get; set; }
-
         public string Password { get; set; }
 
         public string Address { get; set; }
@@ -42,7 +40,6 @@ namespace Business_Logic.Modules.UserModule.Request
             RuleFor(x => x.UserId).NotEmpty().NotNull();
             //RuleFor(x => x.AccountName).NotEmpty().NotNull();
             RuleFor(x => x.UserName).NotEmpty().NotNull();
-            RuleFor(x => x.Email).NotEmpty().NotNull();
             RuleFor(x => x.Password).NotEmpty().NotNull();
             RuleFor(x => x.Address).NotEmpty().NotNull();
             RuleFor(x => x.Phone).NotEmpty().NotNull();

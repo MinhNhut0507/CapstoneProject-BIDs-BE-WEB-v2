@@ -3,6 +3,7 @@ using BIDs_API.SignalR;
 using Business_Logic.Modules.SessionDetailModule.Interface;
 using Business_Logic.Modules.SessionDetailModule.Request;
 using Business_Logic.Modules.SessionDetailModule.Response;
+using Business_Logic.Modules.SessionModule.Interface;
 using Data_Access.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +18,21 @@ namespace BIDs_API.Controllers
     {
         private readonly ISessionDetailService _SessionDetailService;
         private readonly IHubContext<SessionDetailHub> _hubSessionDetailContext;
+        private readonly IHubContext<SessionHub> _hubSessionContext;
         private readonly IMapper _mapper;
+        private readonly ISessionService _SessionService;
 
         public SessionDetailsController(ISessionDetailService SessionDetailService
             , IHubContext<SessionDetailHub> hubSessionDetailContext
-            , IMapper mapper)
+            , IHubContext<SessionHub> hubSessionContext
+            , IMapper mapper
+            , ISessionService SessionService)
         {
             _SessionDetailService = SessionDetailService;
             _hubSessionDetailContext = hubSessionDetailContext;
             _mapper = mapper;
+            _SessionService = SessionService;
+            _hubSessionContext = hubSessionContext;
         }
 
         // GET api/<ValuesController>
@@ -123,12 +130,14 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<SessionDetailResponseStaffAndAdmin>> PostSessionDetail([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
+        public async Task<ActionResult<SessionDetailResponseStaffAndAdmin>> IncreasePrice([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
         {
             try
             {
                 var SessionDetail = await _SessionDetailService.IncreasePrice(createSessionDetailRequest);
+                var Session = await _SessionService.GetSessionByID(SessionDetail.SessionId);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
+                await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionUpdate", Session.ElementAt(0));
                 return Ok(_mapper.Map<SessionDetailResponseStaffAndAdmin>(SessionDetail));
             }
             catch (Exception ex)

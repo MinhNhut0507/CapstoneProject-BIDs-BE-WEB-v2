@@ -17,6 +17,7 @@ namespace Business_Logic.Modules.SessionDetailModule.Interface
         public Task<SessionDetail> DeleteSessionDetail(Guid? SessionDetailDeleteID);
 
         public Task<ICollection<SessionDetail>> GetAll();
+        public Task<SessionDetail> Getwinner();
 
         public Task<ICollection<SessionDetail>> GetSessionDetailByID(Guid? id);
 
@@ -27,6 +28,7 @@ namespace Business_Logic.Modules.SessionDetailModule.Interface
         public Task<ICollection<SessionDetail>> GetSessionDetailByUser(Guid? id);
 
         public Task<ICollection<SessionDetail>> GetSessionDetailBySession(Guid? id);
+        public Task<ICollection<SessionDetail>> GetSessionDetailBySessionForAuction(Guid? id);
 
     }
 }

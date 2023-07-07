@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.SignalR;
 using Business_Logic.Modules.SessionModule.Response;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Business_Logic.Modules.SendEmailModule.Interface;
 
 namespace BIDs_API.Controllers
 {
@@ -24,14 +25,17 @@ namespace BIDs_API.Controllers
         private readonly ISessionService _SessionService;
         private readonly IHubContext<SessionHub> _hubSessionContext;
         private readonly IMapper _mapper;
+        private readonly ISendEmail _SendEmail;
 
         public SessionsController(ISessionService SessionService
             , IHubContext<SessionHub> hubSessionContext
-            , IMapper mapper)
+            , IMapper mapper
+            , ISendEmail SendEmail)
         {
             _SessionService = SessionService;
             _hubSessionContext = hubSessionContext;
             _mapper = mapper;
+            _SendEmail = SendEmail;
             _ = RunTasksAtScheduledTimesForNotStart();
             _ = RunTasksAtScheduledTimesForHaventTranfer();
             _ = RunTasksAtScheduledTimesForInStage();
@@ -113,6 +117,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var session = await _SessionService.UpdateSessionStatusNotStart(updateSessionRequest);
+                await _SendEmail.SendEmailBeginAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 return Ok();
             }
@@ -130,6 +135,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var session = await _SessionService.UpdateSessionStatusInStage(updateSessionRequest);
+                await _SendEmail.SendEmailWinnerAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 return Ok();
             }
@@ -147,6 +153,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var session = await _SessionService.UpdateSessionStatusHaventTranfer(updateSessionRequest);
+                await _SendEmail.SendEmailOutOfDateAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 return Ok();
             }

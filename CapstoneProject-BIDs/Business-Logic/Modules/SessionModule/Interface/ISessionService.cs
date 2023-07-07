@@ -14,6 +14,8 @@ namespace Business_Logic.Modules.SessionModule.Interface
 
         public Task<Session> UpdateSession(UpdateSessionRequest SessionUpdate);
 
+        public Task UpdatePriceSession(Guid id, double price);
+
         public Task<Session> UpdateSessionStatusInStage(UpdateSessionStatusRequest SessionUpdate);
 
         public Task<Session> UpdateSessionStatusNotStart(UpdateSessionStatusRequest SessionUpdate);

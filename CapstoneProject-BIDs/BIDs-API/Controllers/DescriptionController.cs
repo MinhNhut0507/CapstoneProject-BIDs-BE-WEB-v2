@@ -18,7 +18,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class DescriptionController : ControllerBase
     {
         private readonly IDescriptionService _DescriptionService;
