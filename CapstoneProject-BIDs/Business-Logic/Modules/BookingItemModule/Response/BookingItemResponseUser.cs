@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,8 @@ namespace Business_Logic.Modules.BookingItemModule.Response
     public class BookingItemResponseUser
     {
         public string ItemName { get; set; }
-        public DateTime UpdateDate { get; set; }
+        public DTODateTime CreateDate { get; set; }
+        public DTODateTime UpdateDate { get; set; }
         public string Status { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Common.Helper;
+using FluentValidation;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,8 +11,8 @@ namespace Business_Logic.Modules.SessionModule.Request
         public Guid ItemId { get; set; }
         public int FeeId { get; set; }
         public Guid SessionRuleId { get; set; }
-        public DateTime BeginTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DTODateTime BeginTime { get; set; }
+        public DTODateTime EndTime { get; set; }
 
     }
 

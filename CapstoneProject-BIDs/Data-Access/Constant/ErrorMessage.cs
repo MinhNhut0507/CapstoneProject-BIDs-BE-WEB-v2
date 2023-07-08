@@ -82,11 +82,11 @@
             public readonly static string SESSION_EXISTED = "Phiên đấu giá đã tồn tại";
             public readonly static string DATE_TIME_BEGIN_END_ERROR = "Sai thông tin ngày đấu giá(Ngày bắt đầu sau ngày kết thúc)";
             public readonly static string DATE_TIME_LATE_ERROR = "Sai thông tin ngày đấu giá(Ngày bắt đầu trong quá khứ)";
-            public readonly static string DATE_TIME_BEGIN_ERROR = "Sai thông tin ngày đấu giá(Ngày bắt đầu phải cách ngày tạo ít nhất 1 ngày)";
+            public readonly static string DATE_TIME_BEGIN_ERROR = "Sai thông tin ngày đấu giá(Ngày bắt đầu phải cách ngày tạo ít nhất 1 ngày.)";
             public readonly static string OUT_OF_DATE_BEGIN_ERROR = "Đã quá hạn đăng ký tham gia đấu giá";
             public readonly static string OUT_OF_TIME_ERROR = "Đã quá số lượt tăng giá(Có thể đợi tới lúc sắp kết thúc đấu giá)";
             public readonly static string TIME_ERROR = "Bạn vừa tăng giá, vui lòng đợi một thời gian";
-
+            public readonly static string AUCTION_TIME_ERROR = "Thời gian đấu giá phải từ 1 ngày trở xuống";
 
         }
         #endregion

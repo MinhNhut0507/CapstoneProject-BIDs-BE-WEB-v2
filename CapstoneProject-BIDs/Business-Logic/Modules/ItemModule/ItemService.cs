@@ -108,6 +108,11 @@ namespace Business_Logic.Modules.ItemModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
+            if(ItemRequest.StepPrice > (ItemRequest.FirstPrice*0.05)
+                && ItemRequest.StepPrice < (ItemRequest.FirstPrice*0.1))
+            {
+                throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
+            }
 
             var newItem = new Item();
 
@@ -158,6 +163,13 @@ namespace Business_Logic.Modules.ItemModule
                 {
                     throw new Exception(ErrorMessage.ItemError.ITEM_EXISTED);
                 }
+
+                if (ItemRequest.StepPrice > (ItemRequest.FirstPrice * 0.05)
+                && ItemRequest.StepPrice < (ItemRequest.FirstPrice * 0.1))
+                {
+                    throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
+                }
+
                 ItemUpdate.Id = ItemRequest.ItemId;
                 ItemUpdate.Name = ItemRequest.ItemName;
                 ItemUpdate.DescriptionDetail = ItemRequest.Description;

@@ -1,4 +1,5 @@
 ﻿using Business_Logic.Modules.DescriptionModule.Response;
+using Common.Helper;
 using Data_Access.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,8 @@ namespace Business_Logic.Modules.CategoryModule.Response
     {
         public string CategoryName { get; set; }
         public ICollection<DescriptionResponse> Description { get; set; }
+        public DTODateTime CreateDate { get; set; }
+        public DTODateTime UpdateDate { get; set; }
+
     }
 }

@@ -8,7 +8,6 @@ namespace Business_Logic.Modules.SessionDetailModule.Request
     {
         public Guid UserId { get; set; }
         public Guid SessionId { get; set; }
-        public double Price { get; set; }
 
     }
 
@@ -18,7 +17,6 @@ namespace Business_Logic.Modules.SessionDetailModule.Request
         {
             RuleFor(x => x.UserId).NotEmpty().NotNull();
             RuleFor(x => x.SessionId).NotEmpty().NotNull();
-            RuleFor(x => x.Price).NotEmpty().NotNull();
         }
     }
 }

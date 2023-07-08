@@ -19,7 +19,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class SessionsController : ControllerBase
     {
         private readonly ISessionService _SessionService;
@@ -36,9 +36,9 @@ namespace BIDs_API.Controllers
             _hubSessionContext = hubSessionContext;
             _mapper = mapper;
             _SendEmail = SendEmail;
-            _ = RunTasksAtScheduledTimesForNotStart();
-            _ = RunTasksAtScheduledTimesForHaventTranfer();
-            _ = RunTasksAtScheduledTimesForInStage();
+            //_ = RunTasksAtScheduledTimesForNotStart();
+            //_ = RunTasksAtScheduledTimesForHaventTranfer();
+            //_ = RunTasksAtScheduledTimesForInStage();
         }
 
         // GET api/<ValuesController>
