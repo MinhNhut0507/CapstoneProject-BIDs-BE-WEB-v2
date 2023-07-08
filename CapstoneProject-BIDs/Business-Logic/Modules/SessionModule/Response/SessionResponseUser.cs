@@ -1,4 +1,5 @@
-﻿using Data_Access.Entities;
+﻿using Common.Helper;
+using Data_Access.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,9 +14,11 @@ namespace Business_Logic.Modules.SessionModule.Response
         public string FeeName { get; set; }
         public string SessionName { get; set; }
         public string ItemName { get; set; }
-        public DateTime BeginTime { get; set; }
+        public DTODateTime BeginTime { get; set; }
         public TimeSpan AuctionTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DTODateTime EndTime { get; set; }
         public double FinalPrice { get; set; }
+        public DTODateTime CreateDate { get; set; }
+        public DTODateTime UpdateDate { get; set; }
     }
 }

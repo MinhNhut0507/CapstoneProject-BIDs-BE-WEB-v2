@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Common.Helper;
+using FluentValidation;
 using System;
 
 namespace Business_Logic.Modules.StaffModule.Request
@@ -11,7 +12,7 @@ namespace Business_Logic.Modules.StaffModule.Request
         public string Password { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DTODateTime DateOfBirth { get; set; }
         public int RoleId { get; set; }
     }
     public class CreateStaffRequestValidator : AbstractValidator<CreateStaffRequest>

@@ -1,5 +1,6 @@
 ﻿using Business_Logic.Modules.DescriptionModule.Response;
 using Business_Logic.Modules.ItemDescriptionModule.Response;
+using Common.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,7 @@ namespace Business_Logic.Modules.ItemModule.Response
         public double FirstPrice { get; set; }
         public double StepPrice { get; set; }
         public bool Deposit { get; set; }
+        public DTODateTime CreateDate { get; set; }
+        public DTODateTime UpdateDate { get; set; }
     }
 }

@@ -22,6 +22,5 @@ namespace Business_Logic.Modules.LoginModule.InterFace
         public ClaimsPrincipal EncrypToken(string Token);
         public Task ResetPassword(string email);
         public Task sendemail(string email);
-        public Task<Users> CreateAccount(CreateUserRequest createUserRequest);
     }
 }

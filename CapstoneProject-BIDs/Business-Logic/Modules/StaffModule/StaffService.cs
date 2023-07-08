@@ -114,7 +114,11 @@ namespace Business_Logic.Modules.StaffModule
             newStaff.Password = StaffRequest.Password;
             newStaff.Address = StaffRequest.Address;
             newStaff.Phone = StaffRequest.Phone;
-            newStaff.DateOfBirth = StaffRequest.DateOfBirth;
+            newStaff.DateOfBirth = new DateTime(StaffRequest.DateOfBirth.Year
+                , StaffRequest.DateOfBirth.Month
+                , StaffRequest.DateOfBirth.Day
+                , StaffRequest.DateOfBirth.Hours
+                , StaffRequest.DateOfBirth.Minute, 0); 
             newStaff.CreateDate = DateTime.Now;
             newStaff.UpdateDate = DateTime.Now;
             newStaff.Status = true;

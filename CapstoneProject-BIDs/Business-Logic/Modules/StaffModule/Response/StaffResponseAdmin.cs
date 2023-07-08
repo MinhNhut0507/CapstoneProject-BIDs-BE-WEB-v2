@@ -1,4 +1,5 @@
-﻿using Data_Access.Entities;
+﻿using Common.Helper;
+using Data_Access.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,9 @@ namespace Business_Logic.Modules.StaffModule.Response
         public string Email { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DTODateTime DateOfBirth { get; set; }
+        public DTODateTime CreateDate { get; set; }
+        public DTODateTime UpdateDate { get; set; }
         public bool Status { get; set; }
     }
 }

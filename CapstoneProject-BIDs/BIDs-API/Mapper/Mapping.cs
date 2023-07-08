@@ -13,6 +13,7 @@ using Business_Logic.Modules.BookingItemModule.Response;
 using Business_Logic.Modules.ItemDescriptionModule.Response;
 using Business_Logic.Modules.FeeModule.Response;
 using Business_Logic.Modules.SessionRuleModule.Response;
+using Common.Helper;
 
 namespace BIDs_API.Mapper
 {
@@ -20,6 +21,13 @@ namespace BIDs_API.Mapper
     {
         public Mapping()
         {
+            CreateMap<DateTime, DTODateTime>()
+                .ForMember(x => x.Year, d => d.MapFrom(s => s.Year))
+                .ForMember(x => x.Month, d => d.MapFrom(s => s.Month))
+                .ForMember(x => x.Day, d => d.MapFrom(s => s.Day))
+                .ForMember(x => x.Hours, d => d.MapFrom(s => s.Hour))
+                .ForMember(x => x.Minute, d => d.MapFrom(s => s.Minute));
+
             CreateMap<Staff, StaffResponseStaff>()
                 .ForMember(x => x.Email, d => d.MapFrom(s => s.Email))
                 .ForMember(x => x.Password, d => d.MapFrom(s => s.Password))
@@ -73,7 +81,7 @@ namespace BIDs_API.Mapper
             
             CreateMap<Session, SessionResponseStaffAndAdmin>()
                 .ForMember(x => x.SessionId, d => d.MapFrom(s => s.Id))
-                .ForMember(x => x.FeeId, d => d.MapFrom(s => s.Fee.Id))
+                .ForMember(x => x.FeeId, d => d.MapFrom(s => s.FeeId))
                 .ForMember(x => x.FeeName, d => d.MapFrom(s => s.Fee.Name))
                 .ForMember(x => x.SessionName, d => d.MapFrom(s => s.Name))
                 .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Item.Id))

@@ -174,6 +174,7 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.StaffId).HasColumnName("StaffID");
 
+                entity.Property(e => e.Status).HasColumnName("Status");
 
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.BookingItems)
@@ -513,7 +514,7 @@ namespace Data_Access.Entities
                     .ValueGeneratedNever()
                     .HasColumnName("ID");
 
-                entity.Property(e => e.AuctionTime).HasColumnName("AuctionTime");
+                entity.Property(e => e.AuctionTime).HasColumnName("AuctionTime").HasColumnType("time(7)");
 
                 entity.Property(e => e.BeginTime).HasColumnType("datetime");
 
@@ -533,6 +534,9 @@ namespace Data_Access.Entities
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("Name");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("Status");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
@@ -594,11 +598,11 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.IncreaseTime).IsRequired().HasColumnName("IncreaseTime");
 
-                entity.Property(e => e.FreeTime).IsRequired().HasColumnName("FreeTime");
+                entity.Property(e => e.FreeTime).IsRequired().HasColumnName("FreeTime").HasColumnType("time(7)"); ;
 
-                entity.Property(e => e.DelayTime).IsRequired().HasColumnName("DelayTime");
+                entity.Property(e => e.DelayTime).IsRequired().HasColumnName("DelayTime").HasColumnType("time(7)"); ;
 
-                entity.Property(e => e.DelayFreeTime).IsRequired().HasColumnName("DelayFreeTime");
+                entity.Property(e => e.DelayFreeTime).IsRequired().HasColumnName("DelayFreeTime").HasColumnType("time(7)"); ;
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -701,6 +705,7 @@ namespace Data_Access.Entities
                     .HasColumnName("Phone");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+                entity.Property(e => e.Status).HasColumnName("Status");
             });
 
             modelBuilder.Entity<UserNotificationDetail>(entity =>

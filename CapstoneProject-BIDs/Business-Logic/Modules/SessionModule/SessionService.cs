@@ -6,6 +6,7 @@ using Data_Access.Constant;
 using Data_Access.Entities;
 using Data_Access.Enum;
 using FluentValidation.Results;
+using System;
 
 namespace Business_Logic.Modules.SessionModule
 {
@@ -109,19 +110,46 @@ namespace Business_Logic.Modules.SessionModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
-            if(SessionRequest.EndTime < SessionRequest.BeginTime)
+            var checkSession = await _SessionRepository.GetFirstOrDefaultAsync(x => x.ItemId == SessionRequest.ItemId);
+
+            if(checkSession != null)
+            {
+                throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
+            }
+
+            var BeginTime = new DateTime(SessionRequest.BeginTime.Year
+                , SessionRequest.BeginTime.Month
+                , SessionRequest.BeginTime.Day
+                , SessionRequest.BeginTime.Hours
+                , SessionRequest.BeginTime.Minute, 0);
+
+            var EndTime = new DateTime(SessionRequest.EndTime.Year
+                , SessionRequest.EndTime.Month
+                , SessionRequest.EndTime.Day
+                , SessionRequest.EndTime.Hours
+                , SessionRequest.EndTime.Minute, 0);
+
+            if (EndTime < BeginTime)
             {
                 throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_END_ERROR);
             }
 
-            if (SessionRequest.BeginTime < DateTime.UtcNow)
+            if (BeginTime < DateTime.UtcNow)
             {
                 throw new Exception(ErrorMessage.SessionError.DATE_TIME_LATE_ERROR);
             }
 
-            if (SessionRequest.BeginTime <  DateTime.UtcNow.AddDays(1))
+            if (BeginTime <  DateTime.UtcNow.AddDays(1))
             {
                 throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
+            }
+
+            TimeSpan timeSpan = (EndTime - BeginTime);
+            TimeSpan checkTime = new TimeSpan(1, 0, 0, 0);
+
+            if (timeSpan > checkTime)
+            {
+                throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_ERROR);
             }
 
             var item = await _ItemService.GetItemByID(SessionRequest.ItemId);
@@ -133,9 +161,25 @@ namespace Business_Logic.Modules.SessionModule
             newSession.Name = SessionRequest.SessionName;
             newSession.FeeId = SessionRequest.FeeId;
             newSession.SessionRuleId = SessionRequest.SessionRuleId;
-            newSession.BeginTime = SessionRequest.BeginTime;
-            newSession.AuctionTime = SessionRequest.EndTime - SessionRequest.BeginTime;
-            newSession.EndTime = SessionRequest.EndTime;
+            newSession.BeginTime = BeginTime;
+            if(timeSpan == checkTime)
+            {
+                newSession.AuctionTime = new TimeSpan(days: 0
+                , hours: (int)(timeSpan.TotalHours - 1)
+                , minutes: 59
+                , seconds: 59
+                , milliseconds: 0000001);
+                newSession.EndTime = EndTime.AddSeconds(-1);
+            }
+            else
+            {
+                newSession.AuctionTime = new TimeSpan(days: 0
+                , hours: (int)(timeSpan.TotalHours)
+                , minutes: timeSpan.Minutes
+                , seconds: timeSpan.Seconds
+                , milliseconds: 0000001);
+                newSession.EndTime = EndTime;
+            }
             newSession.FinalPrice = item.ElementAt(0).FirstPrice;
             newSession.CreateDate = DateTime.Now;
             newSession.UpdateDate = DateTime.Now;
@@ -171,27 +215,63 @@ namespace Business_Logic.Modules.SessionModule
                         throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
                 }
 
-                if (SessionRequest.EndTime < SessionRequest.BeginTime)
+                var BeginTime = new DateTime(SessionRequest.BeginTime.Year
+                , SessionRequest.BeginTime.Month
+                , SessionRequest.BeginTime.Day
+                , SessionRequest.BeginTime.Hours
+                , SessionRequest.BeginTime.Minute, 0);
+
+                var EndTime = new DateTime(SessionRequest.EndTime.Year
+                    , SessionRequest.EndTime.Month
+                    , SessionRequest.EndTime.Day
+                    , SessionRequest.EndTime.Hours
+                    , SessionRequest.EndTime.Minute, 0);
+
+                if (EndTime < BeginTime)
                 {
                     throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_END_ERROR);
                 }
 
-                if (SessionRequest.BeginTime < DateTime.UtcNow)
+                if (BeginTime < DateTime.UtcNow)
                 {
                     throw new Exception(ErrorMessage.SessionError.DATE_TIME_LATE_ERROR);
                 }
 
-                if (SessionRequest.BeginTime < DateTime.UtcNow.AddDays(1))
+                if (BeginTime < DateTime.UtcNow.AddDays(1))
                 {
                     throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
+                }
+
+                TimeSpan timeSpan = (EndTime - BeginTime);
+                TimeSpan checkTime = new TimeSpan(1, 0, 0, 0);
+
+                if (timeSpan > checkTime)
+                {
+                    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_ERROR);
                 }
 
                 SessionUpdate.Name = SessionRequest.SessionName;
                 SessionUpdate.FeeId = SessionRequest.FeeId;
                 SessionUpdate.SessionRuleId = SessionRequest.SessionRuleId;
-                SessionUpdate.BeginTime = SessionRequest.BeginTime;
-                SessionUpdate.AuctionTime = SessionRequest.EndTime - SessionRequest.BeginTime;
-                SessionUpdate.EndTime = SessionRequest.EndTime;
+                SessionUpdate.BeginTime = BeginTime;
+                if (timeSpan == checkTime)
+                {
+                    SessionUpdate.AuctionTime = new TimeSpan(days: 0
+                    , hours: (int)(timeSpan.TotalHours - 1)
+                    , minutes: 59
+                    , seconds: 59
+                    , milliseconds: 0000001);
+                    SessionUpdate.EndTime = EndTime.AddSeconds(-1);
+                }
+                else
+                {
+                    SessionUpdate.AuctionTime = new TimeSpan(days: 0
+                    , hours: (int)(timeSpan.TotalHours)
+                    , minutes: timeSpan.Minutes
+                    , seconds: timeSpan.Seconds
+                    , milliseconds: 0000001);
+                    SessionUpdate.EndTime = EndTime;
+                }
                 SessionUpdate.UpdateDate = DateTime.Now;
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);

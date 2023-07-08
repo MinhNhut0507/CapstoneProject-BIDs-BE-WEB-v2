@@ -155,6 +155,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: x => x.Where(o => o.UserId == SessionDetailRequest.UserId).ToList());
             var SessionRule = await _SessionRuleService.GetSessionRuleByID(Session.ElementAt(0).SessionRuleId);
+            var item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 
             if((SessionDetail.Count() >= (SessionRule.IncreaseTime)) 
                 && ((Session.ElementAt(0).EndTime - DateTime.Now) > TimeSpan.FromMinutes(5)))
@@ -174,13 +175,13 @@ namespace Business_Logic.Modules.SessionDetailModule
             newSessionDetail.Id = Guid.NewGuid();
             newSessionDetail.UserId = SessionDetailRequest.UserId;
             newSessionDetail.SessionId = SessionDetailRequest.SessionId;
-            newSessionDetail.Price = SessionDetailRequest.Price;
+            newSessionDetail.Price = Session.ElementAt(0).FinalPrice + item.ElementAt(0).StepPrice;
             newSessionDetail.CreateDate = DateTime.Now;
             newSessionDetail.Status = true;
 
             await _SessionDetailRepository.AddAsync(newSessionDetail);
 
-            await _SessionService.UpdatePriceSession(SessionDetailRequest.SessionId, SessionDetailRequest.Price);
+            await _SessionService.UpdatePriceSession(newSessionDetail.SessionId, newSessionDetail.Price);
 
             return newSessionDetail;
         }

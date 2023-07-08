@@ -144,20 +144,5 @@ namespace BIDs_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpPost("register")]
-        public async Task<ActionResult<UserResponseUser>> PostUser([FromBody] CreateUserRequest createUserRequest)
-        {
-            try
-            {
-                var user = await _LoginService.CreateAccount(createUserRequest);
-                await _hubContext.Clients.All.SendAsync("ReceiveUserAdd", user);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace Business_Logic.Modules.SessionDetailModule.Response
         public Guid SessionId { get; set; }
         public string SessionName { get; set; }
         public double Price { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DTODateTime CreateDate { get; set; }
         public bool Status { get; set; }
     }
 }
