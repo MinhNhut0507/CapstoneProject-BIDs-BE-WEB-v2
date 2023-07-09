@@ -1,4 +1,5 @@
 ﻿using Business_Logic.Modules.AdminModule.Request;
+using Business_Logic.Modules.LoginModule.Request;
 using Data_Access.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace Business_Logic.Modules.AdminModule.Interface
         public Task<Admin> AddNewAdmin(CreateAdminRequest AdminCreate);
 
         public Task<Admin> UpdateAdmin(UpdateAdminRequest AdminUpdate);
+
+        public Task<Admin> UpdatePassword(UpdatePasswordRequest AdminUpdate);
 
         public Task<ICollection<Admin>> GetAll();
 

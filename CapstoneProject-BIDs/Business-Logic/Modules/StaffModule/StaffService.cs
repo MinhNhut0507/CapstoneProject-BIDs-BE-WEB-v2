@@ -1,4 +1,5 @@
-﻿using Business_Logic.Modules.StaffModule.Interface;
+﻿using Business_Logic.Modules.LoginModule.Request;
+using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.StaffModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
 using Data_Access.Constant;
@@ -116,9 +117,7 @@ namespace Business_Logic.Modules.StaffModule
             newStaff.Phone = StaffRequest.Phone;
             newStaff.DateOfBirth = new DateTime(StaffRequest.DateOfBirth.Year
                 , StaffRequest.DateOfBirth.Month
-                , StaffRequest.DateOfBirth.Day
-                , StaffRequest.DateOfBirth.Hours
-                , StaffRequest.DateOfBirth.Minute, 0); 
+                , StaffRequest.DateOfBirth.Day); 
             newStaff.CreateDate = DateTime.Now;
             newStaff.UpdateDate = DateTime.Now;
             newStaff.Status = true;
@@ -186,6 +185,38 @@ namespace Business_Logic.Modules.StaffModule
                 throw new Exception(ex.Message);
             }
 
+        }
+
+        public async Task<Staff> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
+        {
+            try
+            {
+                var staff = await _StaffRepository.GetFirstOrDefaultAsync(x => x.Id == updatePasswordRequest.Id
+                    && x.Password == updatePasswordRequest.OldPassword);
+                if (staff != null)
+                {
+                    throw new Exception(ErrorMessage.StaffError.STAFF_NOT_FOUND);
+                }
+
+                ValidationResult result = new UpdatePasswordRequestValidator().Validate(updatePasswordRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                staff.Password = updatePasswordRequest.NewPassword;
+                staff.UpdateDate = DateTime.Now;
+
+                await _StaffRepository.UpdateAsync(staff);
+
+                return staff;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<Staff> DeleteStaff(Guid? StaffDeleteID)

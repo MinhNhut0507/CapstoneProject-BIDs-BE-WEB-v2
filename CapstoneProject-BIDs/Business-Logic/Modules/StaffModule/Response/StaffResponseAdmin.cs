@@ -15,7 +15,7 @@ namespace Business_Logic.Modules.StaffModule.Response
         public string Email { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-        public DTODateTime DateOfBirth { get; set; }
+        public DTODateOfBirth DateOfBirth { get; set; }
         public DTODateTime CreateDate { get; set; }
         public DTODateTime UpdateDate { get; set; }
         public bool Status { get; set; }

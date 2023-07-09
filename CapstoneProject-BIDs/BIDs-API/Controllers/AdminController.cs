@@ -11,6 +11,7 @@ using Business_Logic.Modules.AdminModule.Request;
 using BIDs_API.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
+using Business_Logic.Modules.LoginModule.Request;
 
 namespace BIDs_API.Controllers
 {
@@ -97,6 +98,21 @@ namespace BIDs_API.Controllers
             try
             {
                 var Admin = await _AdminService.UpdateAdmin(updateAdminRequest);
+                await _hubAdminContext.Clients.All.SendAsync("ReceiveAdminUpdate", Admin);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("update_password")]
+        public async Task<IActionResult> PutPassword([FromBody] UpdatePasswordRequest updateAdminRequest)
+        {
+            try
+            {
+                var Admin = await _AdminService.UpdatePassword(updateAdminRequest);
                 await _hubAdminContext.Clients.All.SendAsync("ReceiveAdminUpdate", Admin);
                 return Ok();
             }

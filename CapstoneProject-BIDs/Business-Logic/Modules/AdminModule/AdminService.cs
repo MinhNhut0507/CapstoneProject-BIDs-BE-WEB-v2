@@ -9,6 +9,7 @@ using FluentValidation;
 using System;
 using System.Text;
 using Data_Access.Enum;
+using Business_Logic.Modules.LoginModule.Request;
 
 namespace Business_Logic.Modules.AdminModule
 {
@@ -119,7 +120,7 @@ namespace Business_Logic.Modules.AdminModule
         {
             try
             {
-                var AdminUpdate = GetAdminByID(AdminRequest.AdminId).Result;
+                var AdminUpdate = await GetAdminByID(AdminRequest.AdminId);
 
                 if (AdminUpdate == null)
                 {
@@ -132,7 +133,7 @@ namespace Business_Logic.Modules.AdminModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                Admin AdminCheckPhone = _AdminRepository.GetFirstOrDefaultAsync(x => x.Phone == AdminRequest.Phone).Result;
+                var AdminCheckPhone = await _AdminRepository.GetFirstOrDefaultAsync(x => x.Phone == AdminRequest.Phone);
                 if (AdminCheckPhone != null)
                 {
                     throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
@@ -162,6 +163,37 @@ namespace Business_Logic.Modules.AdminModule
                 throw new Exception(ex.Message);
             }
 
+        }
+
+        public async Task<Admin> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
+        {
+            try
+            {
+                var Admin = await _AdminRepository.GetFirstOrDefaultAsync(x => x.Id == updatePasswordRequest.Id
+                    && x.Password == updatePasswordRequest.OldPassword);
+                if (Admin != null)
+                {
+                    throw new Exception(ErrorMessage.AdminError.ADMIN_NOT_FOUND);
+                }
+
+                ValidationResult result = new UpdatePasswordRequestValidator().Validate(updatePasswordRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                Admin.Password = updatePasswordRequest.NewPassword;
+
+                await _AdminRepository.UpdateAsync(Admin);
+
+                return Admin;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

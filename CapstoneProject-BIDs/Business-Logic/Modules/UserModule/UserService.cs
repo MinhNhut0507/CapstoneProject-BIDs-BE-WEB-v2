@@ -1,14 +1,12 @@
-﻿using Business_Logic.Modules.UserModule.Interface;
+﻿using Business_Logic.Modules.LoginModule.Request;
+using Business_Logic.Modules.UserModule.Interface;
 using Business_Logic.Modules.UserModule.Request;
 using Data_Access.Constant;
 using Data_Access.Entities;
-using FluentValidation.Results;
-using System.Net.Mail;
-using System.Net;
-using FluentValidation;
-using System;
-using System.Text;
 using Data_Access.Enum;
+using FluentValidation.Results;
+using System.Net;
+using System.Net.Mail;
 
 namespace Business_Logic.Modules.UserModule
 {
@@ -111,7 +109,7 @@ namespace Business_Logic.Modules.UserModule
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_EMAIL_FORMAT);
             }
-            if ((!userRequest.Phone.StartsWith("09") 
+            if ((!userRequest.Phone.StartsWith("09")
                 && !userRequest.Phone.StartsWith("08")
                 && !userRequest.Phone.StartsWith("07")
                 && !userRequest.Phone.StartsWith("05")
@@ -138,9 +136,7 @@ namespace Business_Logic.Modules.UserModule
             newUser.Phone = userRequest.Phone;
             newUser.DateOfBirth = new DateTime(userRequest.DateOfBirth.Year
                 , userRequest.DateOfBirth.Month
-                , userRequest.DateOfBirth.Day
-                , userRequest.DateOfBirth.Hours
-                , userRequest.DateOfBirth.Minute, 0);
+                , userRequest.DateOfBirth.Day);
             newUser.Cccdnumber = userRequest.Cccdnumber;
             newUser.CccdfrontImage = userRequest.CccdfrontImage;
             newUser.CccdbackImage = userRequest.CccdbackImage;
@@ -233,48 +229,86 @@ namespace Business_Logic.Modules.UserModule
 
         public async Task<Users> UpdateRoleAccount(Guid id)
         {
-
-
-            Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id && x.Status == 0);
-            if (user != null)
+            try
             {
-                throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
+                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id && x.Status == 0);
+                if (user != null)
+                {
+                    throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
+                }
+
+                user.Role = (int)RoleEnum.Auctioneer;
+                user.UpdateDate = DateTime.Now;
+
+                await _UserRepository.UpdateAsync(user);
+
+                string _gmail = "bidauctionfloor@gmail.com";
+                string _password = "gnauvhbfubtgxjow";
+
+                string sendto = user.Email;
+                string subject = "BIDs - Nâng Cấp Tài Khoản";
+
+                string content = "Tài khoản " + user.Email + " đã được nâng cấp. Bây giờ bạn có thể bán đấu giá các sản phẩm trên hệ thống";
+
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+
+                mail.From = new MailAddress(_gmail);
+                mail.To.Add(user.Email);
+                mail.Subject = subject;
+                mail.IsBodyHtml = true;
+                mail.Body = content;
+
+                mail.Priority = MailPriority.High;
+
+                SmtpServer.Port = 587;
+                SmtpServer.UseDefaultCredentials = false;
+                SmtpServer.Credentials = new NetworkCredential(_gmail, _password);
+                SmtpServer.EnableSsl = true;
+
+                SmtpServer.Send(mail);
+
+                return user;
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
 
+        public async Task<Users> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
+        {
+            try
+            {
+                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == updatePasswordRequest.Id
+                    && x.Password == updatePasswordRequest.OldPassword
+                    && x.Status != -1
+                    && x.Status != 2);
+                if (user != null)
+                {
+                    throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
+                }
 
-            user.Role = (int)RoleEnum.Auctioneer;
-            user.CreateDate = DateTime.Now;
-            user.UpdateDate = DateTime.Now;
+                ValidationResult result = new UpdatePasswordRequestValidator().Validate(updatePasswordRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
 
-            await _UserRepository.UpdateAsync(user);
+                user.Password = updatePasswordRequest.NewPassword;
+                user.UpdateDate = DateTime.Now;
 
-            string _gmail = "bidauctionfloor@gmail.com";
-            string _password = "gnauvhbfubtgxjow";
+                await _UserRepository.UpdateAsync(user);
 
-            string sendto = user.Email;
-            string subject = "BIDs - Nâng Cấp Tài Khoản";
+                return user;
 
-            string content = "Tài khoản " + user.Email + " đã được nâng cấp. Bây giờ bạn có thể bán đấu giá các sản phẩm trên hệ thống";
-
-            MailMessage mail = new MailMessage();
-            SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
-
-            mail.From = new MailAddress(_gmail);
-            mail.To.Add(user.Email);
-            mail.Subject = subject;
-            mail.IsBodyHtml = true;
-            mail.Body = content;
-
-            mail.Priority = MailPriority.High;
-
-            SmtpServer.Port = 587;
-            SmtpServer.UseDefaultCredentials = false;
-            SmtpServer.Credentials = new NetworkCredential(_gmail, _password);
-            SmtpServer.EnableSsl = true;
-
-            SmtpServer.Send(mail);
-
-            return user;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
 
     }

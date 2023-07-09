@@ -78,19 +78,19 @@ namespace Business_Logic.Modules.SessionRuleModule
                 SessionRuleRequest.DelayTime.hours,
                 SessionRuleRequest.DelayTime.minutes,
                 SessionRuleRequest.DelayTime.seconds,
-                milliseconds: 0000000);
+                milliseconds: 0000001);
             newSessionRule.DelayFreeTime = new TimeSpan(
                 SessionRuleRequest.DelayFreeTime.days,
                 SessionRuleRequest.DelayFreeTime.hours,
                 SessionRuleRequest.DelayFreeTime.minutes,
                 SessionRuleRequest.DelayFreeTime.seconds,
-                milliseconds: 0000000); 
+                milliseconds: 0000001); 
             newSessionRule.FreeTime = new TimeSpan(
                 SessionRuleRequest.FreeTime.days,
                 SessionRuleRequest.FreeTime.hours,
                 SessionRuleRequest.FreeTime.minutes,
                 SessionRuleRequest.FreeTime.seconds,
-                milliseconds: 0000000);
+                milliseconds: 0000001);
             newSessionRule.UpdateDate = DateTime.Now;
             newSessionRule.CreateDate = DateTime.Now;
             newSessionRule.Status = true;
@@ -130,18 +130,19 @@ namespace Business_Logic.Modules.SessionRuleModule
                 SessionRuleRequest.DelayTime.hours,
                 SessionRuleRequest.DelayTime.minutes,
                 SessionRuleRequest.DelayTime.seconds,
-                milliseconds: 0000000);
+                milliseconds: 0000001);
                 SessionRuleUpdate.DelayFreeTime = new TimeSpan(
                     SessionRuleRequest.DelayFreeTime.days,
                     SessionRuleRequest.DelayFreeTime.hours,
                     SessionRuleRequest.DelayFreeTime.minutes,
-                    SessionRuleRequest.DelayFreeTime.seconds);
+                    SessionRuleRequest.DelayFreeTime.seconds,
+                    milliseconds: 0000001);
                 SessionRuleUpdate.FreeTime = new TimeSpan(
                     SessionRuleRequest.FreeTime.days,
                     SessionRuleRequest.FreeTime.hours,
                     SessionRuleRequest.FreeTime.minutes,
                     SessionRuleRequest.FreeTime.seconds,
-                    milliseconds: 0000000);
+                    milliseconds: 0000001);
                 SessionRuleUpdate.UpdateDate = DateTime.Now;
                 SessionRuleUpdate.Status = SessionRuleRequest.Status;
 

@@ -37,6 +37,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
+        [Authorize(Roles = "Staff,Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ItemResponseStaffAndAdmin>>> GetItemsForAdmin()
         {
@@ -60,6 +61,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
+        [Authorize(Roles = "Staff,Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemResponseStaffAndAdmin>> GetItemByID([FromRoute] Guid? id)
         {
@@ -74,6 +76,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Staff,Admin")]
         [HttpGet("by_name/{name}")]
         public async Task<ActionResult<ItemResponseUser>> GetItemByName([FromRoute] string name)
         {
@@ -88,8 +91,9 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_type_name/{name}")]
-        public async Task<ActionResult<IEnumerable<ItemResponseStaffAndAdmin>>> GetItemByTypeName([FromRoute] string name)
+        [Authorize(Roles = "Staff,Admin")]
+        [HttpGet("by_category_name/{name}")]
+        public async Task<ActionResult<IEnumerable<ItemResponseUser>>> GetItemByCategoryName([FromRoute] string name)
         {
             try
             {
@@ -100,7 +104,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Item, ItemResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Item, ItemResponseUser>(emp)
                            );
                 return Ok(response);
             }
@@ -111,12 +115,61 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpGet("by_user/{id}")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItemByUser([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<ItemResponseUser>>> GetItemByUser([FromRoute] Guid? id)
         {
             try
             {
                 var list = await _ItemService.GetItemByUserID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Item, ItemResponseUser>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Bidder,Auctioneer")]
+        [HttpGet("by_name_and_user")]
+        public async Task<ActionResult<IEnumerable<ItemResponseUser>>> GetItemByNameAndUser([FromRoute] string name, Guid id)
+        {
+            try
+            {
+                var list = await _ItemService.GetItemByNameAndUser(name, id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Item, ItemResponseUser>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Bidder,Auctioneer")]
+        [HttpGet("by_category_name_and_user")]
+        public async Task<ActionResult<IEnumerable<ItemResponseUser>>> GetItemByCategoryNameAndUser([FromRoute] string name, Guid id)
+        {
+            try
+            {
+                var list = await _ItemService.GetItemByCategoryNameAndUser(name, id);
                 if (list == null)
                 {
                     return NotFound();

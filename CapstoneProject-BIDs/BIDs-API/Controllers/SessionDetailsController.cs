@@ -36,8 +36,9 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
+        [Authorize(Roles = "Staff,Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SessionDetailResponseStaffAndAdmin>>> GetSessionDetailsForAdmin()
+        public async Task<ActionResult<IEnumerable<SessionDetailResponseStaffAndAdmin>>> GetSessionDetailsForAdminAndStaff()
         {
             try
             {
@@ -59,6 +60,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
+        [Authorize(Roles = "Staff,Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<SessionDetailResponseStaffAndAdmin>> GetSessionDetailByID([FromRoute] Guid? id)
         {
@@ -74,7 +76,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionDetail>>> GetSessionDetailByUser([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<SessionDetailResponseUser>>> GetSessionDetailByUser([FromRoute] Guid? id)
         {
             try
             {
@@ -93,7 +95,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_session/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionDetail>>> GetSessionDetailBySession([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<SessionDetailResponseUser>>> GetSessionDetailBySession([FromRoute] Guid? id)
         {
             try
             {
@@ -112,6 +114,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Staff,Admin")]
         [HttpPut]
         public async Task<IActionResult> PutSessionDetail([FromBody] UpdateSessionDetailRequest updateSessionDetailRequest)
         {
@@ -147,6 +150,7 @@ namespace BIDs_API.Controllers
         }
 
         // DELETE api/<ValuesController>/5
+        [Authorize(Roles = "Staff,Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSessionDetail([FromRoute] Guid? id)
         {

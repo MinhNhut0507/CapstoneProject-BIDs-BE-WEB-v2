@@ -12,7 +12,7 @@ namespace Business_Logic.Modules.StaffModule.Request
         public string Password { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-        public DTODateTime DateOfBirth { get; set; }
+        public DTODateOfBirth DateOfBirth { get; set; }
         public int RoleId { get; set; }
     }
     public class CreateStaffRequestValidator : AbstractValidator<CreateStaffRequest>
@@ -27,10 +27,6 @@ namespace Business_Logic.Modules.StaffModule.Request
             RuleFor(x => x.Phone).NotEmpty().NotNull();
             RuleFor(x => x.DateOfBirth).NotEmpty().NotNull();
             RuleFor(x => x.Password).NotEmpty().NotNull();
-            //RuleFor(x => x.UpdateDate).NotEmpty().NotNull();
-            //RuleFor(x => x.CreateDate).NotEmpty().NotNull();
-            //RuleFor(x => x.Notification).NotEmpty().NotNull();
-            //RuleFor(x => x.Status).NotEmpty().NotNull();
         }
     }
 }
