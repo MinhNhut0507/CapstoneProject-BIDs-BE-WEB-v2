@@ -16,7 +16,7 @@ namespace Business_Logic.Modules.UserModule.Response
         public string Avatar { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-        public DTODateTime DateOfBirth { get; set; }
+        public DTODateOfBirth DateOfBirth { get; set; }
         public string Cccdnumber { get; set; }
         public string CccdfrontImage { get; set; }
         public string CccdbackImage { get; set; }

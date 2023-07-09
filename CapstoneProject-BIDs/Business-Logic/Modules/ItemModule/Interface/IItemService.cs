@@ -26,5 +26,9 @@ namespace Business_Logic.Modules.ItemModule.Interface
 
         public Task<ICollection<Item>> GetItemByUserID(Guid? id);
 
+        public Task<ICollection<Item>> GetItemByNameAndUser(string name, Guid id);
+
+        public Task<ICollection<Item>> GetItemByCategoryNameAndUser(string name, Guid id);
+
     }
 }

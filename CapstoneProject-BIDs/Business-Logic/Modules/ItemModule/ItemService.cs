@@ -99,6 +99,37 @@ namespace Business_Logic.Modules.ItemModule
             return Item;
         }
 
+        public async Task<ICollection<Item>> GetItemByCategoryNameAndUser(string CategoryName, Guid id)
+        {
+            if (CategoryName == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
+            }
+            var CategoryCheck = await _CategoryService.GetCategoryByName(CategoryName);
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+                , options: o => o.Where(x => x.CategoryId == CategoryCheck.First().Id && x.UserId == id).ToList());
+            if (Item == null)
+            {
+                throw new Exception(ErrorMessage.ItemError.ITEM_NOT_FOUND);
+            }
+            return Item;
+        }
+
+        public async Task<ICollection<Item>> GetItemByNameAndUser(string name, Guid id)
+        {
+            if (name == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
+            }
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+                , options: o => o.Where(x => x.Name == name && x.UserId == id).ToList());
+            if (Item == null)
+            {
+                throw new Exception(ErrorMessage.ItemError.ITEM_NOT_FOUND);
+            }
+            return Item;
+        }
+
         public async Task<ICollection<Item>> AddNewItem(CreateItemRequest ItemRequest)
         {
 
@@ -108,8 +139,8 @@ namespace Business_Logic.Modules.ItemModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
-            if(ItemRequest.StepPrice > (ItemRequest.FirstPrice*0.05)
-                && ItemRequest.StepPrice < (ItemRequest.FirstPrice*0.1))
+            if(ItemRequest.StepPrice < (ItemRequest.FirstPrice*0.05)
+                || ItemRequest.StepPrice > (ItemRequest.FirstPrice*0.1))
             {
                 throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
             }

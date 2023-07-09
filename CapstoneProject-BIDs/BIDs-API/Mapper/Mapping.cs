@@ -28,6 +28,11 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Hours, d => d.MapFrom(s => s.Hour))
                 .ForMember(x => x.Minute, d => d.MapFrom(s => s.Minute));
 
+            CreateMap<DateTime, DTODateOfBirth>()
+                .ForMember(x => x.Year, d => d.MapFrom(s => s.Year))
+                .ForMember(x => x.Month, d => d.MapFrom(s => s.Month))
+                .ForMember(x => x.Day, d => d.MapFrom(s => s.Day));
+
             CreateMap<Staff, StaffResponseStaff>()
                 .ForMember(x => x.Email, d => d.MapFrom(s => s.Email))
                 .ForMember(x => x.Password, d => d.MapFrom(s => s.Password))

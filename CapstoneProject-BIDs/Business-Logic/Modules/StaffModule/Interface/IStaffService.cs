@@ -1,4 +1,5 @@
-﻿using Business_Logic.Modules.StaffModule.Request;
+﻿using Business_Logic.Modules.LoginModule.Request;
+using Business_Logic.Modules.StaffModule.Request;
 using Data_Access.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace Business_Logic.Modules.StaffModule.Interface
         public Task<Staff> AddNewStaff(CreateStaffRequest StaffCreate);
 
         public Task<Staff> UpdateStaff(UpdateStaffRequest StaffUpdate);
+        public Task<Staff> UpdatePassword(UpdatePasswordRequest StaffUpdate);
 
         public Task<Staff> DeleteStaff(Guid? StaffDeleteID);
 

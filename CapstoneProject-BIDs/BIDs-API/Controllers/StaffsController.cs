@@ -15,12 +15,13 @@ using Microsoft.AspNetCore.SignalR;
 using Business_Logic.Modules.UserModule.Request;
 using System.Collections;
 using Microsoft.AspNetCore.Authorization;
+using Business_Logic.Modules.LoginModule.Request;
 
 namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Staff,Admin")]
+    [Authorize(Roles = "Staff,Admin")]
     public class StaffsController : ControllerBase
     {
         private readonly IStaffService _StaffService;
@@ -39,6 +40,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StaffResponseAdmin>>> GetStaffsForAdmin()
         {
@@ -63,6 +65,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
+        [Authorize(Roles = "Staff")]
         [HttpGet("{id}")]
         public async Task<ActionResult<StaffResponseStaff>> GetStaffByID([FromRoute] Guid id)
         {
@@ -77,10 +80,11 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Admin")]
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<StaffResponseStaff>> GetStaffByName([FromRoute] string name)
+        public async Task<ActionResult<StaffResponseAdmin>> GetStaffByName([FromRoute] string name)
         {
-            var Staff = _mapper.Map<StaffResponseStaff>(await _StaffService.GetStaffByName(name));
+            var Staff = _mapper.Map<StaffResponseAdmin>(await _StaffService.GetStaffByName(name));
 
             if (Staff == null)
             {
@@ -91,10 +95,11 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Admin")]
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<Staff>> GetStaffByEmail([FromRoute] string email)
+        public async Task<ActionResult<StaffResponseAdmin>> GetStaffByEmail([FromRoute] string email)
         {
-            var Staff = await _StaffService.GetStaffByEmail(email);
+            var Staff = _mapper.Map<StaffResponseAdmin>(await _StaffService.GetStaffByEmail(email));
 
             if (Staff == null)
             {
@@ -106,6 +111,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Staff")]
         [HttpPut]
         public async Task<IActionResult> PutStaff([FromBody] UpdateStaffRequest updateStaffRequest)
         {
@@ -121,8 +127,27 @@ namespace BIDs_API.Controllers
             }
         }
 
+        // PUT api/<ValuesController>/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Staff")]
+        [HttpPut("update_password")]
+        public async Task<IActionResult> PutPassword([FromBody] UpdatePasswordRequest updateStaffRequest)
+        {
+            try
+            {
+                var staff = await _StaffService.UpdatePassword(updateStaffRequest);
+                await _hubStaffContext.Clients.All.SendAsync("ReceiveStaffUpdate", staff);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<StaffResponseAdmin>> PostStaff([FromBody] CreateStaffRequest createStaffRequest)
         {
@@ -139,6 +164,7 @@ namespace BIDs_API.Controllers
         }
 
         // DELETE api/<ValuesController>/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStaff([FromRoute] Guid id)
         {

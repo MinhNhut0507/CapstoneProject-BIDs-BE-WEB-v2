@@ -1,4 +1,5 @@
-﻿using Business_Logic.Modules.ItemModule.Interface;
+﻿using Business_Logic.Modules.FeeModule.Interface;
+using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.SendEmailModule.Interface;
 using Business_Logic.Modules.SessionModule.Interface;
 using Business_Logic.Modules.SessionModule.Request;
@@ -14,11 +15,14 @@ namespace Business_Logic.Modules.SessionModule
     {
         private readonly ISessionRepository _SessionRepository;
         private readonly IItemService _ItemService;
+        private readonly IFeeService _FeeService;
         public SessionService(ISessionRepository SessionRepository
-            , IItemService ItemService)
+            , IItemService ItemService
+            , IFeeService FeeService)
         {
             _SessionRepository = SessionRepository;
             _ItemService = ItemService;
+            _FeeService = FeeService;
         }
 
         public async Task<ICollection<Session>> GetAll()
@@ -153,13 +157,21 @@ namespace Business_Logic.Modules.SessionModule
             }
 
             var item = await _ItemService.GetItemByID(SessionRequest.ItemId);
+            var fee = await _FeeService.GetAll();
 
             var newSession = new Session();
 
             newSession.Id = Guid.NewGuid();
             newSession.ItemId = SessionRequest.ItemId;
             newSession.Name = SessionRequest.SessionName;
-            newSession.FeeId = SessionRequest.FeeId;
+            foreach(var i in fee)
+            {
+                if(i.Min <= item.ElementAt(0).FirstPrice && i.Max >= item.ElementAt(0).FirstPrice)
+                {
+                    newSession.FeeId = i.Id;
+                    break;
+                }
+            }
             newSession.SessionRuleId = SessionRequest.SessionRuleId;
             newSession.BeginTime = BeginTime;
             if(timeSpan == checkTime)
@@ -251,7 +263,6 @@ namespace Business_Logic.Modules.SessionModule
                 }
 
                 SessionUpdate.Name = SessionRequest.SessionName;
-                SessionUpdate.FeeId = SessionRequest.FeeId;
                 SessionUpdate.SessionRuleId = SessionRequest.SessionRuleId;
                 SessionUpdate.BeginTime = BeginTime;
                 if (timeSpan == checkTime)
