@@ -18,6 +18,10 @@ using Business_Logic.Modules.ItemModule;
 using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.LoginModule;
 using Business_Logic.Modules.LoginModule.InterFace;
+using Business_Logic.Modules.NotificationModule;
+using Business_Logic.Modules.NotificationModule.Interface;
+using Business_Logic.Modules.NotificationTypeModule;
+using Business_Logic.Modules.NotificationTypeModule.Interface;
 using Business_Logic.Modules.SendEmailModule;
 using Business_Logic.Modules.SendEmailModule.Interface;
 using Business_Logic.Modules.SessionDetailModule;
@@ -28,8 +32,12 @@ using Business_Logic.Modules.SessionRuleModule;
 using Business_Logic.Modules.SessionRuleModule.Interface;
 using Business_Logic.Modules.StaffModule;
 using Business_Logic.Modules.StaffModule.Interface;
+using Business_Logic.Modules.StaffNotificationDetailModule;
+using Business_Logic.Modules.StaffNotificationDetailModule.Interface;
 using Business_Logic.Modules.UserModule;
 using Business_Logic.Modules.UserModule.Interface;
+using Business_Logic.Modules.UserNotificationDetailModule;
+using Business_Logic.Modules.UserNotificationDetailModule.Interface;
 using Data_Access.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -165,6 +173,18 @@ namespace BIDs_API
             //Session Rule Module
             services.AddScoped<ISessionRuleRepository, SessionRuleRepository>();
             services.AddScoped<ISessionRuleService, SessionRuleService>();
+            //Notification Module
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<INotificationService, NotificationService>();
+            //Notification Type Module
+            services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
+            services.AddScoped<INotificationTypeService, NotificationTypeService>();
+            //Staff Notification Detail Module
+            services.AddScoped<IStaffNotificationDetailRepository, StaffNotificationDetailRepository>();
+            services.AddScoped<IStaffNotificationDetailService, StaffNotificationDetailService>();
+            //User Notification Detail Module
+            services.AddScoped<IUserNotificationDetailRepository, UserNotificationDetailRepository>();
+            services.AddScoped<IUserNotificationDetailService, UserNotificationDetailService>();
             //Login Module
             services.AddScoped<ILoginService, LoginService>();
             //Send Email Module
@@ -216,6 +236,10 @@ namespace BIDs_API
                 endpoints.MapHub<BookingItemHub>("/bookingitemhub");
                 endpoints.MapHub<ItemDescriptionHub>("/itemdescriptionhub");
                 endpoints.MapHub<SessionRuleHub>("/sessionrulehub");
+                endpoints.MapHub<FeeHub>("/notificationhub");
+                endpoints.MapHub<FeeHub>("/staffnotificationdetailhub");
+                endpoints.MapHub<FeeHub>("/notificationtypehub");
+                endpoints.MapHub<FeeHub>("/usernotificationdetailhub");
             });
         }
 
