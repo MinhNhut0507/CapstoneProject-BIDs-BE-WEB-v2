@@ -177,6 +177,16 @@ namespace Business_Logic.Modules.StaffModule
                 StaffUpdate.UpdateDate = DateTime.Now;
 
                 await _StaffRepository.UpdateAsync(StaffUpdate);
+
+                //CreateStaffNotificationDetailRequest request = new CreateStaffNotificationDetailRequest()
+                //{
+                //    Messages = "Tài khoản vừa được cập nhập thông tin",
+                //    TypeId = (int)NotificationEnum.AccountNoti,
+                //    StaffId = StaffUpdate.Id,
+                //    NotificationId = Guid.NewGuid()
+                //};
+                //await _staffNotificationDetailService.AddNewStaffNotificationDetail(request);
+
                 return StaffUpdate;
             }
             catch (Exception ex)
@@ -208,6 +218,15 @@ namespace Business_Logic.Modules.StaffModule
                 staff.UpdateDate = DateTime.Now;
 
                 await _StaffRepository.UpdateAsync(staff);
+
+                //CreateStaffNotificationDetailRequest request = new CreateStaffNotificationDetailRequest()
+                //{
+                //    Messages = "Tài khoản vừa được cập nhập mật khẩu",
+                //    TypeId = (int)NotificationEnum.AccountNoti,
+                //    StaffId = StaffUpdate.Id,
+                //    NotificationId = Guid.NewGuid()
+                //};
+                //await _staffNotificationDetailService.AddNewStaffNotificationDetail(request);
 
                 return staff;
 

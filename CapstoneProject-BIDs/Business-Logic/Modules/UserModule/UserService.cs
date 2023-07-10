@@ -1,6 +1,8 @@
 ﻿using Business_Logic.Modules.LoginModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
 using Business_Logic.Modules.UserModule.Request;
+using Business_Logic.Modules.UserNotificationDetailModule.Interface;
+using Business_Logic.Modules.UserNotificationDetailModule.Request;
 using Data_Access.Constant;
 using Data_Access.Entities;
 using Data_Access.Enum;
@@ -13,9 +15,12 @@ namespace Business_Logic.Modules.UserModule
     public class UserService : IUserService
     {
         private readonly IUserRepository _UserRepository;
-        public UserService(IUserRepository UserRepository)
+        private readonly IUserNotificationDetailService _userNotificationDetailService;
+        public UserService(IUserRepository UserRepository
+            , IUserNotificationDetailService userNotificationDetailService)
         {
             _UserRepository = UserRepository;
+            _userNotificationDetailService = userNotificationDetailService;
         }
 
         public async Task<ICollection<Users>> GetAll()
@@ -217,6 +222,16 @@ namespace Business_Logic.Modules.UserModule
                 userUpdate.UpdateDate = DateTime.Now;
 
                 await _UserRepository.UpdateAsync(userUpdate);
+
+                //CreateUserNotificationDetailRequest request = new CreateUserNotificationDetailRequest()
+                //{
+                //    Messages = "Tài khoản vừa được cập nhập thông tin",
+                //    TypeId = (int)NotificationEnum.AccountNoti,
+                //    UserId = userUpdate.Id,
+                //    NotificationId = Guid.NewGuid()
+                //};
+                //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
+
                 return userUpdate;
             }
             catch (Exception ex)
@@ -268,6 +283,15 @@ namespace Business_Logic.Modules.UserModule
 
                 SmtpServer.Send(mail);
 
+                //CreateUserNotificationDetailRequest request = new CreateUserNotificationDetailRequest()
+                //{
+                //    Messages = "Tài khoản vừa được nâng cấp quyền",
+                //    TypeId = (int)NotificationEnum.AccountNoti,
+                //    UserId = userUpdate.Id,
+                //    NotificationId = Guid.NewGuid()
+                //};
+                //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
+
                 return user;
             }
             catch (Exception ex)
@@ -300,6 +324,15 @@ namespace Business_Logic.Modules.UserModule
                 user.UpdateDate = DateTime.Now;
 
                 await _UserRepository.UpdateAsync(user);
+
+                //CreateUserNotificationDetailRequest request = new CreateUserNotificationDetailRequest()
+                //{
+                //    Messages = "Tài khoản vừa cập nhập mật khẩu",
+                //    TypeId = (int)NotificationEnum.AccountNoti,
+                //    UserId = userUpdate.Id,
+                //    NotificationId = Guid.NewGuid()
+                //};
+                //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
 
                 return user;
 

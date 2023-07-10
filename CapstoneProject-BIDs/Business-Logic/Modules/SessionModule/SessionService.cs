@@ -198,6 +198,18 @@ namespace Business_Logic.Modules.SessionModule
             newSession.Status = (int)SessionStatusEnum.NotStart;
 
             await _SessionRepository.AddAsync(newSession);
+
+            //CreateUserNotificationDetailRequest request = new CreateUserNotificationDetailRequest()
+            //{
+            //    Messages = "Buổi đấu giá cho sản phẩm " + item.ElementAt(0).Name + " vừa được tạo thành công và sẽ bắt đầu vào lúc "
+            //    + newSession.BeginTime + " và sẽ diễn ra trong vòng " + newSession.AuctionTime + ".",
+            //    TypeId = (int)NotificationEnum.AccountNoti,
+            //    UserId = userUpdate.Id,
+            //    NotificationId = Guid.NewGuid()
+            //};
+            //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
+
+
             return newSession;
         }
 
@@ -286,6 +298,20 @@ namespace Business_Logic.Modules.SessionModule
                 SessionUpdate.UpdateDate = DateTime.Now;
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
+
+                var item = _ItemService.GetItemByID(SessionUpdate.ItemId);
+
+                //CreateUserNotificationDetailRequest request = new CreateUserNotificationDetailRequest()
+                //{
+                //    Messages = "Buổi đấu giá cho sản phẩm " + item.ElementAt(0).Name + " vừa được tạo thành công và sẽ bắt đầu vào lúc "
+                //    + SessionUpdate.BeginTime + " và sẽ diễn ra trong vòng " + SessionUpdate.AuctionTime + ".",
+                //    TypeId = (int)NotificationEnum.AccountNoti,
+                //    UserId = userUpdate.Id,
+                //    NotificationId = Guid.NewGuid()
+                //};
+                //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
+
+
                 return SessionUpdate;
             }
             catch (Exception ex)

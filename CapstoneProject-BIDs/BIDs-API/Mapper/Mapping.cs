@@ -14,6 +14,10 @@ using Business_Logic.Modules.ItemDescriptionModule.Response;
 using Business_Logic.Modules.FeeModule.Response;
 using Business_Logic.Modules.SessionRuleModule.Response;
 using Common.Helper;
+using Business_Logic.Modules.NotificationModule.Response;
+using Business_Logic.Modules.NotificationTypeModule.Response;
+using Business_Logic.Modules.StaffNotificationDetailModule.Response;
+using Business_Logic.Modules.UserNotificationDetailModule.Response;
 
 namespace BIDs_API.Mapper
 {
@@ -250,6 +254,34 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
                 .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
+
+            CreateMap<StaffNotificationDetail, StaffNotificationDetailResponseAdmin>()
+                .ForMember(x => x.NotificationId, d => d.MapFrom(s => s.NotificationId))
+                .ForMember(x => x.Message, d => d.MapFrom(s => s.Messages))
+                .ForMember(x => x.StaffId, d => d.MapFrom(s => s.StaffId))
+                .ForMember(x => x.TypeName, d => d.MapFrom(s => s.Type.Name));
+
+            CreateMap<Notification, NotificationResponseAdmin>()
+                .ForMember(x => x.Id, d => d.MapFrom(s => s.Id))
+                .ForMember(x => x.ExpireDate, d => d.MapFrom(s => s.ExpireDate))
+                .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
+                .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
+
+            CreateMap<NotificationType, NotificationTypeResponseAdmin>()
+                .ForMember(x => x.Id, d => d.MapFrom(s => s.Id))
+                .ForMember(x => x.Name, d => d.MapFrom(s => s.Name));
+
+            CreateMap<UserNotificationDetail, UserNotificationDetailResponseAdmin>()
+                .ForMember(x => x.NotificationId, d => d.MapFrom(s => s.NotificationId))
+                .ForMember(x => x.Message, d => d.MapFrom(s => s.Messages))
+                .ForMember(x => x.UserId, d => d.MapFrom(s => s.UserId))
+                .ForMember(x => x.TypeName, d => d.MapFrom(s => s.Type.Name));
+
+            CreateMap<UserNotificationDetail, UserNotificationDetailResponseUser>()
+                .ForMember(x => x.Message, d => d.MapFrom(s => s.Messages));
+
+            CreateMap<StaffNotificationDetail, StaffNotificationDetailResponseStaff>()
+                .ForMember(x => x.Message, d => d.MapFrom(s => s.Messages));
         }
 
         public class RoleEnumConverter : IValueConverter<int, string>

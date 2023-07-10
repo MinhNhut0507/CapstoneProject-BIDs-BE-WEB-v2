@@ -146,5 +146,37 @@
             public readonly static string SESSION_RULE_EXISTED = "Quy định đấu giá đã tồn tại";
         }
         #endregion
+
+        #region Notification error message
+        public static class NotificationError
+        {
+            public readonly static string NOTIFICATION_NOT_FOUND = "Thông báo không tài tại";
+            public readonly static string NOTIFICATION_EXISTED = "Thông báo đã tồn tại";
+        }
+        #endregion
+
+        #region Notification Type error message
+        public static class NotificationTypeError
+        {
+            public readonly static string NOTIFICATION_TYPE_NOT_FOUND = "Loại thông báo không tài tại";
+            public readonly static string NOTIFICATION_TYPE_EXISTED = "Loại thông báo đã tồn tại";
+        }
+        #endregion
+
+        #region Staff Notification Detail error message
+        public static class StaffNotificationDetailError
+        {
+            public readonly static string STAFF_NOTIFICATION_DETAIL_NOT_FOUND = "Thông báo cho nhân viên không tài tại";
+            public readonly static string STAFF_NOTIFICATION_DETAIL_EXISTED = "Thông báo cho nhân viên đã tồn tại";
+        }
+        #endregion
+
+        #region User Notification Detail error message
+        public static class UserNotificationDetailError
+        {
+            public readonly static string USER_NOTIFICATION_DETAIL_NOT_FOUND = "Thông báo cho người dùng không tài tại";
+            public readonly static string USER_NOTIFICATION_DETAIL_EXISTED = "Thông báo cho người dùng đã tồn tại";
+        }
+        #endregion
     }
 }
