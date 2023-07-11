@@ -9,7 +9,7 @@ namespace Business_Logic.Modules.StaffNotificationDetailModule.Response
 {
     public class StaffNotificationDetailResponseAdmin
     {
-        public Guid Id { get; set; }
+        public Guid NotificationId { get; set; }
         public string Message { get; set; }
         public Guid StaffId { get; set; }
         public string TypeName { get; set; }

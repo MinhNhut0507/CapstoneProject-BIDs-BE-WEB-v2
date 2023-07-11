@@ -117,7 +117,10 @@ namespace Business_Logic.Modules.StaffModule
             newStaff.Phone = StaffRequest.Phone;
             newStaff.DateOfBirth = new DateTime(StaffRequest.DateOfBirth.Year
                 , StaffRequest.DateOfBirth.Month
-                , StaffRequest.DateOfBirth.Day); 
+                , StaffRequest.DateOfBirth.Day
+                , 0
+                , 0
+                , 0); 
             newStaff.CreateDate = DateTime.Now;
             newStaff.UpdateDate = DateTime.Now;
             newStaff.Status = true;
