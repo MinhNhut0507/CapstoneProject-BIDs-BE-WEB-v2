@@ -10,8 +10,8 @@ namespace Business_Logic.Modules.SessionModule.Request
         public string SessionName { get; set; }
         public Guid ItemId { get; set; }
         public Guid SessionRuleId { get; set; }
-        public DTODateTime BeginTime { get; set; }
-        public DTODateTime EndTime { get; set; }
+        public DateTime BeginTime { get; set; }
+        public DateTime EndTime { get; set; }
 
     }
 

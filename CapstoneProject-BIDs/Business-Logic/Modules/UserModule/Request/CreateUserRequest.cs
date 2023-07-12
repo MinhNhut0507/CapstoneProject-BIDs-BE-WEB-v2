@@ -12,7 +12,7 @@ namespace Business_Logic.Modules.UserModule.Request
         public string Password { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-        public DTODateOfBirth DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public string Cccdnumber { get; set; }
         public string CccdfrontImage { get; set; }
         public string CccdbackImage { get; set; }

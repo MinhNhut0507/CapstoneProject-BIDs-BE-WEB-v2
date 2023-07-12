@@ -121,17 +121,9 @@ namespace Business_Logic.Modules.SessionModule
                 throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
             }
 
-            var BeginTime = new DateTime(SessionRequest.BeginTime.Year
-                , SessionRequest.BeginTime.Month
-                , SessionRequest.BeginTime.Day
-                , SessionRequest.BeginTime.Hours
-                , SessionRequest.BeginTime.Minute, 0);
+            var BeginTime = SessionRequest.BeginTime;
 
-            var EndTime = new DateTime(SessionRequest.EndTime.Year
-                , SessionRequest.EndTime.Month
-                , SessionRequest.EndTime.Day
-                , SessionRequest.EndTime.Hours
-                , SessionRequest.EndTime.Minute, 0);
+            var EndTime = SessionRequest.EndTime;
 
             if (EndTime < BeginTime)
             {
@@ -239,17 +231,9 @@ namespace Business_Logic.Modules.SessionModule
                         throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
                 }
 
-                var BeginTime = new DateTime(SessionRequest.BeginTime.Year
-                , SessionRequest.BeginTime.Month
-                , SessionRequest.BeginTime.Day
-                , SessionRequest.BeginTime.Hours
-                , SessionRequest.BeginTime.Minute, 0);
+                var BeginTime = SessionRequest.BeginTime;
 
-                var EndTime = new DateTime(SessionRequest.EndTime.Year
-                    , SessionRequest.EndTime.Month
-                    , SessionRequest.EndTime.Day
-                    , SessionRequest.EndTime.Hours
-                    , SessionRequest.EndTime.Minute, 0);
+                var EndTime = SessionRequest.EndTime;
 
                 if (EndTime < BeginTime)
                 {
