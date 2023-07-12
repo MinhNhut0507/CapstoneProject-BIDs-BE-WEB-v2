@@ -54,8 +54,9 @@ namespace Data_Access.Entities
                         .AddFilter(level => level >= LogLevel.Warning); // Adjust log level as needed
                 });
 
-                optionsBuilder.UseSqlServer("server=MINHNHUT\\NHUT57; database=BIDs; uid=sa; pwd=05072001;")
-                              //.UseSqlServer("Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n")
+                optionsBuilder
+                              //.UseSqlServer("server=MINHNHUT\\NHUT57; database=BIDs; uid=sa; pwd=05072001;")
+                              .UseSqlServer("Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n")
                               .UseLoggerFactory(loggerFactory); // Use the created loggerFactory
             }
 

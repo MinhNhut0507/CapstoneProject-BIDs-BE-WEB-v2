@@ -155,7 +155,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Bidder,Auctioneer")]
         [HttpGet("by_email/{email}")]
         public async Task<ActionResult<UserResponseStaffAndAdmin>> GetUserByEmail([FromRoute] string email)
         {

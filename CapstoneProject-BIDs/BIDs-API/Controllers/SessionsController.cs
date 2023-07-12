@@ -19,7 +19,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Staff")]
+    [Authorize(Roles = "Admin,Staff,Bidder,Auctioneer")]
     public class SessionsController : ControllerBase
     {
         private readonly ISessionService _SessionService;

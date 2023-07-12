@@ -78,7 +78,7 @@ namespace Business_Logic.Modules.LoginModule
                 }
                 return accountLogin;
             }
-            throw new Exception(ErrorMessage.LoginError.WRONG_ACCOUNT_NAME_OR_PASSWORD);
+            return null;
         }
         public ClaimsPrincipal EncrypToken(string token)
         {
