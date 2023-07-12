@@ -18,8 +18,8 @@ namespace Business_Logic.Modules.CategoryModule.Response
         public Guid CategoryId { get; set; }
         public string CategoryName { get; set; }
         public virtual ICollection<DescriptionResponse> Descriptions { get; set; }
-        public DTODateTime UpdateDate { get; set; }
-        public DTODateTime CreateDate { get; set; }
+        public DateTime UpdateDate { get; set; }
+        public DateTime CreateDate { get; set; }
         public bool Status { get; set; }
     }
 }

@@ -58,14 +58,16 @@ namespace Business_Logic.Modules.BookingItemModule
             return BookingItem;
         }
 
-        public async Task<ICollection<BookingItem>> GetBookingItemByStaffIsWatting(Guid id)
+        public async Task<ICollection<BookingItem>> GetBookingItemByStaffIsWatting(string email)
         {
-            if (id == null)
+
+            if (email == null)
             {
-                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+                throw new Exception(ErrorMessage.CommonError.EMAIL_IS_NULL);
             }
+            var staff = await _StaffRepository.GetFirstOrDefaultAsync(x => x.Email == email);
             var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item"
-                , options: o => o.Where(x => x.StaffId == id && x.Status == (int)BookingItemEnum.Watting).ToList());
+                , options: o => o.Where(x => x.StaffId == staff.Id && x.Status == (int) BookingItemEnum.Watting).ToList());
             if (BookingItem == null)
             {
                 throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);

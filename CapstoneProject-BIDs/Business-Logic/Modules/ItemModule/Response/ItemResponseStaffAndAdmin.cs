@@ -26,7 +26,7 @@ namespace Business_Logic.Modules.ItemModule.Response
         public double FirstPrice { get; set; }
         public double StepPrice { get; set; }
         public bool Deposit { get; set; }
-        public DTODateTime CreateDate { get; set; }
-        public DTODateTime UpdateDate { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime UpdateDate { get; set; }
     }
 }

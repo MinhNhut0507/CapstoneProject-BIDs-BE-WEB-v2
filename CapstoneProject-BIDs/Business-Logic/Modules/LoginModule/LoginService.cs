@@ -47,7 +47,7 @@ namespace Business_Logic.Modules.LoginModule
             }
 
             var UserCheckLogin =  _UserRepository.GetFirstOrDefaultAsync(x => x.Email == loginRequest.Email
-            && x.Password == loginRequest.Password).Result;
+            && x.Password == loginRequest.Password && x.Status == (int)UserStatusEnum.Acctive).Result;
             var StaffCheckLogin = _StaffRepository.GetFirstOrDefaultAsync(x => x.Email == loginRequest.Email
             && x.Password == loginRequest.Password).Result;
             var AdminCheckLogin = _AdminRepository.GetFirstOrDefaultAsync(x => x.Email == loginRequest.Email

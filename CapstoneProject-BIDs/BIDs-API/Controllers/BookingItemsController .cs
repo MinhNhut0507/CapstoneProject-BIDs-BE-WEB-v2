@@ -100,11 +100,11 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_staff_watting/{id}")]
-        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaffIsWatting([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaffIsWatting([FromRoute] string email)
         {
             try
             {
-                var list = await _BookingItemService.GetBookingItemByStaffIsWatting(id);
+                var list = await _BookingItemService.GetBookingItemByStaffIsWatting(email);
                 if (list == null)
                 {
                     return NotFound();
