@@ -217,6 +217,7 @@ namespace BIDs_API
             app.UseAuthentication();
 
             app.UseRouting();
+            app.UseCors("AllowReact");
             
             app.UseAuthorization();
 

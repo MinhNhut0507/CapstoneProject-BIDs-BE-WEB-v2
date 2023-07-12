@@ -12,7 +12,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class CategorysController : ControllerBase
     {
         private readonly ICategoryService _CategoryService;
@@ -53,6 +53,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<CategoryResponseAdmin>> GetCategoryByID([FromRoute] Guid? id)
         {
             var Category = _mapper.Map<CategoryResponseAdmin>(await _CategoryService.GetCategoryByID(id));
@@ -67,6 +68,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<CategoryResponseAdmin>> GetCategoryByName([FromRoute] string name)
         {
             var Category = _mapper.Map<CategoryResponseAdmin>(await _CategoryService.GetCategoryByName(name));
@@ -82,6 +84,7 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutCategory([FromBody] UpdateCategoryRequest updateCategoryRequest)
         {
             try
@@ -99,6 +102,7 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<CategoryResponseAdmin>> PostCategory([FromBody] CreateCategoryRequest createCategoryRequest)
         {
             try
@@ -115,6 +119,7 @@ namespace BIDs_API.Controllers
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid? id)
         {
             try
