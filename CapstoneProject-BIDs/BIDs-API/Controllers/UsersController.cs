@@ -126,6 +126,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
+        [Authorize(Roles = "Staff,Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserResponseUser>> GetUserByID([FromRoute] Guid id)
         {
@@ -140,7 +141,6 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Staff,Admin")]
         [HttpGet("by_name/{name}")]
         public async Task<ActionResult<UserResponseStaffAndAdmin>> GetUserByName([FromRoute] string name)
         {
@@ -155,11 +155,11 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Staff,Admin,Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<UserResponseStaffAndAdmin>> GetUserByEmail([FromRoute] string email)
+        public async Task<ActionResult<UserResponseUser>> GetUserByEmail([FromRoute] string email)
         {
-            var user = _mapper.Map<UserResponseStaffAndAdmin>(await _userService.GetUserByEmail(email));
+            var user = _mapper.Map<UserResponseUser>(await _userService.GetUserByEmail(email));
 
             if (User == null)
             {

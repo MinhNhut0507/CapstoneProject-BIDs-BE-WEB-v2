@@ -10,8 +10,8 @@ namespace Business_Logic.Modules.SessionModule.Request
         public Guid? SessionID { get; set; }
         public Guid SessionRuleId { get; set; }
         public string SessionName { get; set; }
-        public DTODateTime BeginTime { get; set; }
-        public DTODateTime EndTime { get; set; }
+        public DateTime BeginTime { get; set; }
+        public DateTime EndTime { get; set; }
     }
     public class UpdateSessionRequestValidator : AbstractValidator<UpdateSessionRequest>
     {

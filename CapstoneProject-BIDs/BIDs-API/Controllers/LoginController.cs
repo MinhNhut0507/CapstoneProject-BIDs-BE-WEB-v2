@@ -1,18 +1,14 @@
-﻿using Business_Logic.Modules.LoginModule.InterFace;
+﻿using BIDs_API.SignalR;
+using Business_Logic.Modules.LoginModule.InterFace;
 using Business_Logic.Modules.LoginModule.Request;
-using Data_Access.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System.Text;
-using System.IdentityModel.Tokens.Jwt;
 using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.UserModule.Interface;
-using Business_Logic.Modules.UserModule.Request;
-using Business_Logic.Modules.UserModule.Response;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using BIDs_API.SignalR;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BIDs_API.Controllers
 {
@@ -60,7 +56,7 @@ namespace BIDs_API.Controllers
 
                     new Claim("Email", string.Join(",", login.Email)),
                     new Claim("role", string.Join(",", result.Role)),
-                    new Claim("Role", string.Join(",", result.Role))
+                    new Claim("Role", string.Join(",", result.Role)),
 
                 }),
                 Expires = expiry,
@@ -71,7 +67,7 @@ namespace BIDs_API.Controllers
         }
 
         [HttpPost("decrypttoken")]
-        public async Task<IActionResult> DecryptTokenForStaff([FromHeader]string token)
+        public async Task<IActionResult> DecryptToken([FromHeader]string token)
         {
             if (token != null)
             {
@@ -90,6 +86,7 @@ namespace BIDs_API.Controllers
                 var respone = readToken.Claims;
                 var email = "";
                 var role = "";
+                Guid id = new Guid();
                 foreach (var x in respone)
                 {
                     switch (x.Type)

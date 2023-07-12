@@ -139,12 +139,7 @@ namespace Business_Logic.Modules.UserModule
             newUser.Password = userRequest.Password;
             newUser.Address = userRequest.Address;
             newUser.Phone = userRequest.Phone;
-            newUser.DateOfBirth = new DateTime(userRequest.DateOfBirth.Year
-                , userRequest.DateOfBirth.Month
-                , userRequest.DateOfBirth.Day
-                , 0
-                , 0
-                , 0);
+            newUser.DateOfBirth = userRequest.DateOfBirth;
             newUser.Cccdnumber = userRequest.Cccdnumber;
             newUser.CccdfrontImage = userRequest.CccdfrontImage;
             newUser.CccdbackImage = userRequest.CccdbackImage;
