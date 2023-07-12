@@ -17,12 +17,12 @@ namespace Business_Logic.Modules.SessionModule.Response
         public string SessionName { get; set; }
         public Guid ItemId { get; set; }
         public string ItemName { get; set; }
-        public DTODateTime BeginTime { get; set; }
+        public DateTime BeginTime { get; set; }
         public TimeSpan AuctionTime { get; set; }
-        public DTODateTime EndTime { get; set; }
+        public DateTime EndTime { get; set; }
         public double FinalPrice { get; set; }
-        public DTODateTime CreateDate { get; set; }
-        public DTODateTime UpdateDate { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime UpdateDate { get; set; }
         public int Status { get; set; }
     }
 }
