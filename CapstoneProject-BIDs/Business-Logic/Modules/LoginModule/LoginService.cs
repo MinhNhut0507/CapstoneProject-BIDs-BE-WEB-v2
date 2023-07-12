@@ -55,18 +55,21 @@ namespace Business_Logic.Modules.LoginModule
             ReturnAccountLogin accountLogin = new ReturnAccountLogin();
             if (StaffCheckLogin != null)
             {
+                accountLogin.Id = StaffCheckLogin.Id;
                 accountLogin.Email = loginRequest.Email;
                 accountLogin.Role = "Staff";
                 return accountLogin;
             }
             if (AdminCheckLogin != null)
             {
+                accountLogin.Id = AdminCheckLogin.Id;
                 accountLogin.Email = loginRequest.Email;
                 accountLogin.Role = "Admin";
                 return accountLogin;
             }
             if (UserCheckLogin != null)
             {
+                accountLogin.Id = UserCheckLogin.Id;
                 accountLogin.Email = loginRequest.Email;
                 if(UserCheckLogin.Role == (int)RoleEnum.Auctioneer)
                 {

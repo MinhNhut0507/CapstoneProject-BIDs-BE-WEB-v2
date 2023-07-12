@@ -57,7 +57,7 @@ namespace BIDs_API.Controllers
                     new Claim("Email", string.Join(",", login.Email)),
                     new Claim("role", string.Join(",", result.Role)),
                     new Claim("Role", string.Join(",", result.Role)),
-
+                    new Claim("Id", string.Join(",", result.Id))
                 }),
                 Expires = expiry,
                 SigningCredentials = creds
@@ -97,12 +97,16 @@ namespace BIDs_API.Controllers
                         case "Role":
                             role = x.Value;
                             break;
+                        case "Id":
+                            id = Guid.Parse(x.Value);
+                            break;
                     }
                 }
                 return Ok(new
                 {
                     Email = email,
-                    Role = role
+                    Role = role,
+                    id = id
                 });
             }
             return BadRequest();
