@@ -12,7 +12,7 @@ namespace Business_Logic.Modules.StaffModule.Request
         public string Password { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-        public DTODateOfBirth DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public int RoleId { get; set; }
     }
     public class CreateStaffRequestValidator : AbstractValidator<CreateStaffRequest>

@@ -65,11 +65,10 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [Authorize(Roles = "Staff")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<StaffResponseStaff>> GetStaffByID([FromRoute] Guid id)
+        public async Task<ActionResult<StaffResponseAdmin>> GetStaffByID([FromRoute] Guid id)
         {
-            var Staff = _mapper.Map<StaffResponseStaff>( await _StaffService.GetStaffByID(id));
+            var Staff = _mapper.Map<StaffResponseAdmin>( await _StaffService.GetStaffByID(id));
 
             if (Staff == null)
             {
@@ -95,11 +94,10 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Admin")]
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<StaffResponseAdmin>> GetStaffByEmail([FromRoute] string email)
+        public async Task<ActionResult<StaffResponseStaff>> GetStaffByEmail([FromRoute] string email)
         {
-            var Staff = _mapper.Map<StaffResponseAdmin>(await _StaffService.GetStaffByEmail(email));
+            var Staff = _mapper.Map<StaffResponseStaff>(await _StaffService.GetStaffByEmail(email));
 
             if (Staff == null)
             {
