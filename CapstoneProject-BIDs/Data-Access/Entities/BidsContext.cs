@@ -55,8 +55,8 @@ namespace Data_Access.Entities
                 });
 
                 optionsBuilder
-                              //.UseSqlServer("server=MINHNHUT\\NHUT57; database=BIDs; uid=sa; pwd=05072001;")
-                              .UseSqlServer("Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n")
+                              .UseSqlServer("server=MINHNHUT\\NHUT57; database=BIDs; uid=sa; pwd=05072001;")
+                              //.UseSqlServer("Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n")
                               .UseLoggerFactory(loggerFactory); // Use the created loggerFactory
             }
 
