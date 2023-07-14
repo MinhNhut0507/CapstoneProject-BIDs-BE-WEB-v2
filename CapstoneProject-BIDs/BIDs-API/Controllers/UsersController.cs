@@ -187,7 +187,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder")]
         [HttpPut("update_role_account/{id}")]
         public async Task<IActionResult> PutRoleUser([FromRoute] Guid id)
         {
