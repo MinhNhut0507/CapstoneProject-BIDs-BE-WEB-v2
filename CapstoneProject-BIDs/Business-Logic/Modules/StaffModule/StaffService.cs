@@ -284,7 +284,7 @@ namespace Business_Logic.Modules.StaffModule
 
                 string sendto = UserCreate.Email;
                 string subject = "[BIDs] - Dịch vụ tài khoản";
-                string content = "Tài khoản" + UserCreate.Name + " đã được khởi tạo thành công, chúc bạn có những phút giây sử dụng hệ thống vui vẻ";
+                string content = "Tài khoản" + UserCreate.Name + " đã được khởi tạo thành công, chúc bạn có những phút giây sử dụng hệ thống vui vẻ. Cảm ơn bạn đã tin tưởng và sử dụng BIDs - Hệ Thống Đấu Giá Trực Tuyến.";
 
                 UserCreate.Status = (int)UserStatusEnum.Acctive;
                 await _UserRepository.UpdateAsync(UserCreate);
@@ -340,7 +340,7 @@ namespace Business_Logic.Modules.StaffModule
                 string content = "Tài khoản" + UserCreate.Name + " khởi tạo không thành công vì thông tin bạn cung cấp không chính xác!";
 
                 UserCreate.Status = (int)UserStatusEnum.Deny;
-                await _UserRepository.UpdateAsync(UserCreate);
+                await _UserRepository.RemoveAsync(UserCreate);
 
                 MailMessage mail = new MailMessage();
                 SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
