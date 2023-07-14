@@ -15,6 +15,7 @@ namespace Business_Logic.Modules.SessionModule.Response
         public int FeeId { get; set; }
         public string FeeName { get; set; }
         public string SessionName { get; set; }
+        public string Image { get; set; }
         public Guid ItemId { get; set; }
         public string ItemName { get; set; }
         public DateTime BeginTime { get; set; }

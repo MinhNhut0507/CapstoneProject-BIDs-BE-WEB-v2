@@ -155,7 +155,7 @@ namespace Business_Logic.Modules.UserModule
             string sendto = userRequest.Email;
             string subject = "BIDs - Tạo Tài Khoản";
 
-            string content = "Tài khoản " + userRequest.Email + " đã được tạo thành công và đang đợi xét duyệt từ nhân viên hệ thống";
+            string content = "Tài khoản " + userRequest.Email + " đã được tạo thành công và đang đợi xét duyệt từ nhân viên hệ thống trong vòng 48h.";
 
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
@@ -244,8 +244,8 @@ namespace Business_Logic.Modules.UserModule
         {
             try
             {
-                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id && x.Status == 0);
-                if (user != null)
+                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id && x.Status == (int)UserStatusEnum.Acctive);
+                if (user == null)
                 {
                     throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
                 }

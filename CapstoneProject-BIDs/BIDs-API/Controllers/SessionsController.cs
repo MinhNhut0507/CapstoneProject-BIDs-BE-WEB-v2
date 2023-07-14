@@ -92,8 +92,101 @@ namespace BIDs_API.Controllers
             return Session;
         }
 
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_not_start/{name}")]
+        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionNotStart()
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsNotStart();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_in_stage/{name}")]
+        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionInStage()
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsInStage();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_havent_pay/{name}")]
+        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionHaventPay()
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsHaventPay();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_out_of_date/{name}")]
+        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionOutOfDate()
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsOutOfDate();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPut]
         public async Task<IActionResult> PutSession([FromBody] UpdateSessionRequest updateSessionRequest)
         {
@@ -111,6 +204,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPut("session_status_for_not_start")]
         public async Task<IActionResult> PutSessionStatusNotStart([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
@@ -129,6 +223,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPut("session_status_for_in_stage")]
         public async Task<IActionResult> PutSessionStatusInStage([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
@@ -147,6 +242,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPut("session_status_for_havent_tranfer")]
         public async Task<IActionResult> PutSessionStatusHaventTranfer([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
@@ -165,6 +261,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPut("session_status_to_complete")]
         public async Task<IActionResult> PutSessionStatusComplete([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
@@ -182,6 +279,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPost]
         public async Task<ActionResult<SessionResponseStaffAndAdmin>> PostSession([FromBody] CreateSessionRequest createSessionRequest)
         {
@@ -198,6 +296,7 @@ namespace BIDs_API.Controllers
         }
 
         // DELETE api/<ValuesController>/5
+        [Authorize(Roles = "Admin,Staff")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSession([FromRoute] Guid? id)
         {

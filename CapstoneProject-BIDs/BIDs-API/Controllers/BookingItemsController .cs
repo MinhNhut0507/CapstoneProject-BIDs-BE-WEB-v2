@@ -12,7 +12,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin,Staff,Auctioneer")]
     public class BookingItemsController : ControllerBase
     {
         private readonly IBookingItemService _BookingItemService;
@@ -99,7 +99,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_staff_watting/{id}")]
+        [HttpGet("by_staff_watting/{email}")]
         public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaffIsWatting([FromRoute] string email)
         {
             try

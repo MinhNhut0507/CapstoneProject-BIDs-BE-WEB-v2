@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Data_Access.Entities;
+﻿using AutoMapper;
+using BIDs_API.SignalR;
+using Business_Logic.Modules.LoginModule.Request;
 using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.StaffModule.Request;
 using Business_Logic.Modules.StaffModule.Response;
-using AutoMapper;
-using BIDs_API.SignalR;
-using Microsoft.AspNetCore.SignalR;
-using Business_Logic.Modules.UserModule.Request;
-using System.Collections;
+using Data_Access.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Business_Logic.Modules.LoginModule.Request;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BIDs_API.Controllers
 {
@@ -40,7 +32,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StaffResponseAdmin>>> GetStaffsForAdmin()
         {
