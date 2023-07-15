@@ -16,5 +16,13 @@ namespace Business_Logic.Modules.BookingItemModule.Response
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
         public string Status { get; set; }
+        public string UserName { get; set; }
+        public string CategoryName { get; set; }
+        public string DescriptionDetail { get; set; }
+        public int Quantity { get; set; }
+        public string Image { get; set; }
+        public double FirstPrice { get; set; }
+        public double StepPrice { get; set; }
+        public bool Deposit { get; set; }
     }
 }
