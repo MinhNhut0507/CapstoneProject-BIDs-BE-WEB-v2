@@ -19,7 +19,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Staff,Bidder,Auctioneer")]
+    [Authorize]
     public class SessionsController : ControllerBase
     {
         private readonly ISessionService _SessionService;
@@ -93,7 +93,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_not_start/{name}")]
+        [HttpGet("by_not_start")]
         public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionNotStart()
         {
             try
@@ -116,7 +116,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_in_stage/{name}")]
+        [HttpGet("by_in_stage")]
         public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionInStage()
         {
             try
@@ -139,7 +139,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_havent_pay/{name}")]
+        [HttpGet("by_havent_pay")]
         public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionHaventPay()
         {
             try
@@ -162,7 +162,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_out_of_date/{name}")]
+        [HttpGet("by_out_of_date")]
         public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionOutOfDate()
         {
             try

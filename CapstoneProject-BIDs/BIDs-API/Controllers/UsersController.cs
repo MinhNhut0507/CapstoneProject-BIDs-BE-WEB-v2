@@ -126,7 +126,6 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [Authorize(Roles = "Staff,Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserResponseUser>> GetUserByID([FromRoute] Guid id)
         {
