@@ -14,6 +14,7 @@ namespace Business_Logic.Modules.SessionModule.Response
         public string FeeName { get; set; }
         public string SessionName { get; set; }
         public string ItemName { get; set; }
+        public string Image { get; set; }
         public DateTime BeginTime { get; set; }
         public TimeSpan AuctionTime { get; set; }
         public DateTime EndTime { get; set; }
