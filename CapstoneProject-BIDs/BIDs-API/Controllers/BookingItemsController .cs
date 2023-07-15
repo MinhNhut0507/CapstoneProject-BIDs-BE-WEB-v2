@@ -75,6 +75,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Staff")]
         [HttpGet("by_staff/{id}")]
         public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaff([FromRoute] Guid id)
         {
@@ -99,6 +100,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Staff")]
         [HttpGet("by_staff_watting/{email}")]
         public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaffIsWatting([FromRoute] string email)
         {
@@ -183,6 +185,7 @@ namespace BIDs_API.Controllers
             }
         }
 
+        [Authorize(Roles = "Staff")]
         [HttpPut("accept/{id}")]
         public async Task<IActionResult> AcceptBookingItem([FromRoute] Guid id)
         {
@@ -198,6 +201,7 @@ namespace BIDs_API.Controllers
             }
         }
 
+        [Authorize(Roles = "Staff")]
         [HttpPut("deny/{id}")]
         public async Task<IActionResult> DenyBookingItem([FromRoute] Guid id)
         {
