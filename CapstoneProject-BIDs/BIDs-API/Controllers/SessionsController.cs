@@ -93,6 +93,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [AllowAnonymous]
         [HttpGet("by_not_start")]
         public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionNotStart()
         {

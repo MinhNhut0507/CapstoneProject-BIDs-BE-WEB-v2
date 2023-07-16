@@ -307,7 +307,7 @@ namespace Business_Logic.Modules.UserModule
                     && x.Password == updatePasswordRequest.OldPassword
                     && x.Status != -1
                     && x.Status != 2);
-                if (user != null)
+                if (user == null)
                 {
                     throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
                 }
