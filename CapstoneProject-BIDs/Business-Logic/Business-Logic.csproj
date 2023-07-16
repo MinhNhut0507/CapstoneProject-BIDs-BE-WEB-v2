@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Modules\SessionDetailModule\SessionDetailService.cs~RF8d10dc84.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Data-Access\Data-Access.csproj" />
   </ItemGroup>

@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.SignalR;
 using Business_Logic.Modules.SessionModule.Response;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Business_Logic.Modules.SendEmailModule.Interface;
+using Business_Logic.Modules.CommonModule.Interface;
 
 namespace BIDs_API.Controllers
 {
@@ -25,17 +25,17 @@ namespace BIDs_API.Controllers
         private readonly ISessionService _SessionService;
         private readonly IHubContext<SessionHub> _hubSessionContext;
         private readonly IMapper _mapper;
-        private readonly ISendEmail _SendEmail;
+        private readonly ICommon _Common;
 
         public SessionsController(ISessionService SessionService
             , IHubContext<SessionHub> hubSessionContext
             , IMapper mapper
-            , ISendEmail SendEmail)
+            , ICommon Common)
         {
             _SessionService = SessionService;
             _hubSessionContext = hubSessionContext;
             _mapper = mapper;
-            _SendEmail = SendEmail;
+            _Common = Common;
             //_ = RunTasksAtScheduledTimesForNotStart();
             //_ = RunTasksAtScheduledTimesForHaventTranfer();
             //_ = RunTasksAtScheduledTimesForInStage();
@@ -93,6 +93,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [AllowAnonymous]
         [HttpGet("by_not_start")]
         public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionNotStart()
         {
@@ -122,6 +123,29 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsInStage();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_in_stage_by_user/{id}")]
+        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionInStageByUser([FromRoute]Guid id)
+        {
+            try
+            {
+                var list = await _Common.GetSessionInStageByUser(id);
                 if (list == null)
                 {
                     return NotFound();
@@ -211,7 +235,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var session = await _SessionService.UpdateSessionStatusNotStart(updateSessionRequest);
-                await _SendEmail.SendEmailBeginAuction(session);
+                await _Common.SendEmailBeginAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 return Ok();
             }
@@ -230,7 +254,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var session = await _SessionService.UpdateSessionStatusInStage(updateSessionRequest);
-                await _SendEmail.SendEmailWinnerAuction(session);
+                await _Common.SendEmailWinnerAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 return Ok();
             }
@@ -249,7 +273,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var session = await _SessionService.UpdateSessionStatusHaventTranfer(updateSessionRequest);
-                await _SendEmail.SendEmailOutOfDateAuction(session);
+                await _Common.SendEmailOutOfDateAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 return Ok();
             }

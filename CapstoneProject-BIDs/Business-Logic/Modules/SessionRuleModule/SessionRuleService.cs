@@ -84,7 +84,7 @@ namespace Business_Logic.Modules.SessionRuleModule
                 SessionRuleRequest.DelayFreeTime.hours,
                 SessionRuleRequest.DelayFreeTime.minutes,
                 SessionRuleRequest.DelayFreeTime.seconds,
-                milliseconds: 0000001); 
+                milliseconds: 0000001);
             newSessionRule.FreeTime = new TimeSpan(
                 SessionRuleRequest.FreeTime.days,
                 SessionRuleRequest.FreeTime.hours,
@@ -120,7 +120,10 @@ namespace Business_Logic.Modules.SessionRuleModule
 
                 if (SessionRuleCheck != null)
                 {
-                    throw new Exception(ErrorMessage.SessionRuleError.SESSION_RULE_EXISTED);
+                    if(SessionRuleCheck.Id != SessionRuleUpdate.Id)
+                    {
+                        throw new Exception(ErrorMessage.SessionRuleError.SESSION_RULE_EXISTED);
+                    }
                 }
 
                 SessionRuleUpdate.Name = SessionRuleRequest.Name;

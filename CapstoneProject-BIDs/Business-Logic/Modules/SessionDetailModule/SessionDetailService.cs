@@ -103,13 +103,14 @@ namespace Business_Logic.Modules.SessionDetailModule
             return SessionDetail;
         }
 
-        public async Task<ICollection<SessionDetail>> GetSessionDetailBySessionForAuction(Guid? id)
+        public async Task<ICollection<SessionDetail>> GetSessionDetailBySessionForAuctioneer(Guid? sessionId, Guid? userId)
         {
-            if (id == null)
+            if (sessionId == null || userId == null)
             {
-                throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var SessionDetail = await _SessionDetailRepository.GetAll(options: o => o.OrderBy(x => x.SessionId == id).ToList());
+            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule",
+                options: o => o.OrderBy(x => x.SessionId == sessionId && x.UserId == userId).ToList());
             if (SessionDetail == null)
             {
                 throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);

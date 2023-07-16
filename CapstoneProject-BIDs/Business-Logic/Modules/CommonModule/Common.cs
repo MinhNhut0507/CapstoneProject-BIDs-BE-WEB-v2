@@ -12,31 +12,35 @@ using System.Text;
 using System.Threading.Tasks;
 using Data_Access.Entities;
 using Business_Logic.Modules.BanHistoryModule.Request;
-using Business_Logic.Modules.SendEmailModule.Interface;
+using Business_Logic.Modules.CommonModule.Interface;
+using Data_Access.Constant;
 
-namespace Business_Logic.Modules.SendEmailModule
+namespace Business_Logic.Modules.CommonModule
 {
-    public class SendEmail : ISendEmail
+    public class Common : ICommon
     {
         private readonly IUserService _UserService;
         private readonly IItemService _ItemService;
         private readonly IBanHistoryService _BanHistoryService;
         private readonly ISessionDetailService _SessionDetailService;
-        public SendEmail(IUserService UserService
+        private readonly ISessionService _SessionService;
+        public Common(IUserService UserService
             , IItemService ItemService
             , IBanHistoryService BanHistoryService
-            , ISessionDetailService SessionDetailService)
+            , ISessionDetailService SessionDetailService
+            , ISessionService SessionService)
         {
             _UserService = UserService;
             _ItemService = ItemService;
             _SessionDetailService = SessionDetailService;
+            _SessionService = SessionService;
             _BanHistoryService = BanHistoryService;
         }
 
         public async Task SendEmailBeginAuction(Session session)
         {
             var item = await _ItemService.GetItemByID(session.ItemId);
-            var SessionDetail = await _SessionDetailService.GetSessionDetailBySessionForAuction(session.Id);
+            var SessionDetail = await _SessionDetailService.GetSessionDetailBySession(session.Id);
 
 
             for (int i = 0; i < SessionDetail.Count; i++)
@@ -162,6 +166,28 @@ namespace Business_Logic.Modules.SendEmailModule
                 Reason = "Đấu giá thành công nhưng chưa thanh toán"
             };
             await _BanHistoryService.AddNewBanHistory(createBanHistoryRequest);
+        }
+
+        public async Task<ICollection<Session>> GetSessionInStageByUser(Guid id)
+        {
+            if(id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            ICollection<Session> listSession = new List<Session>();
+            var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
+            ICollection<Session> checkSession = new List<Session>();
+            foreach(var x in sessionDetail)
+            {
+                checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                foreach(var y in listSession)
+                {
+                    if (y.Id == checkSession.ElementAt(0).Id)
+                        continue;
+                    listSession.Add(checkSession.ElementAt(0));
+                }
+            }
+            return listSession;
         }
     }
 }

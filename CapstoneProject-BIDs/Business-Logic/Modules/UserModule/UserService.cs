@@ -198,7 +198,10 @@ namespace Business_Logic.Modules.UserModule
                 Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
                 if (userCheckPhone != null)
                 {
-                    throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                    if(userCheckPhone.Id != userUpdate.Id)
+                    {
+                        throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                    }
                 }
 
                 if ((!userRequest.Phone.StartsWith("09")
@@ -307,7 +310,7 @@ namespace Business_Logic.Modules.UserModule
                     && x.Password == updatePasswordRequest.OldPassword
                     && x.Status != -1
                     && x.Status != 2);
-                if (user != null)
+                if (user == null)
                 {
                     throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
                 }

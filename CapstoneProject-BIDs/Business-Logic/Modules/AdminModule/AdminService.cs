@@ -136,7 +136,10 @@ namespace Business_Logic.Modules.AdminModule
                 var AdminCheckPhone = await _AdminRepository.GetFirstOrDefaultAsync(x => x.Phone == AdminRequest.Phone);
                 if (AdminCheckPhone != null)
                 {
-                    throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                    if(AdminCheckPhone.Id != AdminUpdate.Id)
+                    {
+                        throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                    }
                 }
 
                 if ((!AdminRequest.Phone.StartsWith("09")
@@ -171,7 +174,7 @@ namespace Business_Logic.Modules.AdminModule
             {
                 var Admin = await _AdminRepository.GetFirstOrDefaultAsync(x => x.Id == updatePasswordRequest.Id
                     && x.Password == updatePasswordRequest.OldPassword);
-                if (Admin != null)
+                if (Admin == null)
                 {
                     throw new Exception(ErrorMessage.AdminError.ADMIN_NOT_FOUND);
                 }

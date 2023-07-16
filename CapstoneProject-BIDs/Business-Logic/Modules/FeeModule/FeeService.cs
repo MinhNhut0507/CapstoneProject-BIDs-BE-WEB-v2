@@ -106,7 +106,10 @@ namespace Business_Logic.Modules.FeeModule
 
                 if (FeeCheck != null)
                 {
-                    throw new Exception(ErrorMessage.FeeError.FEE_EXISTED);
+                    if(FeeCheck.Id != FeeUpdate.Id)
+                    {
+                        throw new Exception(ErrorMessage.FeeError.FEE_EXISTED);
+                    }
                 }
 
                 FeeUpdate.Name = FeeRequest.Name;
