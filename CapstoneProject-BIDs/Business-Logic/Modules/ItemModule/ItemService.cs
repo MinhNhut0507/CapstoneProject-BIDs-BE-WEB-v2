@@ -192,7 +192,10 @@ namespace Business_Logic.Modules.ItemModule
 
                 if (ItemCheck != null)
                 {
-                    throw new Exception(ErrorMessage.ItemError.ITEM_EXISTED);
+                    if(ItemUpdate.Id != ItemCheck.Id)
+                    {
+                        throw new Exception(ErrorMessage.ItemError.ITEM_EXISTED);
+                    }
                 }
 
                 if (ItemRequest.StepPrice > (ItemRequest.FirstPrice * 0.05)

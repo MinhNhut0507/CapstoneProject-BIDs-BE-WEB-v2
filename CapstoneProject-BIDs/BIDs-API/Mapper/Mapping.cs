@@ -82,13 +82,18 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Status, d => d.ConvertUsing(new UserStatusEnumConverter(), s => s.Status));
 
             CreateMap<Session, SessionResponseUser>()
+                .ForMember(x => x.SessionId, d => d.MapFrom(s => s.Id))
+                .ForMember(x => x.FeeId, d => d.MapFrom(s => s.FeeId))
                 .ForMember(x => x.FeeName, d => d.MapFrom(s => s.Fee.Name))
-                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
                 .ForMember(x => x.SessionName, d => d.MapFrom(s => s.Name))
+                .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Item.Id))
+                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
+                .ForMember(x => x.Image, d => d.MapFrom(s => s.Item.Image))
                 .ForMember(x => x.BeginTime, d => d.MapFrom(s => s.BeginTime))
                 .ForMember(x => x.AuctionTime, d => d.MapFrom(s => s.AuctionTime))
                 .ForMember(x => x.EndTime, d => d.MapFrom(s => s.EndTime))
-                .ForMember(x => x.FinalPrice, d => d.MapFrom(s => s.FinalPrice));
+                .ForMember(x => x.FinalPrice, d => d.MapFrom(s => s.FinalPrice))
+                .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
             CreateMap<Session, SessionResponseStaffAndAdmin>()
                 .ForMember(x => x.SessionId, d => d.MapFrom(s => s.Id))

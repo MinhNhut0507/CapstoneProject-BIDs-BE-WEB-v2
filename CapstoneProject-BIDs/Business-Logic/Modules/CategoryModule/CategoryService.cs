@@ -102,11 +102,14 @@ namespace Business_Logic.Modules.CategoryModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                Category CategoryCheck = _CategoryRepository.GetFirstOrDefaultAsync(x => x.Name == CategoryRequest.CategoryName).Result;
+                Category CategoryCheck = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Name == CategoryRequest.CategoryName);
 
                 if (CategoryCheck != null)
                 {
-                    throw new Exception(ErrorMessage.CategoryError.CATEGORY_EXISTED);
+                    if(CategoryCheck.Id != CategoryUpdate.Id)
+                    {
+                        throw new Exception(ErrorMessage.CategoryError.CATEGORY_EXISTED);
+                    }
                 }
 
                 CategoryUpdate.Name = CategoryRequest.CategoryName;
@@ -133,7 +136,7 @@ namespace Business_Logic.Modules.CategoryModule
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
 
-                Category CategoryDelete = _CategoryRepository.GetFirstOrDefaultAsync(x => x.Id == CategoryDeleteID && x.Status == true).Result;
+                Category CategoryDelete = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Id == CategoryDeleteID && x.Status == true);
 
                 if (CategoryDelete == null)
                 {

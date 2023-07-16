@@ -1,6 +1,6 @@
 ﻿using Business_Logic.Modules.FeeModule.Interface;
 using Business_Logic.Modules.ItemModule.Interface;
-using Business_Logic.Modules.SendEmailModule.Interface;
+using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.SessionModule.Interface;
 using Business_Logic.Modules.SessionModule.Request;
 using Data_Access.Constant;
@@ -227,7 +227,7 @@ namespace Business_Logic.Modules.SessionModule
 
                 if (SessionCheck != null)
                 {
-                    if(SessionCheck.Id != SessionRequest.SessionID)
+                    if(SessionCheck.Id != SessionUpdate.Id)
                         throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
                 }
 

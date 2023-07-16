@@ -28,7 +28,7 @@ namespace Business_Logic.Modules.SessionDetailModule.Interface
         public Task<ICollection<SessionDetail>> GetSessionDetailByUser(Guid? id);
 
         public Task<ICollection<SessionDetail>> GetSessionDetailBySession(Guid? id);
-        public Task<ICollection<SessionDetail>> GetSessionDetailBySessionForAuction(Guid? id);
+        public Task<ICollection<SessionDetail>> GetSessionDetailBySessionForAuctioneer(Guid? sessionId, Guid? userId);
 
     }
 }

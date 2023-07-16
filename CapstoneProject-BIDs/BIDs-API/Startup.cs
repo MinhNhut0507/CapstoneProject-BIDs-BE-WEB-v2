@@ -22,8 +22,8 @@ using Business_Logic.Modules.NotificationModule;
 using Business_Logic.Modules.NotificationModule.Interface;
 using Business_Logic.Modules.NotificationTypeModule;
 using Business_Logic.Modules.NotificationTypeModule.Interface;
-using Business_Logic.Modules.SendEmailModule;
-using Business_Logic.Modules.SendEmailModule.Interface;
+using Business_Logic.Modules.CommonModule;
+using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.SessionDetailModule;
 using Business_Logic.Modules.SessionDetailModule.Interface;
 using Business_Logic.Modules.SessionModule;
@@ -188,7 +188,7 @@ namespace BIDs_API
             //Login Module
             services.AddScoped<ILoginService, LoginService>();
             //Send Email Module
-            services.AddScoped<ISendEmail, SendEmail>();
+            services.AddScoped<ICommon, Business_Logic.Modules.CommonModule.Common>();
 
             services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore

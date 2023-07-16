@@ -112,6 +112,25 @@ namespace BIDs_API.Controllers
             }
         }
 
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_session_for_auctioneer")]
+        public async Task<ActionResult<IEnumerable<SessionDetailResponseUser>>> GetSessionDetailBySessionForAuctioneer([FromHeader] Guid? id, Guid? userId)
+        {
+            try
+            {
+                var SessionDetail = _mapper.Map<SessionDetailResponseUser>(await _SessionDetailService.GetSessionDetailBySessionForAuctioneer(id, userId));
+                if (SessionDetail == null)
+                {
+                    return NotFound();
+                }
+                return Ok(SessionDetail);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Staff,Admin")]

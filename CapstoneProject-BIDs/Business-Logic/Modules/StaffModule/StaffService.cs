@@ -141,22 +141,15 @@ namespace Business_Logic.Modules.StaffModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                Staff staffCheckEmail = _StaffRepository.GetFirstOrDefaultAsync(x => x.Email == StaffRequest.Email).Result;
-                if (staffCheckEmail != null)
-                {
-                    throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
-                }
                 Staff staffCheckPhone = _StaffRepository.GetFirstOrDefaultAsync(x => x.Phone == StaffRequest.Phone).Result;
                 if (staffCheckPhone != null)
                 {
-                    throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                    if(staffCheckPhone.Id != StaffUpdate.Id)
+                    {
+                        throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                    }
                 }
 
-
-                if (!StaffRequest.Email.Contains("@"))
-                {
-                    throw new Exception(ErrorMessage.CommonError.WRONG_EMAIL_FORMAT);
-                }
                 if ((!StaffRequest.Phone.StartsWith("09")
                     && !StaffRequest.Phone.StartsWith("08")
                     && !StaffRequest.Phone.StartsWith("07")
@@ -169,7 +162,6 @@ namespace Business_Logic.Modules.StaffModule
 
                 StaffUpdate.Name = StaffRequest.StaffName;
                 StaffUpdate.Password = StaffRequest.Password;
-                StaffUpdate.Email = StaffRequest.Email;
                 StaffUpdate.Address = StaffRequest.Address;
                 StaffUpdate.Phone = StaffRequest.Phone;
                 StaffUpdate.UpdateDate = DateTime.Now;
@@ -201,7 +193,7 @@ namespace Business_Logic.Modules.StaffModule
             {
                 var staff = await _StaffRepository.GetFirstOrDefaultAsync(x => x.Id == updatePasswordRequest.Id
                     && x.Password == updatePasswordRequest.OldPassword);
-                if (staff != null)
+                if (staff == null)
                 {
                     throw new Exception(ErrorMessage.StaffError.STAFF_NOT_FOUND);
                 }
