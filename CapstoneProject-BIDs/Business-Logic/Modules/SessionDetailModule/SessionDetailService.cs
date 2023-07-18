@@ -187,10 +187,10 @@ namespace Business_Logic.Modules.SessionDetailModule
             return newSessionDetail;
         }
 
-        public async Task<SessionDetail> Jonning(JonningRequest jonningRequest)
+        public async Task<SessionDetail> Joinning(CreateSessionDetailRequest jonningRequest)
         {
 
-            ValidationResult result = new JonningRequestValidator().Validate(jonningRequest);
+            ValidationResult result = new CreateSessionDetailRequestValidator().Validate(jonningRequest);
             if (!result.IsValid)
             {
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);

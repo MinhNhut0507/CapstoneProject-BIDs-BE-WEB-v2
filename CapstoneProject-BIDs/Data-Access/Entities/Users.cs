@@ -13,6 +13,7 @@ namespace Data_Access.Entities
             Items = new HashSet<Item>();
             PaymentMethodUsers = new HashSet<PaymentMethodUser>();
             PaymentUsers = new HashSet<PaymentUser>();
+            SessionDetails = new HashSet<SessionDetail>();
         }
 
         public Guid Id { get; set; }
@@ -33,6 +34,7 @@ namespace Data_Access.Entities
 
         public virtual ICollection<BanHistory> BanHistories { get; set; }
         public virtual ICollection<Item> Items { get; set; }
+        public virtual ICollection<SessionDetail> SessionDetails { get; set; }
         public virtual ICollection<PaymentMethodUser> PaymentMethodUsers { get; set; }
         public virtual ICollection<PaymentUser> PaymentUsers { get; set; }
     }

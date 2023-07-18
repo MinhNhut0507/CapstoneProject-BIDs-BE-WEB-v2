@@ -560,8 +560,6 @@ namespace Data_Access.Entities
 
             modelBuilder.Entity<SessionDetail>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("SessionDetail");
 
                 entity.Property(e => e.Id)
@@ -574,14 +572,16 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
+                entity.Property(e => e.Price).HasColumnName("Price");
+
                 entity.HasOne(d => d.Session)
-                    .WithMany()
+                    .WithMany(p => p.SessionDetails)
                     .HasForeignKey(d => d.SessionId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__SessionDe__Sessi__44FF419A");
 
                 entity.HasOne(d => d.User)
-                    .WithMany()
+                    .WithMany(p => p.SessionDetails)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__SessionDe__UserI__440B1D61");

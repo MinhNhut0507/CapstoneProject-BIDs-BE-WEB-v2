@@ -19,9 +19,13 @@ namespace Business_Logic.Modules.SessionModule.Response
         public Guid ItemId { get; set; }
         public string ItemName { get; set; }
         public string Description { get; set; }
+        public TimeSpan FreeTime { get; set; }
+        public TimeSpan DelayTime { get; set; }
+        public TimeSpan DelayFreeTime { get; set; }
         public DateTime BeginTime { get; set; }
         public TimeSpan AuctionTime { get; set; }
         public DateTime EndTime { get; set; }
+        public double FirstPrice { get; set; }
         public double FinalPrice { get; set; }
         public double StepPrice { get; set; }
         public DateTime CreateDate { get; set; }
