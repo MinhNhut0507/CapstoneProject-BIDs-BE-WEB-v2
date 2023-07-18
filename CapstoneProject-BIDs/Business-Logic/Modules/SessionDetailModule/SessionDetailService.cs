@@ -154,22 +154,28 @@ namespace Business_Logic.Modules.SessionDetailModule
 
             var Session = await _SessionService.GetSessionByID(SessionDetailRequest.SessionId);
             var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
-                , options: x => x.Where(o => o.UserId == SessionDetailRequest.UserId).ToList());
+                , options: x => x.OrderByDescending(o => o.UserId == SessionDetailRequest.UserId && o.SessionId == SessionDetailRequest.SessionId).ToList());
             var SessionRule = await _SessionRuleService.GetSessionRuleByID(Session.ElementAt(0).SessionRuleId);
             var item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
+            var ListSessionDetailSort = SessionDetail.OrderByDescending(o => o.CreateDate);
 
-            if((SessionDetail.Count() >= (SessionRule.IncreaseTime)) 
-                && ((Session.ElementAt(0).EndTime - DateTime.Now) > TimeSpan.FromMinutes(5)))
-            {
-                throw new Exception(ErrorMessage.SessionError.OUT_OF_TIME_ERROR);
-            }
+            //if(Session.ElementAt(0).EndTime < DateTime.Now)
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.END_TIME_AUCTION);
+            //}
 
-            if (((DateTime.Now - SessionDetail.ElementAt(0).CreateDate) < TimeSpan.FromMinutes(10))
-                || (((Session.ElementAt(0).EndTime - DateTime.Now) > TimeSpan.FromMinutes(5)) 
-                    && (DateTime.Now - SessionDetail.ElementAt(0).CreateDate) < TimeSpan.FromSeconds(15)))
-            {
-                throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
-            }
+            //if((SessionDetail.Count() >= (SessionRule.IncreaseTime)) 
+            //    && ((Session.ElementAt(0).EndTime - DateTime.Now) > TimeSpan.FromMinutes(5)))
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.OUT_OF_TIME_ERROR);
+            //}
+
+            //if (((DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < TimeSpan.FromMinutes(10))
+            //    || (((Session.ElementAt(0).EndTime - DateTime.Now) > TimeSpan.FromMinutes(5)) 
+            //        && (DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < TimeSpan.FromSeconds(15)))
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
+            //}
 
             var newSessionDetail = new SessionDetail();
 
@@ -198,10 +204,10 @@ namespace Business_Logic.Modules.SessionDetailModule
 
             var Session = await _SessionService.GetSessionByID(jonningRequest.SessionId);
 
-            if(Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
-            {
-                throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
-            }
+            //if(Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
+            //}
 
             var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 

@@ -133,7 +133,7 @@ namespace Business_Logic.Modules.UserModule
 
             newUser.Id = Guid.NewGuid();
             newUser.Name = userRequest.UserName;
-            newUser.Avatar = userRequest.UserName;
+            newUser.Avatar = userRequest.Avatar;
             newUser.Role = (int)RoleEnum.Bidder;
             newUser.Email = userRequest.Email;
             newUser.Password = userRequest.Password;

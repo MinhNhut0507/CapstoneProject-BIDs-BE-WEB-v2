@@ -87,6 +87,7 @@
             public readonly static string OUT_OF_TIME_ERROR = "Đã quá số lượt tăng giá(Có thể đợi tới lúc sắp kết thúc đấu giá)";
             public readonly static string TIME_ERROR = "Bạn vừa tăng giá, vui lòng đợi một thời gian";
             public readonly static string AUCTION_TIME_ERROR = "Thời gian đấu giá phải từ 1 ngày trở xuống";
+            public readonly static string END_TIME_AUCTION = "Cuộc đấu giá đã kết thúc";
 
         }
         #endregion
