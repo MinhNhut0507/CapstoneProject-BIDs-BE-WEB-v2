@@ -264,7 +264,7 @@ namespace Business_Logic.Modules.StaffModule
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
 
-                Users UserCreate = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == accountCreateID && x.Status == 0).Result;
+                Users UserCreate = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == accountCreateID && x.Status == 0);
 
                 if (UserCreate == null)
                 {
@@ -317,7 +317,7 @@ namespace Business_Logic.Modules.StaffModule
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
 
-                Users UserCreate = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == accountCreateID && x.Status == 0).Result;
+                Users UserCreate = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == accountCreateID && x.Status == 0);
 
                 if (UserCreate == null)
                 {
@@ -369,7 +369,7 @@ namespace Business_Logic.Modules.StaffModule
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
 
-                var UserBan = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == UserBanID && x.Status == 0).Result;
+                var UserBan = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == UserBanID && x.Status == (int)UserStatusEnum.Acctive);
 
                 if (UserBan == null)
                 {
@@ -421,7 +421,7 @@ namespace Business_Logic.Modules.StaffModule
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
 
-                Users UserUnban = _UserRepository.GetFirstOrDefaultAsync(x => x.Id == UserUnbanID && x.Status == 0).Result;
+                Users UserUnban = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == UserUnbanID && x.Status == (int)UserStatusEnum.Ban);
 
                 if (UserUnban == null)
                 {

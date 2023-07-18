@@ -64,14 +64,23 @@ namespace BIDs_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SessionDetailResponseStaffAndAdmin>> GetSessionDetailByID([FromRoute] Guid? id)
         {
-            var SessionDetail = _mapper.Map<SessionDetailResponseStaffAndAdmin>(await _SessionDetailService.GetSessionDetailByID(id));
-
-            if (SessionDetail == null)
+            try
             {
-                return NotFound();
+                var list = await _SessionDetailService.GetSessionDetailByID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<SessionDetail, SessionDetailResponseStaffAndAdmin>(emp)
+                           );
+                return Ok(response);
             }
-
-            return SessionDetail;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/<ValuesController>/abc
@@ -80,12 +89,16 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var SessionDetail = _mapper.Map<SessionDetailResponseUser>(await _SessionDetailService.GetSessionDetailByUser(id));
-                if (SessionDetail == null)
+                var list = await _SessionDetailService.GetSessionDetailByUser(id);
+                if (list == null)
                 {
                     return NotFound();
                 }
-                return Ok(SessionDetail);
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<SessionDetail, SessionDetailResponseUser>(emp)
+                           );
+                return Ok(response);
             }
             catch
             {
@@ -99,12 +112,16 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var SessionDetail = _mapper.Map<SessionDetailResponseUser>(await _SessionDetailService.GetSessionDetailBySession(id));
-                if (SessionDetail == null)
+                var list = await _SessionDetailService.GetSessionDetailBySession(id);
+                if (list == null)
                 {
                     return NotFound();
                 }
-                return Ok(SessionDetail);
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<SessionDetail, SessionDetailResponseUser>(emp)
+                           );
+                return Ok(response);
             }
             catch
             {
@@ -118,12 +135,16 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var SessionDetail = _mapper.Map<SessionDetailResponseUser>(await _SessionDetailService.GetSessionDetailBySessionForAuctioneer(id, userId));
-                if (SessionDetail == null)
+                var list = await _SessionDetailService.GetSessionDetailBySessionForAuctioneer(id, userId);
+                if (list == null)
                 {
                     return NotFound();
                 }
-                return Ok(SessionDetail);
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<SessionDetail, SessionDetailResponseUser>(emp)
+                           );
+                return Ok(response);
             }
             catch
             {

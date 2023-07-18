@@ -67,7 +67,7 @@ namespace Business_Logic.Modules.BookingItemModule
             }
             var staff = await _StaffRepository.GetFirstOrDefaultAsync(x => x.Email == email);
             var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category"
-                , options: o => o.Where(x => x.StaffId == staff.Id && x.Status == (int) BookingItemEnum.Watting).ToList());
+                , options: o => o.Where(x => x.StaffId == staff.Id && x.Status == (int) BookingItemEnum.Waitting).ToList());
             if (BookingItem == null)
             {
                 throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
@@ -109,7 +109,7 @@ namespace Business_Logic.Modules.BookingItemModule
             newBookingItem.StaffId = listStaffActive.ElementAt(random.Next(0,listStaffActive.Count-1)).Id;
             newBookingItem.UpdateDate = DateTime.Now;
             newBookingItem.CreateDate = DateTime.Now;
-            newBookingItem.Status = (int)BookingItemEnum.Watting;
+            newBookingItem.Status = (int)BookingItemEnum.Waitting;
 
             await _BookingItemRepository.AddAsync(newBookingItem);
         }

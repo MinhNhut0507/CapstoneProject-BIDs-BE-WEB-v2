@@ -245,10 +245,10 @@ namespace Business_Logic.Modules.SessionModule
                     throw new Exception(ErrorMessage.SessionError.DATE_TIME_LATE_ERROR);
                 }
 
-                if (BeginTime < DateTime.UtcNow.AddDays(1))
-                {
-                    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
-                }
+                //if (BeginTime < DateTime.UtcNow.AddDays(1))
+                //{
+                //    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
+                //}
 
                 TimeSpan timeSpan = (EndTime - BeginTime);
                 TimeSpan checkTime = new TimeSpan(1, 0, 0, 0);
