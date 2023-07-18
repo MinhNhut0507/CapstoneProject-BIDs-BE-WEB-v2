@@ -151,12 +151,33 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [Authorize(Roles = "Bidder,Auctioneer")]
+        [HttpPost("increase_price")]
         public async Task<ActionResult<SessionDetailResponseStaffAndAdmin>> IncreasePrice([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
         {
             try
             {
                 var SessionDetail = await _SessionDetailService.IncreasePrice(createSessionDetailRequest);
+                var Session = await _SessionService.GetSessionByID(SessionDetail.SessionId);
+                await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
+                await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionUpdate", Session.ElementAt(0));
+                return Ok(_mapper.Map<SessionDetailResponseStaffAndAdmin>(SessionDetail));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // POST api/<ValuesController>
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Bidder,Auctioneer")]
+        [HttpPost("joinning")]
+        public async Task<ActionResult<SessionDetailResponseStaffAndAdmin>> Joinning([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
+        {
+            try
+            {
+                var SessionDetail = await _SessionDetailService.Joinning(createSessionDetailRequest);
                 var Session = await _SessionService.GetSessionByID(SessionDetail.SessionId);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionUpdate", Session.ElementAt(0));
