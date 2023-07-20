@@ -68,28 +68,46 @@ namespace BIDs_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SessionResponseUser>> GetSessionByID([FromRoute] Guid? id)
         {
-            var Session = _mapper.Map<SessionResponseUser>(await _SessionService.GetSessionByID(id));
-
-            if (Session == null)
+            try
             {
-                return NotFound();
+                var list = await _SessionService.GetSessionByID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                           );
+                return Ok(response);
             }
-
-            return Session;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
         public async Task<ActionResult<SessionResponseUser>> GetSessionByName([FromRoute] string name)
         {
-            var Session = _mapper.Map<SessionResponseUser>(await _SessionService.GetSessionByName(name));
-
-            if (Session == null)
+            try
             {
-                return NotFound();
+                var list = await _SessionService.GetSessionByName(name);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                           );
+                return Ok(response);
             }
-
-            return Session;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/<ValuesController>/abc
@@ -164,7 +182,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_havent_pay")]
-        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionHaventPay()
+        public async Task<ActionResult<SessionResponseComplete>> GetSessionHaventPay()
         {
             try
             {
@@ -175,8 +193,14 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
+                var user = new Users();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                    response.ElementAt(i).Email = user.Email;
+                }
                 return Ok(response);
             }
             catch
@@ -187,7 +211,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_out_of_date")]
-        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionOutOfDate()
+        public async Task<ActionResult<SessionResponseComplete>> GetSessionOutOfDate()
         {
             try
             {
@@ -198,8 +222,43 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
+                var user = new Users();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                    response.ElementAt(i).Email = user.Email;
+                }
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_complete")]
+        public async Task<ActionResult<SessionResponseComplete>> GetSessionComplete()
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsComplete();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                for(int i = 0; i < response.Count(); i++)
+                {
+                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                    response.ElementAt(i).Email = user.Email;
+                }
                 return Ok(response);
             }
             catch
@@ -228,8 +287,8 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin,Staff")]
-        [HttpPut("session_status_for_not_start")]
+        [AllowAnonymous]
+        [HttpPut("session_status_to_in_stage")]
         public async Task<IActionResult> PutSessionStatusNotStart([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
             try
@@ -247,8 +306,8 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin,Staff")]
-        [HttpPut("session_status_for_in_stage")]
+        [AllowAnonymous]
+        [HttpPut("session_status_to_haven't_pay")]
         public async Task<IActionResult> PutSessionStatusInStage([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
             try
@@ -266,8 +325,8 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin,Staff")]
-        [HttpPut("session_status_for_havent_tranfer")]
+        [AllowAnonymous]
+        [HttpPut("session_status_to_out_of_date")]
         public async Task<IActionResult> PutSessionStatusHaventTranfer([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
             try
@@ -285,7 +344,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin,Staff")]
+        [AllowAnonymous]
         [HttpPut("session_status_to_complete")]
         public async Task<IActionResult> PutSessionStatusComplete([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {

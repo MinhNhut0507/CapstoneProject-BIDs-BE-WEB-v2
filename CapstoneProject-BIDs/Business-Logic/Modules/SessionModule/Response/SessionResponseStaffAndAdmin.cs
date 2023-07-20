@@ -18,7 +18,9 @@ namespace Business_Logic.Modules.SessionModule.Response
         public string Image { get; set; }
         public Guid ItemId { get; set; }
         public string ItemName { get; set; }
+        public string CategoryName { get; set; }
         public string Description { get; set; }
+        public int IncreaseTime { get; set; }
         public TimeSpan FreeTime { get; set; }
         public TimeSpan DelayTime { get; set; }
         public TimeSpan DelayFreeTime { get; set; }

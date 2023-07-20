@@ -103,7 +103,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             return SessionDetail;
         }
 
-        public async Task<ICollection<SessionDetail>> GetSessionDetailBySessionForAuctioneer(Guid? sessionId, Guid? userId)
+        public async Task<ICollection<SessionDetail>> GetSessionDetailBySessionForBidder(Guid? sessionId, Guid? userId)
         {
             if (sessionId == null || userId == null)
             {
@@ -118,9 +118,10 @@ namespace Business_Logic.Modules.SessionDetailModule
             return SessionDetail;
         }
 
-        public async Task<SessionDetail> Getwinner()
+        public async Task<SessionDetail> Getwinner(Guid id)
         {
-            var SessionDetail = await _SessionDetailRepository.GetAll(options: o => o.OrderByDescending(x => x.CreateDate).ToList());
+            var SessionDetail = await _SessionDetailRepository.GetAll(options: o => o.OrderBy(x => x.SessionId == id).ToList());
+            var result = SessionDetail.OrderByDescending(x => x.CreateDate).ToList();
             if (SessionDetail == null)
             {
                 throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);

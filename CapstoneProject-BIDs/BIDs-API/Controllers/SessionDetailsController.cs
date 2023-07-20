@@ -130,12 +130,12 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_session_for_auctioneer")]
-        public async Task<ActionResult<IEnumerable<SessionDetailResponseUser>>> GetSessionDetailBySessionForAuctioneer([FromHeader] Guid? id, Guid? userId)
+        [HttpGet("by_session_for_bidder")]
+        public async Task<ActionResult<IEnumerable<SessionDetailResponseUser>>> GetSessionDetailBySessionForBidder([FromHeader] Guid? id, Guid? userId)
         {
             try
             {
-                var list = await _SessionDetailService.GetSessionDetailBySessionForAuctioneer(id, userId);
+                var list = await _SessionDetailService.GetSessionDetailBySessionForBidder(id, userId);
                 if (list == null)
                 {
                     return NotFound();

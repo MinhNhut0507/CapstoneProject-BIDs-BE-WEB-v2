@@ -43,6 +43,7 @@ namespace Business_Logic.Modules.SessionModule
 
             query = query.Include(s => s.Fee)
                 .Include(s => s.Item)
+                .Include(s => s.Item.Category)
                 .Include(s => s.SessionRule);
             
 

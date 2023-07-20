@@ -83,7 +83,7 @@ namespace Business_Logic.Modules.CommonModule
         public async Task SendEmailWinnerAuction(Session session)
         {
             var item = await _ItemService.GetItemByID(session.ItemId);
-            var SessionWinner = await _SessionDetailService.Getwinner();
+            var SessionWinner = await _SessionDetailService.Getwinner(session.Id);
             var Winner = await _UserService.GetUserByID(SessionWinner.UserId);
 
             string _gmail = "bidauctionfloor@gmail.com";
@@ -122,7 +122,7 @@ namespace Business_Logic.Modules.CommonModule
         public async Task SendEmailOutOfDateAuction(Session session)
         {
             var item = await _ItemService.GetItemByID(session.ItemId);
-            var SessionWinner = await _SessionDetailService.Getwinner();
+            var SessionWinner = await _SessionDetailService.Getwinner(session.Id);
             var Winner = await _UserService.GetUserByID(SessionWinner.UserId);
 
             string _gmail = "bidauctionfloor@gmail.com";
@@ -188,6 +188,17 @@ namespace Business_Logic.Modules.CommonModule
                 }
             }
             return listSession;
+        }
+
+        public async Task<Users> GetUserWinning(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var sessionDetailWinner = await _SessionDetailService.Getwinner(id);
+            var Winner = await _UserService.GetUserByID(sessionDetailWinner.UserId);
+            return Winner;
         }
     }
 }
