@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Data_Access.Entities;
+﻿using AutoMapper;
+using BIDs_API.SignalR;
+using Business_Logic.Modules.LoginModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
 using Business_Logic.Modules.UserModule.Request;
-using AutoMapper;
 using Business_Logic.Modules.UserModule.Response;
-using Microsoft.AspNetCore.SignalR;
-using BIDs_API.SignalR;
+using Data_Access.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Business_Logic.Modules.LoginModule.Request;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BIDs_API.Controllers
 {
@@ -127,58 +127,87 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserResponseUser>> GetUserByID([FromRoute] Guid id)
+        public async Task<ActionResult<ReturnUserController>> GetUserByID([FromRoute] Guid id)
         {
-            var user = _mapper.Map<UserResponseUser>(await _userService.GetUserByID(id));
-
-            if (user == null)
+            var returnUser = await _userService.GetUserByID(id);
+            if (returnUser.Users == null)
             {
                 return NotFound();
             }
-
-            return user;
+            var UserDTO = _mapper.Map<UserResponseStaffAndAdmin>(returnUser.Users.ElementAt(0));
+            var response = new ReturnUserController();
+            response.Success = true;
+            response.Error = null;
+            response.User = new List<UserResponseStaffAndAdmin>()
+            {
+                UserDTO
+            };
+            //response.User.Add(UserDTO);
+            return response;
         }
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<UserResponseStaffAndAdmin>> GetUserByName([FromRoute] string name)
+        public async Task<ActionResult<ReturnUserController>> GetUserByName([FromRoute] string name)
         {
-            var user = _mapper.Map<UserResponseStaffAndAdmin>(await _userService.GetUserByName(name));
-
-            if (user == null)
+            var returnUser = await _userService.GetUserByName(name);
+            if (returnUser.Users == null)
             {
                 return NotFound();
             }
-
-            return user;
+            var UserDTO = _mapper.Map<UserResponseStaffAndAdmin>(returnUser.Users.ElementAt(0));
+            var response = new ReturnUserController();
+            response.Success = true;
+            response.Error = null;
+            response.User = new List<UserResponseStaffAndAdmin>()
+            {
+                UserDTO
+            };
+            //response.User.Add(UserDTO);
+            return response;
         }
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<UserResponseUser>> GetUserByEmail([FromRoute] string email)
+        public async Task<ActionResult<ReturnUserController>> GetUserByEmail([FromRoute] string email)
         {
-            var user = _mapper.Map<UserResponseUser>(await _userService.GetUserByEmail(email));
-
-            if (User == null)
+            var returnUser = await _userService.GetUserByEmail(email);
+            if (returnUser.Users == null)
             {
                 return NotFound();
             }
-
-            return user;
+            var UserDTO = _mapper.Map<UserResponseStaffAndAdmin>(returnUser.Users.ElementAt(0));
+            var response = new ReturnUserController();
+            response.Success = true;
+            response.Error = null;
+            response.User = new List<UserResponseStaffAndAdmin>()
+            {
+                UserDTO
+            };
+            //response.User.Add(UserDTO);
+            return response;
         }
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpPut]
-        public async Task<IActionResult> PutUser([FromBody] UpdateUserRequest updateUserRequest)
+        public async Task<ActionResult<ReturnUserController>> PutUser([FromBody] UpdateUserRequest updateUserRequest)
         {
             try
             {
-                var user = await _userService.UpdateUser(updateUserRequest);
-                await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
-                return Ok();
+                var returnUser = await _userService.UpdateUser(updateUserRequest);
+                await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", returnUser.Users);
+                var UserDTO = _mapper.Map<UserResponseStaffAndAdmin>(returnUser.Users);
+                var response = new ReturnUserController();
+                response.Success = true;
+                response.Error = null;
+                response.User = new List<UserResponseStaffAndAdmin>()
+                {
+                    UserDTO
+                };
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -188,13 +217,21 @@ namespace BIDs_API.Controllers
 
         [Authorize(Roles = "Bidder")]
         [HttpPut("update_role_account/{id}")]
-        public async Task<IActionResult> PutRoleUser([FromRoute] Guid id)
+        public async Task<ActionResult<ReturnUserController>> PutRoleUser([FromRoute] Guid id)
         {
             try
             {
-                var user = await _userService.UpdateRoleAccount(id);
-                await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
-                return Ok();
+                var returnUser = await _userService.UpdateRoleAccount(id);
+                await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", returnUser.Users);
+                var UserDTO = _mapper.Map<UserResponseStaffAndAdmin>(returnUser.Users);
+                var response = new ReturnUserController();
+                response.Success = true;
+                response.Error = null;
+                response.User = new List<UserResponseStaffAndAdmin>()
+                {
+                    UserDTO
+                };
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -204,13 +241,21 @@ namespace BIDs_API.Controllers
 
         [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpPut("update_password/{id}")]
-        public async Task<IActionResult> PutPasswordUser([FromBody] UpdatePasswordRequest updatePasswordRequest)
+        public async Task<ActionResult<ReturnUserController>> PutPasswordUser([FromBody] UpdatePasswordRequest updatePasswordRequest)
         {
             try
             {
-                var user = await _userService.UpdatePassword(updatePasswordRequest);
-                await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
-                return Ok();
+                var returnUser = await _userService.UpdatePassword(updatePasswordRequest);
+                await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", returnUser.Users);
+                var UserDTO = _mapper.Map<UserResponseStaffAndAdmin>(returnUser.Users);
+                var response = new ReturnUserController();
+                response.Success = true;
+                response.Error = null;
+                response.User = new List<UserResponseStaffAndAdmin>()
+                {
+                    UserDTO
+                };
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -222,13 +267,21 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<UserResponseUser>> PostUser([FromBody] CreateUserRequest createUserRequest)
+        public async Task<ActionResult<ReturnUserController>> PostUser([FromBody] CreateUserRequest createUserRequest)
         {
             try
             {
-                var user = await _userService.AddNewUser(createUserRequest);
-                await _hubContext.Clients.All.SendAsync("ReceiveUserAdd", user);
-                return Ok(_mapper.Map<UserResponseUser>(user));
+                var returnUser = await _userService.AddNewUser(createUserRequest);
+                await _hubContext.Clients.All.SendAsync("ReceiveUserAdd", returnUser.Users);
+                var UserDTO = _mapper.Map<UserResponseStaffAndAdmin>(returnUser.Users);
+                var response = new ReturnUserController();
+                response.Success = true;
+                response.Error = null;
+                response.User = new List<UserResponseStaffAndAdmin>()
+                {
+                    UserDTO
+                };
+                return Ok(response);
             }
             catch (Exception ex)
             {

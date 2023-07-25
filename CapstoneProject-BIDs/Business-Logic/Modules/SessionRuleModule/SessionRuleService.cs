@@ -1,5 +1,6 @@
 ﻿using Business_Logic.Modules.SessionRuleModule.Interface;
 using Business_Logic.Modules.SessionRuleModule.Request;
+using Business_Logic.Modules.SessionRuleModule.Response;
 using Business_Logic.Modules.UserModule.Interface;
 using Data_Access.Constant;
 using Data_Access.Entities;
@@ -25,48 +26,72 @@ namespace Business_Logic.Modules.SessionRuleModule
             return _SessionRuleRepository.GetSessionRulesBy(x => x.Status == true);
         }
 
-        public async Task<SessionRule> GetSessionRuleByID(Guid id)
+        public async Task<ReturnSessionRule> GetSessionRuleByID(Guid id)
         {
+            var returnSession = new ReturnSessionRule();
             if (id == null)
             {
-                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+                returnSession.Success = false;
+                returnSession.Error = ErrorMessage.CommonError.ID_IS_NULL;
+                returnSession.SessionRule = null;
+                return returnSession;
             }
             var SessionRule = await _SessionRuleRepository.GetFirstOrDefaultAsync(x => x.Id == id);
             if (SessionRule == null)
             {
-                throw new Exception(ErrorMessage.SessionRuleError.SESSION_RULE_NOT_FOUND);
+                returnSession.Success = false;
+                returnSession.Error = ErrorMessage.SessionRuleError.SESSION_RULE_NOT_FOUND;
+                returnSession.SessionRule = null;
+                return returnSession;
             }
-            return SessionRule;
+            returnSession.Success = true;
+            returnSession.Error = null;
+            returnSession.SessionRule = SessionRule;
+            return returnSession;
         }
 
-        public async Task<SessionRule> GetSessionRuleByName(string SessionRuleName)
+        public async Task<ReturnSessionRule> GetSessionRuleByName(string SessionRuleName)
         {
+            var returnSession = new ReturnSessionRule();
             if (SessionRuleName == null)
             {
-                throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
+                returnSession.Success = false;
+                returnSession.Error = ErrorMessage.CommonError.NAME_IS_NULL;
+                returnSession.SessionRule = null;
             }
             var SessionRule = await _SessionRuleRepository.GetFirstOrDefaultAsync(x => x.Name == SessionRuleName);
             if (SessionRule == null)
             {
-                throw new Exception(ErrorMessage.SessionRuleError.SESSION_RULE_NOT_FOUND);
+                returnSession.Success = false;
+                returnSession.Error = ErrorMessage.SessionRuleError.SESSION_RULE_NOT_FOUND;
+                returnSession.SessionRule = null;
             }
-            return SessionRule;
+            returnSession.Success = true;
+            returnSession.Error = null;
+            returnSession.SessionRule = SessionRule;
+            return returnSession;
         }
 
-        public async Task<SessionRule> AddNewSessionRule(CreateSessionRuleRequest SessionRuleRequest)
+        public async Task<ReturnSessionRule> AddNewSessionRule(CreateSessionRuleRequest SessionRuleRequest)
         {
-
+            var returnSession = new ReturnSessionRule();
             ValidationResult result = new CreateSessionRuleRequestValidator().Validate(SessionRuleRequest);
             if (!result.IsValid)
             {
-                throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                returnSession.Success = false;
+                returnSession.Error = ErrorMessage.CommonError.INVALID_REQUEST;
+                returnSession.SessionRule = null;
+                return returnSession;
             }
 
             SessionRule SessionRuleCheck = await _SessionRuleRepository.GetFirstOrDefaultAsync(x => x.Name == SessionRuleRequest.Name);
 
             if (SessionRuleCheck != null)
             {
-                throw new Exception(ErrorMessage.SessionRuleError.SESSION_RULE_EXISTED);
+                returnSession.Success = false;
+                returnSession.Error = ErrorMessage.SessionRuleError.SESSION_RULE_EXISTED;
+                returnSession.SessionRule = null;
+                return returnSession;
             }
 
             var newSessionRule = new SessionRule();
@@ -96,24 +121,34 @@ namespace Business_Logic.Modules.SessionRuleModule
             newSessionRule.Status = true;
 
             await _SessionRuleRepository.AddAsync(newSessionRule);
-            return newSessionRule;
+            returnSession.Success = true;
+            returnSession.Error = null;
+            returnSession.SessionRule = newSessionRule;
+            return returnSession;
         }
 
-        public async Task<SessionRule> UpdateSessionRule(UpdateSessionRuleRequest SessionRuleRequest)
+        public async Task<ReturnSessionRule> UpdateSessionRule(UpdateSessionRuleRequest SessionRuleRequest)
         {
             try
             {
-                var SessionRuleUpdate = await GetSessionRuleByID(SessionRuleRequest.SessionRuleId);
+                var returnSession = new ReturnSessionRule();
+                var SessionRuleUpdate = await _SessionRuleRepository.GetFirstOrDefaultAsync(s => s.Id == SessionRuleRequest.SessionRuleId);
 
                 if (SessionRuleUpdate == null)
                 {
-                    throw new Exception(ErrorMessage.SessionRuleError.SESSION_RULE_NOT_FOUND);
+                    returnSession.Success = false;
+                    returnSession.Error = ErrorMessage.SessionRuleError.SESSION_RULE_NOT_FOUND;
+                    returnSession.SessionRule = null;
+                    return returnSession;
                 }
 
                 ValidationResult result = new UpdateSessionRuleRequestValidator().Validate(SessionRuleRequest);
                 if (!result.IsValid)
                 {
-                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                    returnSession.Success = false;
+                    returnSession.Error = ErrorMessage.CommonError.INVALID_REQUEST;
+                    returnSession.SessionRule = null;
+                    return returnSession;
                 }
 
                 SessionRule SessionRuleCheck = _SessionRuleRepository.GetFirstOrDefaultAsync(x => x.Name == SessionRuleRequest.Name).Result;
@@ -122,7 +157,10 @@ namespace Business_Logic.Modules.SessionRuleModule
                 {
                     if(SessionRuleCheck.Id != SessionRuleUpdate.Id)
                     {
-                        throw new Exception(ErrorMessage.SessionRuleError.SESSION_RULE_EXISTED);
+                        returnSession.Success = false;
+                        returnSession.Error = ErrorMessage.SessionRuleError.SESSION_RULE_EXISTED;
+                        returnSession.SessionRule = null;
+                        return returnSession;
                     }
                 }
 
@@ -150,7 +188,10 @@ namespace Business_Logic.Modules.SessionRuleModule
                 SessionRuleUpdate.Status = SessionRuleRequest.Status;
 
                 await _SessionRuleRepository.UpdateAsync(SessionRuleUpdate);
-                return SessionRuleUpdate;
+                returnSession.Success = true;
+                returnSession.Error = null;
+                returnSession.SessionRule = SessionRuleUpdate;
+                return returnSession;
             }
             catch (Exception ex)
             {
@@ -160,25 +201,35 @@ namespace Business_Logic.Modules.SessionRuleModule
 
         }
 
-        public async Task<SessionRule> DeleteSessionRule(Guid SessionRuleDeleteID)
+        public async Task<ReturnSessionRule> DeleteSessionRule(Guid SessionRuleDeleteID)
         {
             try
             {
+                var returnSession = new ReturnSessionRule();
                 if (SessionRuleDeleteID == null)
                 {
-                    throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+                    returnSession.Success = false;
+                    returnSession.Error = ErrorMessage.CommonError.ID_IS_NULL;
+                    returnSession.SessionRule = null;
+                    return returnSession;
                 }
 
                 SessionRule SessionRuleDelete = _SessionRuleRepository.GetFirstOrDefaultAsync(x => x.Id == SessionRuleDeleteID && x.Status == true).Result;
 
                 if (SessionRuleDelete == null)
                 {
-                    throw new Exception(ErrorMessage.SessionRuleError.SESSION_RULE_NOT_FOUND);
+                    returnSession.Success = false;
+                    returnSession.Error = ErrorMessage.SessionRuleError.SESSION_RULE_NOT_FOUND;
+                    returnSession.SessionRule = null;
+                    return returnSession;
                 }
 
                 SessionRuleDelete.Status = false;
                 await _SessionRuleRepository.UpdateAsync(SessionRuleDelete);
-                return SessionRuleDelete;
+                returnSession.Success = true;
+                returnSession.Error = null;
+                returnSession.SessionRule = SessionRuleDelete;
+                return returnSession;
             }
             catch (Exception ex)
             {

@@ -1,8 +1,8 @@
 ﻿using Business_Logic.Modules.LoginModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
 using Business_Logic.Modules.UserModule.Request;
+using Business_Logic.Modules.UserModule.Response;
 using Business_Logic.Modules.UserNotificationDetailModule.Interface;
-using Business_Logic.Modules.UserNotificationDetailModule.Request;
 using Data_Access.Constant;
 using Data_Access.Entities;
 using Data_Access.Enum;
@@ -43,76 +43,119 @@ namespace Business_Logic.Modules.UserModule
             return await _UserRepository.GetUsersBy(x => x.Status == (int)UserStatusEnum.Waitting, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
-        public async Task<Users> GetUserByID(Guid? id)
+        public async Task<ReturnUserList> GetUserByID(Guid? id)
         {
+            var returnUser = new ReturnUserList();
             if (id == null)
             {
-                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.ID_IS_NULL;
+                return returnUser;
             }
-            var user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id);
-            if (user == null)
+            var User = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id);
+            if (User == null)
             {
-                throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.UserError.USER_NOT_FOUND;
+                return returnUser;
             }
-            return user;
+            returnUser.Success = true;
+            returnUser.Error = null;
+            returnUser.Users = new List<Users>()
+            {
+                User
+            };
+            return returnUser;
         }
 
-        public async Task<Users> GetUserByName(string userName)
+        public async Task<ReturnUserList> GetUserByName(string userName)
         {
+            var returnUser = new ReturnUserList();
             if (userName == null)
             {
-                throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.ID_IS_NULL;
+                return returnUser;
             }
-            var user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Name == userName);
-            if (user == null)
+            var User = await _UserRepository.GetFirstOrDefaultAsync(x => x.Name == userName);
+            if (User == null)
             {
-                throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.UserError.USER_NOT_FOUND;
+                return returnUser;
             }
-            return user;
+            returnUser.Success = true;
+            returnUser.Error = null;
+            returnUser.Users = new List<Users>()
+            {
+                User
+            };
+            return returnUser;
         }
 
-        public async Task<Users> GetUserByEmail(string email)
+        public async Task<ReturnUserList> GetUserByEmail(string email)
         {
+            var returnUser = new ReturnUserList();
             if (email == null)
             {
-                throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.ID_IS_NULL;
+                return returnUser;
             }
-            var user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Email == email);
-            if (user == null)
+            var User = await _UserRepository.GetFirstOrDefaultAsync(x => x.Email== email);
+            if (User == null)
             {
-                throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.UserError.USER_NOT_FOUND;
+                return returnUser;
             }
-            return user;
+            returnUser.Success = true;
+            returnUser.Error = null;
+            returnUser.Users = new List<Users>()
+            {
+                User
+            };
+            return returnUser;
         }
 
-        public async Task<Users> AddNewUser(CreateUserRequest userRequest)
+        public async Task<ReturnUserList> AddNewUser(CreateUserRequest userRequest)
         {
-
+            var returnUser = new ReturnUserList();
             ValidationResult result = new CreateUserRequestValidator().Validate(userRequest);
             if (!result.IsValid)
             {
-                throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.INVALID_REQUEST;
+                return returnUser;
             }
 
             Users userCheckEmail = _UserRepository.GetFirstOrDefaultAsync(x => x.Email == userRequest.Email).Result;
             if (userCheckEmail != null)
             {
-                throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.EMAIL_IS_EXITED;
+                return returnUser;
             }
             Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
             if (userCheckPhone != null)
             {
-                throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.PHONE_IS_EXITED;
+                return returnUser;
             }
             Users userCheckCCCDNumber = _UserRepository.GetFirstOrDefaultAsync(x => x.Cccdnumber == userRequest.Cccdnumber).Result;
             if (userCheckCCCDNumber != null)
             {
-                throw new Exception(ErrorMessage.CommonError.CCCD_NUMBER_IS_EXITED);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.CCCD_NUMBER_IS_EXITED;
+                return returnUser;
             }
 
             if (!userRequest.Email.Contains("@"))
             {
-                throw new Exception(ErrorMessage.CommonError.WRONG_EMAIL_FORMAT);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.WRONG_EMAIL_FORMAT;
+                return returnUser;
             }
             if ((!userRequest.Phone.StartsWith("09")
                 && !userRequest.Phone.StartsWith("08")
@@ -121,12 +164,16 @@ namespace Business_Logic.Modules.UserModule
                 && !userRequest.Phone.StartsWith("03"))
                 || userRequest.Phone.Length != 10)
             {
-                throw new Exception(ErrorMessage.CommonError.WRONG_PHONE_FORMAT);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.WRONG_PHONE_FORMAT;
+                return returnUser;
             }
             if (userRequest.Cccdnumber.Length != 12
                 || !userRequest.Cccdnumber.StartsWith("0"))
             {
-                throw new Exception(ErrorMessage.CommonError.WRONG_CCCD_NUMBER_FORMAT);
+                returnUser.Success = false;
+                returnUser.Error = ErrorMessage.CommonError.WRONG_CCCD_NUMBER_FORMAT;
+                return returnUser;
             }
 
             var newUser = new Users();
@@ -175,24 +222,35 @@ namespace Business_Logic.Modules.UserModule
 
             SmtpServer.Send(mail);
 
-            return newUser;
+            returnUser.Success = true;
+            returnUser.Error = null;
+            returnUser.Users = new List<Users>()
+            {
+                newUser
+            };
+            return returnUser;
         }
 
-        public async Task<Users> UpdateUser(UpdateUserRequest userRequest)
+        public async Task<ReturnUserList> UpdateUser(UpdateUserRequest userRequest)
         {
             try
             {
-                var userUpdate = GetUserByID(userRequest.UserId).Result;
+                var returnUser = new ReturnUserList();
+                var userUpdate = await _UserRepository.GetFirstOrDefaultAsync(u => u.Id == userRequest.UserId);
 
                 if (userUpdate == null)
                 {
-                    throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
+                    returnUser.Success = false;
+                    returnUser.Error = ErrorMessage.UserError.USER_NOT_FOUND;
+                    return returnUser;
                 }
 
                 ValidationResult result = new UpdateUserRequestValidator().Validate(userRequest);
                 if (!result.IsValid)
                 {
-                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                    returnUser.Success = false;
+                    returnUser.Error = ErrorMessage.CommonError.INVALID_REQUEST;
+                    return returnUser;
                 }
 
                 Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
@@ -200,7 +258,9 @@ namespace Business_Logic.Modules.UserModule
                 {
                     if(userCheckPhone.Id != userUpdate.Id)
                     {
-                        throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                        returnUser.Success = false;
+                        returnUser.Error = ErrorMessage.CommonError.PHONE_IS_EXITED;
+                        return returnUser;
                     }
                 }
 
@@ -211,7 +271,9 @@ namespace Business_Logic.Modules.UserModule
                     && !userRequest.Phone.StartsWith("03"))
                     || userRequest.Phone.Length != 10)
                 {
-                    throw new Exception(ErrorMessage.CommonError.WRONG_PHONE_FORMAT);
+                    returnUser.Success = false;
+                    returnUser.Error = ErrorMessage.CommonError.WRONG_PHONE_FORMAT;
+                    return returnUser;
                 }
 
                 userUpdate.Name = userRequest.UserName;
@@ -233,7 +295,13 @@ namespace Business_Logic.Modules.UserModule
                 //};
                 //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
 
-                return userUpdate;
+                returnUser.Success = true;
+                returnUser.Error = null;
+                returnUser.Users = new List<Users>()
+                {
+                    userUpdate
+                };
+                return returnUser;
             }
             catch (Exception ex)
             {
@@ -243,14 +311,18 @@ namespace Business_Logic.Modules.UserModule
 
         }
 
-        public async Task<Users> UpdateRoleAccount(Guid id)
+        public async Task<ReturnUserList> UpdateRoleAccount(Guid id)
         {
             try
             {
-                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id && x.Status == (int)UserStatusEnum.Acctive);
+                var returnUser = new ReturnUserList();
+                var user = await _UserRepository.GetFirstOrDefaultAsync(u => u.Id == id && u.Status == (int)UserStatusEnum.Acctive);
+
                 if (user == null)
                 {
-                    throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
+                    returnUser.Success = false;
+                    returnUser.Error = ErrorMessage.UserError.USER_NOT_FOUND;
+                    return returnUser;
                 }
 
                 user.Role = (int)RoleEnum.Auctioneer;
@@ -293,7 +365,13 @@ namespace Business_Logic.Modules.UserModule
                 //};
                 //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
 
-                return user;
+                returnUser.Success = true;
+                returnUser.Error = null;
+                returnUser.Users = new List<Users>()
+                {
+                    user
+                };
+                return returnUser;
             }
             catch (Exception ex)
             {
@@ -302,23 +380,27 @@ namespace Business_Logic.Modules.UserModule
             }
         }
 
-        public async Task<Users> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
+        public async Task<ReturnUserList> UpdatePassword(UpdatePasswordRequest updatePasswordRequest)
         {
             try
             {
-                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == updatePasswordRequest.Id
+                var returnUser = new ReturnUserList();
+                var user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == updatePasswordRequest.Id
                     && x.Password == updatePasswordRequest.OldPassword
-                    && x.Status != -1
-                    && x.Status != 2);
+                    && x.Status == 1);
                 if (user == null)
                 {
-                    throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
+                    returnUser.Success = false;
+                    returnUser.Error = ErrorMessage.UserError.USER_NOT_FOUND;
+                    return returnUser;
                 }
 
                 ValidationResult result = new UpdatePasswordRequestValidator().Validate(updatePasswordRequest);
                 if (!result.IsValid)
                 {
-                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                    returnUser.Success = false;
+                    returnUser.Error = ErrorMessage.CommonError.INVALID_REQUEST;
+                    return returnUser;
                 }
 
                 user.Password = updatePasswordRequest.NewPassword;
@@ -335,7 +417,13 @@ namespace Business_Logic.Modules.UserModule
                 //};
                 //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
 
-                return user;
+                returnUser.Success = true;
+                returnUser.Error = null;
+                returnUser.Users = new List<Users>()
+                {
+                    user
+                };
+                return returnUser;
 
             }
             catch (Exception ex)

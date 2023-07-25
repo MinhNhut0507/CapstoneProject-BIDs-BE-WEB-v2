@@ -14,6 +14,7 @@ using Business_Logic.Modules.SessionModule.Response;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Business_Logic.Modules.CommonModule.Interface;
+using Business_Logic.Modules.UserModule.Response;
 
 namespace BIDs_API.Controllers
 {
@@ -195,11 +196,11 @@ namespace BIDs_API.Controllers
                            (
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
-                var user = new Users();
+                var user = new ReturnUserList();
                 for (int i = 0; i < response.Count(); i++)
                 {
                     user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Email = user.Email;
+                    response.ElementAt(i).Email = user.Users.ElementAt(0).Email;
                 }
                 return Ok(response);
             }
@@ -224,11 +225,11 @@ namespace BIDs_API.Controllers
                            (
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
-                var user = new Users();
+                var user = new ReturnUserList();
                 for (int i = 0; i < response.Count(); i++)
                 {
                     user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Email = user.Email;
+                    response.ElementAt(i).Email = user.Users.ElementAt(0).Email;
                 }
                 return Ok(response);
             }
@@ -253,11 +254,11 @@ namespace BIDs_API.Controllers
                            (
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
-                var user = new Users();
+                var user = new ReturnUserList();
                 for(int i = 0; i < response.Count(); i++)
                 {
                     user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Email = user.Email;
+                    response.ElementAt(i).Email = user.Users.ElementAt(0).Email;
                 }
                 return Ok(response);
             }

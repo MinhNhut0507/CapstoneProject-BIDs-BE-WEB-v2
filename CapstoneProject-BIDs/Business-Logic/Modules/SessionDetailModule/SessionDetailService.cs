@@ -229,11 +229,11 @@ namespace Business_Logic.Modules.SessionDetailModule
             string _gmail = "bidauctionfloor@gmail.com";
             string _password = "gnauvhbfubtgxjow";
 
-            string sendto = user.Email;
+            string sendto = user.Users.ElementAt(0).Email;
             string subject = "BIDs - Đấu Giá";
 
             string content = "Tài khoản " 
-                + user.Email 
+                + sendto
                 + " đã đăng ký tham giá vào buổi đấu giá của sản phẩm "
                 + item.ElementAt(0).Name
                 + " thành công. Vui lòng đợi tới khi cuộc đấu giá bắt đầu.";
@@ -242,7 +242,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
 
             mail.From = new MailAddress(_gmail);
-            mail.To.Add(user.Email);
+            mail.To.Add(sendto);
             mail.Subject = subject;
             mail.IsBodyHtml = true;
             mail.Body = content;
