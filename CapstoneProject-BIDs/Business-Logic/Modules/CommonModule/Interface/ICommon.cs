@@ -1,5 +1,4 @@
-﻿using Business_Logic.Modules.UserModule.Response;
-using Data_Access.Entities;
+﻿using Data_Access.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +13,6 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task SendEmailWinnerAuction(Session session);
         public Task SendEmailOutOfDateAuction(Session session);
         public Task<ICollection<Session>> GetSessionInStageByUser(Guid id);
-        public Task<ReturnUserList> GetUserWinning(Guid id);
+        public Task<Users> GetUserWinning(Guid id);
     }
 }

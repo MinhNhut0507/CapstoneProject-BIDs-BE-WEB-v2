@@ -14,7 +14,6 @@ using Data_Access.Entities;
 using Business_Logic.Modules.BanHistoryModule.Request;
 using Business_Logic.Modules.CommonModule.Interface;
 using Data_Access.Constant;
-using Business_Logic.Modules.UserModule.Response;
 
 namespace Business_Logic.Modules.CommonModule
 {
@@ -51,7 +50,7 @@ namespace Business_Logic.Modules.CommonModule
                 string _gmail = "bidauctionfloor@gmail.com";
                 string _password = "gnauvhbfubtgxjow";
 
-                string sendto = user.Users.ElementAt(0).Email;
+                string sendto = user.Email;
                 string subject = "BIDs - Đấu Giá";
 
                 string content = "Cuộc đấu giá của sản phẩm "
@@ -65,7 +64,7 @@ namespace Business_Logic.Modules.CommonModule
                 SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
 
                 mail.From = new MailAddress(_gmail);
-                mail.To.Add(user.Users.ElementAt(0).Email);
+                mail.To.Add(user.Email);
                 mail.Subject = subject;
                 mail.IsBodyHtml = true;
                 mail.Body = content;
@@ -90,11 +89,11 @@ namespace Business_Logic.Modules.CommonModule
             string _gmail = "bidauctionfloor@gmail.com";
             string _password = "gnauvhbfubtgxjow";
 
-            string sendto = Winner.Users.ElementAt(0).Email;
+            string sendto = Winner.Email;
             string subject = "BIDs - Đấu Giá";
 
             string content = "Tài khoản "
-                + sendto
+                + Winner.Email
                 + " đã đấu giá thành công sản phẩm "
                 + item.ElementAt(0).Name
                 + " với mức giá "
@@ -105,7 +104,7 @@ namespace Business_Logic.Modules.CommonModule
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
 
             mail.From = new MailAddress(_gmail);
-            mail.To.Add(sendto);
+            mail.To.Add(Winner.Email);
             mail.Subject = subject;
             mail.IsBodyHtml = true;
             mail.Body = content;
@@ -129,25 +128,25 @@ namespace Business_Logic.Modules.CommonModule
             string _gmail = "bidauctionfloor@gmail.com";
             string _password = "gnauvhbfubtgxjow";
 
-            string sendto = Winner.Users.ElementAt(0).Email;
+            string sendto = Winner.Email;
             string subject = "BIDs - Đấu Giá";
 
             string content = "Tài khoản "
-                + sendto
+                + Winner.Email
                 + " đã đấu giá thành công sản phẩm "
                 + item.ElementAt(0).Name
                 + " với mức giá "
                 + SessionWinner.Price
                 + " nhưng chưa thanh toán trong thời gian quy định."
                 + " Hệ thống sẽ khóa tài khoản vĩnh viễn vì tài khoản "
-                + sendto
+                + Winner.Email
                 + " đã vi phạm nghiêm trọng luật của hệ thống.";
 
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
 
             mail.From = new MailAddress(_gmail);
-            mail.To.Add(sendto);
+            mail.To.Add(Winner.Email);
             mail.Subject = subject;
             mail.IsBodyHtml = true;
             mail.Body = content;
@@ -163,7 +162,7 @@ namespace Business_Logic.Modules.CommonModule
 
             CreateBanHistoryRequest createBanHistoryRequest = new CreateBanHistoryRequest()
             {
-                UserId = Winner.Users.ElementAt(0).Id,
+                UserId = Winner.Id,
                 Reason = "Đấu giá thành công nhưng chưa thanh toán"
             };
             await _BanHistoryService.AddNewBanHistory(createBanHistoryRequest);
@@ -191,15 +190,11 @@ namespace Business_Logic.Modules.CommonModule
             return listSession;
         }
 
-        public async Task<ReturnUserList> GetUserWinning(Guid id)
+        public async Task<Users> GetUserWinning(Guid id)
         {
-            var returnUser = new ReturnUserList();
-            
             if (id == null)
             {
-                returnUser.Success = false;
-                returnUser.Error = ErrorMessage.CommonError.ID_IS_NULL;
-                returnUser.Users = null;
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
             var sessionDetailWinner = await _SessionDetailService.Getwinner(id);
             var Winner = await _UserService.GetUserByID(sessionDetailWinner.UserId);

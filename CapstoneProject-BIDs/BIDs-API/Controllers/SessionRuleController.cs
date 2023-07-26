@@ -61,60 +61,43 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ReturnSessionRuleController>> GetSessionRuleByID([FromRoute] Guid id)
+        public async Task<ActionResult<SessionRuleResponseAdmin>> GetSessionRuleByID([FromRoute] Guid id)
         {
-            var returnSessionRule = await _SessionRuleService.GetSessionRuleByID(id);
-            var SessionRuleDTO = _mapper.Map<SessionRuleResponseAdmin>(returnSessionRule.SessionRule);
-            if (SessionRuleDTO == null)
+            var SessionRule = _mapper.Map<SessionRuleResponseAdmin>(await _SessionRuleService.GetSessionRuleByID(id));
+
+            if (SessionRule == null)
             {
                 return NotFound();
             }
-            var response = new ReturnSessionRuleController()
-            {
-                Success = returnSessionRule.Success,
-                Error = returnSessionRule.Error,
-                SessionRules = SessionRuleDTO
-            };
-            return response;
+
+            return SessionRule;
         }
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<ReturnSessionRuleController>> GetSessionRuleByName([FromRoute] string name)
+        public async Task<ActionResult<SessionRuleResponseAdmin>> GetSessionRuleByName([FromRoute] string name)
         {
-            var returnSessionRule = await _SessionRuleService.GetSessionRuleByName(name);
-            var SessionRuleDTO = _mapper.Map<SessionRuleResponseAdmin>(returnSessionRule.SessionRule);
-            if (SessionRuleDTO == null)
+            var SessionRule = _mapper.Map<SessionRuleResponseAdmin>(await _SessionRuleService.GetSessionRuleByName(name));
+
+            if (SessionRule == null)
             {
                 return NotFound();
             }
-            var response = new ReturnSessionRuleController()
-            {
-                Success = returnSessionRule.Success,
-                Error = returnSessionRule.Error,
-                SessionRules = SessionRuleDTO
-            };
-            return response;
+
+            return SessionRule;
         }
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin")]
         [HttpPut]
-        public async Task<ActionResult<ReturnSessionRuleController>> PutSessionRule([FromBody] UpdateSessionRuleRequest updateSessionRuleRequest)
+        public async Task<IActionResult> PutSessionRule([FromBody] UpdateSessionRuleRequest updateSessionRuleRequest)
         {
             try
             {
-                var returnSessionRule = await _SessionRuleService.UpdateSessionRule(updateSessionRuleRequest);
-                await _hubContext.Clients.All.SendAsync("ReceiveSessionRuleUpdate", returnSessionRule.SessionRule);
-                var SessionRuleDTO = _mapper.Map<SessionRuleResponseAdmin>(returnSessionRule.SessionRule);
-                var response = new ReturnSessionRuleController()
-                {
-                    Success = returnSessionRule.Success,
-                    Error = returnSessionRule.Error,
-                    SessionRules = SessionRuleDTO
-                };
-                return Ok(response);
+                var SessionRule = await _SessionRuleService.UpdateSessionRule(updateSessionRuleRequest);
+                await _hubContext.Clients.All.SendAsync("ReceiveSessionRuleUpdate", SessionRule);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -126,20 +109,13 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<ReturnSessionRuleController>> PostSessionRule([FromBody] CreateSessionRuleRequest createSessionRuleRequest)
+        public async Task<ActionResult<SessionRuleResponseAdmin>> PostSessionRule([FromBody] CreateSessionRuleRequest createSessionRuleRequest)
         {
             try
             {
-                var returnSessionRule = await _SessionRuleService.AddNewSessionRule(createSessionRuleRequest);
-                await _hubContext.Clients.All.SendAsync("ReceiveSessionRuleAdd", returnSessionRule.SessionRule);
-                var SessionRuleDTO = _mapper.Map<SessionRuleResponseAdmin>(returnSessionRule.SessionRule);
-                var response = new ReturnSessionRuleController()
-                {
-                    Success = returnSessionRule.Success,
-                    Error = returnSessionRule.Error,
-                    SessionRules = SessionRuleDTO
-                };
-                return Ok(response);
+                var SessionRule = await _SessionRuleService.AddNewSessionRule(createSessionRuleRequest);
+                await _hubContext.Clients.All.SendAsync("ReceiveSessionRuleAdd", SessionRule);
+                return Ok(_mapper.Map<SessionRuleResponseAdmin>(SessionRule));
             }
             catch (Exception ex)
             {
@@ -150,20 +126,13 @@ namespace BIDs_API.Controllers
         // DELETE api/<ValuesController>/5
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ReturnSessionRuleController>> DeleteSessionRule([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteSessionRule([FromRoute] Guid id)
         {
             try
             {
-                var returnSessionRule = await _SessionRuleService.DeleteSessionRule(id);
-                await _hubContext.Clients.All.SendAsync("ReceiveSessionRuleDelete", returnSessionRule.SessionRule);
-                var SessionRuleDTO = _mapper.Map<SessionRuleResponseAdmin>(returnSessionRule.SessionRule);
-                var response = new ReturnSessionRuleController()
-                {
-                    Success = returnSessionRule.Success,
-                    Error = returnSessionRule.Error,
-                    SessionRules = SessionRuleDTO
-                };
-                return Ok(response);
+                var SessionRule = await _SessionRuleService.DeleteSessionRule(id);
+                await _hubContext.Clients.All.SendAsync("ReceiveSessionRuleDelete", SessionRule);
+                return Ok();
             }
             catch (Exception ex)
             {
