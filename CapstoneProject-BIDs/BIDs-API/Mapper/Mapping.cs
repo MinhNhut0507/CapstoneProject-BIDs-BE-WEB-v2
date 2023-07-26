@@ -72,6 +72,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Role, d => d.ConvertUsing(new RoleEnumConverter(), s => s.Role))
                 .ForMember(x => x.Email, d => d.MapFrom(s => s.Email))
                 .ForMember(x => x.UserName, d => d.MapFrom(s => s.Name))
+                .ForMember(x => x.Password, d => d.MapFrom(s => s.Password))
                 .ForMember(x => x.Avatar, d => d.MapFrom(s => s.Avatar))
                 .ForMember(x => x.DateOfBirth, d => d.MapFrom(s => s.DateOfBirth))
                 .ForMember(x => x.Address, d => d.MapFrom(s => s.Address))
