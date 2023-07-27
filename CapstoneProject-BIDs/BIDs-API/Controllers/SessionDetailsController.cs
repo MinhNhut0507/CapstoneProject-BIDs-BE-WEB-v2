@@ -8,6 +8,7 @@ using Data_Access.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Collections.Immutable;
 
 namespace BIDs_API.Controllers
 {
@@ -121,6 +122,7 @@ namespace BIDs_API.Controllers
                            (
                              emp => _mapper.Map<SessionDetail, SessionDetailResponseUser>(emp)
                            );
+                var responseSort = response.OrderBy(s => s.CreateDate);
                 return Ok(response);
             }
             catch
