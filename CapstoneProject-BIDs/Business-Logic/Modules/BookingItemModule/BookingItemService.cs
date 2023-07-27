@@ -162,7 +162,7 @@ namespace Business_Logic.Modules.BookingItemModule
 
                 var bookingAccept = BookingItemUpdate.ElementAt(0);
                 bookingAccept.UpdateDate = DateTime.Now;
-                bookingAccept.Status = (int)BookingItemEnum.Accepted;
+                bookingAccept.Status = (int)BookingItemEnum.NotCreateSessionYet;
 
                 await _BookingItemRepository.UpdateAsync(bookingAccept);
                 return bookingAccept;

@@ -14,7 +14,7 @@ namespace Business_Logic.Modules.SessionDetailModule.Request
         public UpdateSessionDetailRequestValidator()
         {
             RuleFor(x => x.SessionDetailId).NotEmpty().NotNull();
-            RuleFor(x => x.Status).NotEmpty().NotNull();
+            RuleFor(x => x.Status);
         }
     }
 }

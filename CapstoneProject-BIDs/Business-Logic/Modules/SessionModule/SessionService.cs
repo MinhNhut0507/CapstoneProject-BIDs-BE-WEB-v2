@@ -8,6 +8,8 @@ using Data_Access.Entities;
 using Data_Access.Enum;
 using FluentValidation.Results;
 using System;
+using Business_Logic.Modules.BookingItemModule.Interface;
+using Business_Logic.Modules.BookingItemModule.Request;
 
 namespace Business_Logic.Modules.SessionModule
 {
@@ -16,13 +18,16 @@ namespace Business_Logic.Modules.SessionModule
         private readonly ISessionRepository _SessionRepository;
         private readonly IItemService _ItemService;
         private readonly IFeeService _FeeService;
+        private readonly IBookingItemService _BookingItemService;
         public SessionService(ISessionRepository SessionRepository
             , IItemService ItemService
-            , IFeeService FeeService)
+            , IFeeService FeeService
+            , IBookingItemService BookingItemService)
         {
             _SessionRepository = SessionRepository;
             _ItemService = ItemService;
             _FeeService = FeeService;
+            _BookingItemService = BookingItemService;
         }
 
         public async Task<ICollection<Session>> GetAll()
@@ -171,8 +176,7 @@ namespace Business_Logic.Modules.SessionModule
                 newSession.AuctionTime = new TimeSpan(days: 0
                 , hours: (int)(timeSpan.TotalHours - 1)
                 , minutes: 59
-                , seconds: 59
-                , milliseconds: 0000001);
+                , seconds: 59);
                 newSession.EndTime = EndTime.AddSeconds(-1);
             }
             else
@@ -180,16 +184,23 @@ namespace Business_Logic.Modules.SessionModule
                 newSession.AuctionTime = new TimeSpan(days: 0
                 , hours: (int)(timeSpan.TotalHours)
                 , minutes: timeSpan.Minutes
-                , seconds: timeSpan.Seconds
-                , milliseconds: 0000001);
+                , seconds: timeSpan.Seconds);
                 newSession.EndTime = EndTime;
             }
             newSession.FinalPrice = item.ElementAt(0).FirstPrice;
             newSession.CreateDate = DateTime.Now;
             newSession.UpdateDate = DateTime.Now;
             newSession.Status = (int)SessionStatusEnum.NotStart;
-
+            
             await _SessionRepository.AddAsync(newSession);
+
+            var bookingItem = await _BookingItemService.GetBookingItemByItem(newSession.ItemId);
+            UpdateBookingItemRequest updateBookingItemRequest = new UpdateBookingItemRequest()
+            {
+                Id = bookingItem.ElementAt(0).Id,
+                Status = (int)BookingItemEnum.Accepted
+            };
+            await _BookingItemService.UpdateStatusBookingItem(updateBookingItemRequest);
 
             //CreateUserNotificationDetailRequest request = new CreateUserNotificationDetailRequest()
             //{
@@ -266,8 +277,7 @@ namespace Business_Logic.Modules.SessionModule
                     SessionUpdate.AuctionTime = new TimeSpan(days: 0
                     , hours: (int)(timeSpan.TotalHours - 1)
                     , minutes: 59
-                    , seconds: 59
-                    , milliseconds: 0000001);
+                    , seconds: 59);
                     SessionUpdate.EndTime = EndTime.AddSeconds(-1);
                 }
                 else
@@ -275,8 +285,7 @@ namespace Business_Logic.Modules.SessionModule
                     SessionUpdate.AuctionTime = new TimeSpan(days: 0
                     , hours: (int)(timeSpan.TotalHours)
                     , minutes: timeSpan.Minutes
-                    , seconds: timeSpan.Seconds
-                    , milliseconds: 0000001);
+                    , seconds: timeSpan.Seconds);
                     SessionUpdate.EndTime = EndTime;
                 }
                 SessionUpdate.UpdateDate = DateTime.Now;

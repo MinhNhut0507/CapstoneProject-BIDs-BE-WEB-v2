@@ -10,7 +10,8 @@ namespace Data_Access.Enum
     {
         Waitting = 1,
         Accepted = 2,
-        Denied = 3,
-        InActive = 4
+        NotCreateSessionYet = 3,
+        Denied = 4,
+        InActive = -1
     }
 }

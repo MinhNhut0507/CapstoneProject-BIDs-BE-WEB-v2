@@ -180,11 +180,18 @@ namespace Business_Logic.Modules.CommonModule
             foreach(var x in sessionDetail)
             {
                 checkSession = await _SessionService.GetSessionByID(x.SessionId);
-                foreach(var y in listSession)
+                if (listSession.Count() == 0)
                 {
-                    if (y.Id == checkSession.ElementAt(0).Id)
-                        continue;
                     listSession.Add(checkSession.ElementAt(0));
+                }
+                else
+                {
+                    foreach (var y in listSession)
+                    {
+                        if (y.Id == checkSession.ElementAt(0).Id)
+                            continue;
+                        listSession.Add(checkSession.ElementAt(0));
+                    }
                 }
             }
             return listSession;

@@ -25,7 +25,7 @@ namespace Business_Logic.Modules.FeeModule.Request
             RuleFor(x => x.ParticipationFee).NotEmpty().NotNull();
             RuleFor(x => x.DepositFee).NotEmpty().NotNull();
             RuleFor(x => x.Surcharge).NotEmpty().NotNull();
-            RuleFor(x => x.Status).NotEmpty().NotNull();
+            RuleFor(x => x.Status);
         }
     }
 }

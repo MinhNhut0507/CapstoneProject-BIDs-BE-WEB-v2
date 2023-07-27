@@ -102,7 +102,7 @@ namespace Business_Logic.Modules.CategoryModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                Category CategoryCheck = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Name == CategoryRequest.CategoryName);
+                var CategoryCheck = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Name == CategoryRequest.CategoryName);
 
                 if (CategoryCheck != null)
                 {

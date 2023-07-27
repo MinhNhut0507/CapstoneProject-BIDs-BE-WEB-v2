@@ -23,7 +23,7 @@ namespace Business_Logic.Modules.SessionRuleModule.Request
             RuleFor(x => x.FreeTime).NotEmpty().NotNull();
             RuleFor(x => x.DelayTime).NotEmpty().NotNull();
             RuleFor(x => x.DelayFreeTime).NotEmpty().NotNull();
-            RuleFor(x => x.Status).NotEmpty().NotNull();
+            RuleFor(x => x.Status);
         }
     }
 }

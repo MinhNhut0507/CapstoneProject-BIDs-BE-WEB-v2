@@ -17,7 +17,7 @@ namespace Business_Logic.Modules.BanHistoryModule.Request
         {
             RuleFor(x => x.BanHistoryId).NotEmpty().NotNull();
             RuleFor(x => x.Reason).NotEmpty().NotNull();
-            RuleFor(x => x.Status).NotEmpty().NotNull();
+            RuleFor(x => x.Status);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Business_Logic.Modules.DescriptionModule.Request
         {
             RuleFor(x => x.DescriptionId).NotEmpty().NotNull();
             RuleFor(x => x.Detail).NotEmpty().NotNull();
-            RuleFor(x => x.Status).NotEmpty().NotNull();
+            RuleFor(x => x.Status);
         }
     }
 }

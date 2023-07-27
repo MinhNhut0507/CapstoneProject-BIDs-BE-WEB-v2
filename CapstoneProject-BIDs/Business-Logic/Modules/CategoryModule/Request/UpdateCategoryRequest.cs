@@ -17,7 +17,7 @@ namespace Business_Logic.Modules.CategoryModule.Request
         {
             RuleFor(x => x.CategoryId).NotEmpty().NotNull();
             RuleFor(x => x.CategoryName).NotEmpty().NotNull();
-            RuleFor(x => x.Status).NotEmpty().NotNull();
+            RuleFor(x => x.Status);
         }
     }
 }

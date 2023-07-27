@@ -15,7 +15,7 @@ namespace Business_Logic.Modules.NotificationModule.Request
         {
             RuleFor(x => x.Id).NotEmpty().NotNull();
             RuleFor(x => x.ExpireDate).NotEmpty().NotNull();
-            RuleFor(x => x.Status).NotEmpty().NotNull();
+            RuleFor(x => x.Status);
         }
     }
 }
