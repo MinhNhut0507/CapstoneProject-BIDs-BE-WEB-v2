@@ -9,8 +9,8 @@ namespace Business_Logic.Modules.FeeModule.Request
         public string Name { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
-        public int ParticipationFee { get; set; }
-        public int DepositFee { get; set; }
+        public double ParticipationFee { get; set; }
+        public double DepositFee { get; set; }
         public double Surcharge { get; set; }
         public bool Status { get; set; }
     }
