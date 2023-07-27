@@ -184,7 +184,8 @@ namespace Business_Logic.Modules.SessionDetailModule
             newSessionDetail.UserId = SessionDetailRequest.UserId;
             newSessionDetail.SessionId = SessionDetailRequest.SessionId;
             newSessionDetail.Price = Session.ElementAt(0).FinalPrice + item.ElementAt(0).StepPrice;
-            newSessionDetail.CreateDate = DateTime.Now;
+            DateTime dateTime = DateTime.UtcNow;
+            newSessionDetail.CreateDate = dateTime.AddHours(7);
             newSessionDetail.Status = true;
 
             await _SessionDetailRepository.AddAsync(newSessionDetail);
