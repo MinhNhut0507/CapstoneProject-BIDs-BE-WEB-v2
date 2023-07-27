@@ -110,7 +110,7 @@ namespace Business_Logic.Modules.StaffModule
             var newStaff = new Staff();
 
             newStaff.Id = Guid.NewGuid();
-            newStaff.Name = StaffRequest.AccountName;
+            newStaff.Name = StaffRequest.StaffName;
             newStaff.Email = StaffRequest.Email;
             newStaff.Password = StaffRequest.Password;
             newStaff.Address = StaffRequest.Address;
@@ -161,7 +161,6 @@ namespace Business_Logic.Modules.StaffModule
                 }
 
                 StaffUpdate.Name = StaffRequest.StaffName;
-                StaffUpdate.Password = StaffRequest.Password;
                 StaffUpdate.Address = StaffRequest.Address;
                 StaffUpdate.Phone = StaffRequest.Phone;
                 StaffUpdate.UpdateDate = DateTime.Now;
