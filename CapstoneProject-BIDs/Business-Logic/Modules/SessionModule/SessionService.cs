@@ -170,7 +170,7 @@ namespace Business_Logic.Modules.SessionModule
                 }
             }
             newSession.SessionRuleId = SessionRequest.SessionRuleId;
-            newSession.BeginTime = BeginTime;
+            newSession.BeginTime = BeginTime.AddHours(7);
             if(timeSpan == checkTime)
             {
                 newSession.AuctionTime = new TimeSpan(days: 0
@@ -178,6 +178,7 @@ namespace Business_Logic.Modules.SessionModule
                 , minutes: 59
                 , seconds: 59);
                 newSession.EndTime = EndTime.AddSeconds(-1);
+                newSession.EndTime = newSession.EndTime.AddHours(7);
             }
             else
             {
@@ -185,7 +186,7 @@ namespace Business_Logic.Modules.SessionModule
                 , hours: (int)(timeSpan.TotalHours)
                 , minutes: timeSpan.Minutes
                 , seconds: timeSpan.Seconds);
-                newSession.EndTime = EndTime;
+                newSession.EndTime = EndTime.AddHours(7);
             }
             newSession.FinalPrice = item.ElementAt(0).FirstPrice;
             DateTime dateTime = DateTime.UtcNow;
