@@ -119,7 +119,8 @@ namespace Business_Logic.Modules.BanHistoryModule
                 }
 
                 BanHistoryUpdate.Reason = BanHistoryRequest.Reason;
-                BanHistoryUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                BanHistoryUpdate.UpdateDate = dateTime.AddHours(7);
                 BanHistoryUpdate.Status = BanHistoryRequest.Status;
 
                 await _BanHistoryRepository.UpdateAsync(BanHistoryUpdate);

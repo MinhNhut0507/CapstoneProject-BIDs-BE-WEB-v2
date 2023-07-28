@@ -124,6 +124,31 @@ namespace BIDs_API.Controllers
             }
         }
 
+        // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Staff")]
+        [HttpGet("by_staff_to_create_session/{email}")]
+        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaffToCreateSession([FromRoute] string email)
+        {
+            try
+            {
+                var list = await _BookingItemService.GetBookingItemByStaffToCreateSession(email);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponseAdminAndStaff>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_id/{id}")]

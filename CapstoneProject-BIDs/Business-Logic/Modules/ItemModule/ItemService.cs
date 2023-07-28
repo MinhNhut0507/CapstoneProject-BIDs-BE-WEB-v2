@@ -157,8 +157,9 @@ namespace Business_Logic.Modules.ItemModule
             newItem.Image = ItemRequest.Image;
             newItem.CategoryId = ItemRequest.CategoryId;
             newItem.Deposit = ItemRequest.Deposit;
-            newItem.UpdateDate = DateTime.Now;
-            newItem.CreateDate = DateTime.Now;
+            DateTime dateTime = DateTime.UtcNow;
+            newItem.CreateDate = dateTime.AddHours(7);
+            newItem.UpdateDate = dateTime.AddHours(7);
 
             await _ItemRepository.AddAsync(newItem);
             CreateBookingItemRequest bookingItemRequest = new CreateBookingItemRequest()
@@ -212,7 +213,8 @@ namespace Business_Logic.Modules.ItemModule
                 ItemUpdate.StepPrice = ItemRequest.StepPrice;
                 ItemUpdate.Image = ItemRequest.Image;
                 ItemUpdate.Deposit = ItemRequest.Deposit;
-                ItemUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                ItemUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _ItemRepository.UpdateAsync(ItemUpdate);
                 return ItemUpdate;

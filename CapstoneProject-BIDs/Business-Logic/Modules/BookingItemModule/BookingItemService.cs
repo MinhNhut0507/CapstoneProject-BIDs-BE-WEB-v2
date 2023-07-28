@@ -75,6 +75,23 @@ namespace Business_Logic.Modules.BookingItemModule
             return BookingItem;
         }
 
+        public async Task<ICollection<BookingItem>> GetBookingItemByStaffToCreateSession(string email)
+        {
+
+            if (email == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.EMAIL_IS_NULL);
+            }
+            var staff = await _StaffRepository.GetFirstOrDefaultAsync(x => x.Email == email);
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category"
+                , options: o => o.Where(x => x.StaffId == staff.Id && x.Status == (int)BookingItemEnum.NotCreateSessionYet).ToList());
+            if (BookingItem == null)
+            {
+                throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+            }
+            return BookingItem;
+        }
+
         public async Task<ICollection<BookingItem>> GetBookingItemByItem(Guid id)
         {
             if (id == null)
@@ -107,8 +124,9 @@ namespace Business_Logic.Modules.BookingItemModule
             newBookingItem.Id = Guid.NewGuid();
             newBookingItem.ItemId = BookingItemRequest.ItemId;
             newBookingItem.StaffId = listStaffActive.ElementAt(random.Next(0,listStaffActive.Count-1)).Id;
-            newBookingItem.UpdateDate = DateTime.Now;
-            newBookingItem.CreateDate = DateTime.Now;
+            DateTime dateTime = DateTime.UtcNow;
+            newBookingItem.CreateDate = dateTime.AddHours(7);
+            newBookingItem.UpdateDate = dateTime.AddHours(7);
             newBookingItem.Status = (int)BookingItemEnum.Waitting;
 
             await _BookingItemRepository.AddAsync(newBookingItem);
@@ -134,7 +152,8 @@ namespace Business_Logic.Modules.BookingItemModule
 
                 var bookingAccept = BookingItemUpdate.ElementAt(0);
 
-                bookingAccept.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                bookingAccept.UpdateDate = dateTime.AddHours(7);
                 bookingAccept.Status = BookingItemRequest.Status;
 
                 await _BookingItemRepository.UpdateAsync(bookingAccept);
@@ -161,7 +180,8 @@ namespace Business_Logic.Modules.BookingItemModule
                 }
 
                 var bookingAccept = BookingItemUpdate.ElementAt(0);
-                bookingAccept.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                bookingAccept.UpdateDate = dateTime.AddHours(7);
                 bookingAccept.Status = (int)BookingItemEnum.NotCreateSessionYet;
 
                 await _BookingItemRepository.UpdateAsync(bookingAccept);
@@ -188,7 +208,8 @@ namespace Business_Logic.Modules.BookingItemModule
                 }
 
                 var bookingAccept = BookingItemUpdate.ElementAt(0);
-                bookingAccept.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                bookingAccept.UpdateDate = dateTime.AddHours(7);
                 bookingAccept.Status = (int)BookingItemEnum.Denied;
 
                 await _BookingItemRepository.UpdateAsync(bookingAccept);

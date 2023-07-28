@@ -115,9 +115,10 @@ namespace Business_Logic.Modules.StaffModule
             newStaff.Password = StaffRequest.Password;
             newStaff.Address = StaffRequest.Address;
             newStaff.Phone = StaffRequest.Phone;
-            newStaff.DateOfBirth = StaffRequest.DateOfBirth; 
-            newStaff.CreateDate = DateTime.Now;
-            newStaff.UpdateDate = DateTime.Now;
+            newStaff.DateOfBirth = StaffRequest.DateOfBirth;
+            DateTime dateTime = DateTime.UtcNow;
+            newStaff.CreateDate = dateTime.AddHours(7);
+            newStaff.UpdateDate = dateTime.AddHours(7);
             newStaff.Status = true;
 
             await _StaffRepository.AddAsync(newStaff);
@@ -163,7 +164,8 @@ namespace Business_Logic.Modules.StaffModule
                 StaffUpdate.Name = StaffRequest.StaffName;
                 StaffUpdate.Address = StaffRequest.Address;
                 StaffUpdate.Phone = StaffRequest.Phone;
-                StaffUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                StaffUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _StaffRepository.UpdateAsync(StaffUpdate);
 
@@ -204,7 +206,8 @@ namespace Business_Logic.Modules.StaffModule
                 }
 
                 staff.Password = updatePasswordRequest.NewPassword;
-                staff.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                staff.UpdateDate = dateTime.AddHours(7);
 
                 await _StaffRepository.UpdateAsync(staff);
 

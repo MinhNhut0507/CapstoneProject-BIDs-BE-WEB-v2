@@ -76,8 +76,9 @@ namespace Business_Logic.Modules.SessionRuleModule
             newSessionRule.DelayTime = SessionRuleRequest.DelayTime;
             newSessionRule.DelayFreeTime = SessionRuleRequest.DelayFreeTime;
             newSessionRule.FreeTime = SessionRuleRequest.FreeTime;
-            newSessionRule.UpdateDate = DateTime.Now;
-            newSessionRule.CreateDate = DateTime.Now;
+            DateTime dateTime = DateTime.UtcNow;
+            newSessionRule.CreateDate = dateTime.AddHours(7);
+            newSessionRule.UpdateDate = dateTime.AddHours(7);
             newSessionRule.Status = true;
 
             await _SessionRuleRepository.AddAsync(newSessionRule);
@@ -116,7 +117,8 @@ namespace Business_Logic.Modules.SessionRuleModule
                 SessionRuleUpdate.DelayTime = SessionRuleRequest.DelayTime;
                 SessionRuleUpdate.DelayFreeTime = SessionRuleRequest.DelayFreeTime;
                 SessionRuleUpdate.FreeTime = SessionRuleRequest.FreeTime;
-                SessionRuleUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                SessionRuleUpdate.UpdateDate = dateTime.AddHours(7);
                 SessionRuleUpdate.Status = SessionRuleRequest.Status;
 
                 await _SessionRuleRepository.UpdateAsync(SessionRuleUpdate);

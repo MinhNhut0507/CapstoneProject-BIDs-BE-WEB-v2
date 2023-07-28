@@ -143,8 +143,9 @@ namespace Business_Logic.Modules.UserModule
             newUser.Cccdnumber = userRequest.Cccdnumber;
             newUser.CccdfrontImage = userRequest.CccdfrontImage;
             newUser.CccdbackImage = userRequest.CccdbackImage;
-            newUser.CreateDate = DateTime.Now;
-            newUser.UpdateDate = DateTime.Now;
+            DateTime dateTime = DateTime.UtcNow;
+            newUser.CreateDate = dateTime.AddHours(7);
+            newUser.UpdateDate = dateTime.AddHours(7);
             newUser.Status = (int)UserStatusEnum.Waitting;
 
             await _UserRepository.AddAsync(newUser);
@@ -220,7 +221,8 @@ namespace Business_Logic.Modules.UserModule
                 userUpdate.Phone = userRequest.Phone;
                 userUpdate.Avatar = userRequest.Avatar;
                 //userUpdate.Status = userRequest.Status;
-                userUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                userUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _UserRepository.UpdateAsync(userUpdate);
 
@@ -254,7 +256,8 @@ namespace Business_Logic.Modules.UserModule
                 }
 
                 user.Role = (int)RoleEnum.Auctioneer;
-                user.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                user.UpdateDate = dateTime.AddHours(7);
 
                 await _UserRepository.UpdateAsync(user);
 
@@ -322,7 +325,8 @@ namespace Business_Logic.Modules.UserModule
                 }
 
                 user.Password = updatePasswordRequest.NewPassword;
-                user.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                user.UpdateDate = dateTime.AddHours(7);
 
                 await _UserRepository.UpdateAsync(user);
 

@@ -27,6 +27,8 @@ namespace Business_Logic.Modules.BookingItemModule.Interface
 
         public Task<ICollection<BookingItem>> GetBookingItemByStaffIsWatting(string email);
 
+        public Task<ICollection<BookingItem>> GetBookingItemByStaffToCreateSession(string email);
+
 
     }
 }

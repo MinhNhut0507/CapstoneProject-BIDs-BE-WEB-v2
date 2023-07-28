@@ -188,8 +188,9 @@ namespace Business_Logic.Modules.SessionModule
                 newSession.EndTime = EndTime;
             }
             newSession.FinalPrice = item.ElementAt(0).FirstPrice;
-            newSession.CreateDate = DateTime.Now;
-            newSession.UpdateDate = DateTime.Now;
+            DateTime dateTime = DateTime.UtcNow;
+            newSession.CreateDate = dateTime.AddHours(7);
+            newSession.UpdateDate = dateTime.AddHours(7);
             newSession.Status = (int)SessionStatusEnum.NotStart;
             
             await _SessionRepository.AddAsync(newSession);
@@ -288,7 +289,8 @@ namespace Business_Logic.Modules.SessionModule
                     , seconds: timeSpan.Seconds);
                     SessionUpdate.EndTime = EndTime;
                 }
-                SessionUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                SessionUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
 
@@ -326,7 +328,8 @@ namespace Business_Logic.Modules.SessionModule
                 }
 
                 SessionUpdate.FinalPrice = Price;
-                SessionUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                SessionUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
             }
@@ -355,7 +358,8 @@ namespace Business_Logic.Modules.SessionModule
                 }
 
                 SessionUpdate.Status = (int)SessionStatusEnum.InStage;
-                SessionUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                SessionUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
                 return SessionUpdate;
@@ -385,7 +389,8 @@ namespace Business_Logic.Modules.SessionModule
                 }
 
                 SessionUpdate.Status = (int)SessionStatusEnum.HaventTranferYet;
-                SessionUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                SessionUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
                 return SessionUpdate;
@@ -415,7 +420,8 @@ namespace Business_Logic.Modules.SessionModule
                 }
 
                 SessionUpdate.Status = (int)SessionStatusEnum.OutOfDate;
-                SessionUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                SessionUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
                 return SessionUpdate;
@@ -445,7 +451,8 @@ namespace Business_Logic.Modules.SessionModule
                 }
 
                 SessionUpdate.Status = (int)SessionStatusEnum.Complete;
-                SessionUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                SessionUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
                 return SessionUpdate;

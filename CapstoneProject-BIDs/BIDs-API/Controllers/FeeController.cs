@@ -20,7 +20,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class FeeController : ControllerBase
     {
         private readonly IFeeService _FeeService;
@@ -89,7 +89,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> PutFee([FromBody] UpdateFeeRequest updateFeeRequest)
         {

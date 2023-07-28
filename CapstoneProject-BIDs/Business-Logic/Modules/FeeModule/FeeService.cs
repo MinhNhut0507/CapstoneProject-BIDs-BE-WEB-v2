@@ -77,8 +77,9 @@ namespace Business_Logic.Modules.FeeModule
             newFee.ParticipationFee = FeeRequest.ParticipationFee;
             newFee.Min = FeeRequest.Min;
             newFee.Max = FeeRequest.Max;
-            newFee.UpdateDate = DateTime.Now;
-            newFee.CreateDate = DateTime.Now;
+            DateTime dateTime = DateTime.UtcNow;
+            newFee.CreateDate = dateTime.AddHours(7);
+            newFee.UpdateDate = dateTime.AddHours(7);
             newFee.Status = true;
 
             await _FeeRepository.AddAsync(newFee);
@@ -118,7 +119,8 @@ namespace Business_Logic.Modules.FeeModule
                 FeeUpdate.ParticipationFee = FeeRequest.ParticipationFee;
                 FeeUpdate.Min = FeeRequest.Min;
                 FeeUpdate.Max = FeeRequest.Max;
-                FeeUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                FeeUpdate.UpdateDate = dateTime.AddHours(7);
                 FeeUpdate.Status = FeeRequest.Status;
 
                 await _FeeRepository.UpdateAsync(FeeUpdate);

@@ -77,8 +77,9 @@ namespace Business_Logic.Modules.CategoryModule
 
             newCategory.Id = Guid.NewGuid();
             newCategory.Name = CategoryRequest.CategoryName;
-            newCategory.CreateDate = DateTime.Now;
-            newCategory.UpdateDate = DateTime.Now;
+            DateTime dateTime = DateTime.UtcNow;
+            newCategory.CreateDate = dateTime.AddHours(7);
+            newCategory.UpdateDate = dateTime.AddHours(7);
             newCategory.Status = true;
 
             await _CategoryRepository.AddAsync(newCategory);
@@ -113,7 +114,8 @@ namespace Business_Logic.Modules.CategoryModule
                 }
 
                 CategoryUpdate.Name = CategoryRequest.CategoryName;
-                CategoryUpdate.UpdateDate = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
+                CategoryUpdate.UpdateDate = dateTime.AddHours(7);
                 CategoryUpdate.Status = CategoryRequest.Status;
 
                 await _CategoryRepository.UpdateAsync(CategoryUpdate);

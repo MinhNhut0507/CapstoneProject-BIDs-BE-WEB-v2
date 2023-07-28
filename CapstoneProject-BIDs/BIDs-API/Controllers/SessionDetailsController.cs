@@ -123,7 +123,7 @@ namespace BIDs_API.Controllers
                              emp => _mapper.Map<SessionDetail, SessionDetailResponseUser>(emp)
                            );
                 var responseSort = response.OrderBy(s => s.CreateDate);
-                return Ok(response);
+                return Ok(responseSort);
             }
             catch
             {

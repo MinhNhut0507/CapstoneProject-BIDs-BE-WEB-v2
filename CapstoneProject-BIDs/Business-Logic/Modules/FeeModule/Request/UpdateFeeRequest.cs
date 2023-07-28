@@ -23,7 +23,7 @@ namespace Business_Logic.Modules.FeeModule.Request
             RuleFor(x => x.Min).NotEmpty().NotNull();
             RuleFor(x => x.Max).NotEmpty().NotNull();
             RuleFor(x => x.ParticipationFee).NotEmpty().NotNull();
-            RuleFor(x => x.DepositFee).NotEmpty().NotNull();
+            RuleFor(x => x.DepositFee);
             RuleFor(x => x.Surcharge).NotEmpty().NotNull();
             RuleFor(x => x.Status);
         }
