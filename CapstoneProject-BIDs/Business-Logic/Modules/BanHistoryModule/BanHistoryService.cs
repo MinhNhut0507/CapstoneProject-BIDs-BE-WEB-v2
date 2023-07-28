@@ -92,8 +92,9 @@ namespace Business_Logic.Modules.BanHistoryModule
             newBanHistory.Id = Guid.NewGuid();
             newBanHistory.UserId = BanHistoryRequest.UserId;
             newBanHistory.Reason = BanHistoryRequest.Reason;
-            newBanHistory.CreateDate = DateTime.Now;
-            newBanHistory.UpdateDate = DateTime.Now;
+            DateTime dateTime = DateTime.UtcNow;
+            newBanHistory.CreateDate = dateTime.AddHours(7);
+            newBanHistory.UpdateDate = dateTime.AddHours(7);
             newBanHistory.Status = true;
 
             await _BanHistoryRepository.AddAsync(newBanHistory);
