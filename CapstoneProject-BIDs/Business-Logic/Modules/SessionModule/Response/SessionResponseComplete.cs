@@ -26,7 +26,8 @@ namespace Business_Logic.Modules.SessionModule.Response
         public ICollection<ImageResponseOrther> Images { get; set; }
         public ICollection<ItemDescriptionResponse> Descriptions { get; set; }
         public double ParticipationFee { get; set; }
-        public double Deposit { get; set; }
+        public bool Deposit { get; set; }
+        public double DepositFee { get; set; }
         public string ItemName { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }
