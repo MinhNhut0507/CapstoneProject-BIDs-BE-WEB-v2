@@ -164,7 +164,8 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
             CreateMap<Description, DescriptionResponse>()
-                .ForMember(x => x.Name, d => d.MapFrom(s => s.Name));
+                .ForMember(x => x.Name, d => d.MapFrom(s => s.Name))
+                .ForMember(x => x.Id, d => d.MapFrom(s => s.Id));
 
             CreateMap<Description, DescriptionResponseAdmin>()
                 .ForMember(x => x.DescriptionId, d => d.MapFrom(s => s.Id))
@@ -173,9 +174,6 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Category.Name))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<Description, DescriptionResponseUserAndStaff>()
-                .ForMember(x => x.DescriptionName, d => d.MapFrom(s => s.Name))
-                .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Category.Name));
 
             CreateMap<Category, CategoryResponseAdmin>()
                 .ForMember(x => x.CategoryId, d => d.MapFrom(s => s.Id))
@@ -185,28 +183,12 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<Category, CategoryResponseUserAndStaff>()
-                .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Name))
-                .ForMember(x => x.Description, d => d.MapFrom(s => s.Descriptions.ToList()));
-
             //CreateMap<Description, ItemDescriptionResponse>()
             //    .ForMember(x => x.Description, d => d.MapFrom(s => s.Name));
 
             CreateMap<ItemDescription, ItemDescriptionResponse>()
                 .ForMember(x => x.Description, d => d.MapFrom(s => s.Description.Name))
                 .ForMember(x => x.Detail, d => d.MapFrom(s => s.Detail));
-
-            CreateMap<Item, ItemResponseUser>()
-                .ForMember(x => x.UserName, d => d.MapFrom(s => s.User.Name))
-                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Name))
-                .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Category.Name))
-                .ForMember(x => x.Descriptions, d => d.MapFrom(s => s.ItemDescriptions.ToList()))
-                .ForMember(x => x.DescriptionDetail, d => d.MapFrom(s => s.DescriptionDetail))
-                .ForMember(x => x.Quantity, d => d.MapFrom(s => s.Quantity))
-                .ForMember(x => x.Image, d => d.MapFrom(s => s.Image))
-                .ForMember(x => x.FirstPrice, d => d.MapFrom(s => s.FirstPrice))
-                .ForMember(x => x.StepPrice, d => d.MapFrom(s => s.StepPrice))
-                .ForMember(x => x.Deposit, d => d.MapFrom(s => s.Deposit));
 
             CreateMap<Item, ItemResponseStaffAndAdmin>()
                 .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Id))

@@ -8,6 +8,7 @@ namespace Business_Logic.Modules.DescriptionModule.Response
 {
     public class DescriptionResponse
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 }

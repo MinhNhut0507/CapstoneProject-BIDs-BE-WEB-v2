@@ -13,6 +13,7 @@ using Business_Logic.Modules.DescriptionModule.Response;
 using AutoMapper;
 using BIDs_API.SignalR;
 using Microsoft.AspNetCore.SignalR;
+using Business_Logic.Modules.CategoryModule.Response;
 
 namespace BIDs_API.Controllers
 {
@@ -36,7 +37,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Description>>> GetDescriptionsForAdmin()
+        public async Task<ActionResult<IEnumerable<DescriptionResponseAdmin>>> GetDescriptionsForAdmin()
         {
             try
             {
@@ -59,7 +60,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Description>>> GetDescriptionByID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<DescriptionResponseAdmin>>> GetDescriptionByID([FromRoute] Guid? id)
         {
             try
             {
@@ -82,7 +83,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_category_name/{name}")]
-        public async Task<ActionResult<IEnumerable<Description>>> GetDescriptionByCategoryName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<DescriptionResponseAdmin>>> GetDescriptionByCategoryName([FromRoute] string name)
         {
             try
             {
@@ -123,13 +124,13 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Description>> PostDescription([FromBody] CreateDescriptionRequest createDescriptionRequest)
+        public async Task<ActionResult<DescriptionResponseAdmin>> PostDescription([FromBody] CreateDescriptionRequest createDescriptionRequest)
         {
             try
             {
                 var description = await _DescriptionService.AddNewDescription(createDescriptionRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveDescriptionAdd", description);
-                return Ok();
+                return Ok(_mapper.Map<DescriptionResponseAdmin>(description));
             }
             catch (Exception ex)
             {
