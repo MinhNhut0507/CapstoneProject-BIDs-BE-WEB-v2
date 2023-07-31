@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.SessionRuleModule.Response
 {
-    public class SessionRuleResponseAdmin
+    public class SessionRuleResponse
     {
         public Guid SessionRuleId { get; set; }
         public string Name { get; set; }
-        public int IncreaseTime { get; set; }
         public TimeSpan FreeTime { get; set; }
         public TimeSpan DelayTime { get; set; }
         public TimeSpan DelayFreeTime { get; set; }

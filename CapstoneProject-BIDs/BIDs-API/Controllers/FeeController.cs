@@ -38,7 +38,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]       
-        public async Task<ActionResult<IEnumerable<FeeResponseAdmin>>> GetFeesForAdmin()
+        public async Task<ActionResult<IEnumerable<FeeResponse>>> GetFeesForAdmin()
         {
             try
             {
@@ -49,7 +49,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Fee, FeeResponseAdmin>(emp)
+                             emp => _mapper.Map<Fee, FeeResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -61,9 +61,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<FeeResponseAdmin>> GetFeeByID([FromRoute] int id)
+        public async Task<ActionResult<FeeResponse>> GetFeeByID([FromRoute] int id)
         {
-            var Fee = _mapper.Map<FeeResponseAdmin>(await _FeeService.GetFeeByID(id));
+            var Fee = _mapper.Map<FeeResponse>(await _FeeService.GetFeeByID(id));
 
             if (Fee == null)
             {
@@ -75,9 +75,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<FeeResponseStaff>> GetFeeByName([FromRoute] string name)
+        public async Task<ActionResult<FeeResponse>> GetFeeByName([FromRoute] string name)
         {
-            var Fee = _mapper.Map<FeeResponseStaff>(await _FeeService.GetFeeByName(name));
+            var Fee = _mapper.Map<FeeResponse>(await _FeeService.GetFeeByName(name));
 
             if (Fee == null)
             {
@@ -109,13 +109,13 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<FeeResponseAdmin>> PostFee([FromBody] CreateFeeRequest createFeeRequest)
+        public async Task<ActionResult<FeeResponse>> PostFee([FromBody] CreateFeeRequest createFeeRequest)
         {
             try
             {
                 var Fee = await _FeeService.AddNewFee(createFeeRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveFeeAdd", Fee);
-                return Ok(_mapper.Map<FeeResponseAdmin>(Fee));
+                return Ok(_mapper.Map<FeeResponse>(Fee));
             }
             catch (Exception ex)
             {

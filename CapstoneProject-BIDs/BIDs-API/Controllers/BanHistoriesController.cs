@@ -30,7 +30,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BanHistoryResponseUser>>> GetBanHistorysForAdmin()
+        public async Task<ActionResult<IEnumerable<BanHistoryResponse>>> GetBanHistorysForAdmin()
         {
             try
             {
@@ -41,7 +41,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<BanHistory, BanHistoryResponseUser>(emp)
+                             emp => _mapper.Map<BanHistory, BanHistoryResponse>(emp)
                            );
                 
                 return Ok(response);
@@ -54,7 +54,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<BanHistoryResponseUser>>> GetBanHistoryByUserID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<BanHistoryResponse>>> GetBanHistoryByUserID([FromRoute] Guid? id)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<BanHistory, BanHistoryResponseUser>(emp)
+                             emp => _mapper.Map<BanHistory, BanHistoryResponse>(emp)
                            );
                 
                 return Ok(response);
@@ -78,7 +78,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<IEnumerable<BanHistoryResponseUser>>> GetBanHistoryByUserName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<BanHistoryResponse>>> GetBanHistoryByUserName([FromRoute] string name)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<BanHistory, BanHistoryResponseUser>(emp)
+                             emp => _mapper.Map<BanHistory, BanHistoryResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -119,13 +119,13 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<BanHistoryResponseUser>> PostBanHistory([FromBody] CreateBanHistoryRequest createBanHistoryRequest)
+        public async Task<ActionResult<BanHistoryResponse>> PostBanHistory([FromBody] CreateBanHistoryRequest createBanHistoryRequest)
         {
             try
             {
                 var BanHistory = await _BanHistoryService.AddNewBanHistory(createBanHistoryRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveBanHistoryAdd", BanHistory);
-                return Ok(_mapper.Map<BanHistoryResponseUser>(BanHistory));
+                return Ok(_mapper.Map<BanHistoryResponse>(BanHistory));
             }
             catch (Exception ex)
             {

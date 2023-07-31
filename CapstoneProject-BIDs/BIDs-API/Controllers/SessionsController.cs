@@ -43,7 +43,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SessionResponseStaffAndAdmin>>> GetSessionsForAdmin()
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionsForAdmin()
         {
             try
             {
@@ -54,7 +54,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -66,7 +66,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SessionResponseUser>> GetSessionByID([FromRoute] Guid? id)
+        public async Task<ActionResult<SessionResponse>> GetSessionByID([FromRoute] Guid? id)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -89,7 +89,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<SessionResponseUser>> GetSessionByName([FromRoute] string name)
+        public async Task<ActionResult<SessionResponse>> GetSessionByName([FromRoute] string name)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -113,7 +113,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [AllowAnonymous]
         [HttpGet("by_not_start")]
-        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionNotStart()
+        public async Task<ActionResult<SessionResponse>> GetSessionNotStart()
         {
             try
             {
@@ -124,7 +124,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -136,7 +136,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_in_stage")]
-        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionInStage()
+        public async Task<ActionResult<SessionResponse>> GetSessionInStage()
         {
             try
             {
@@ -147,7 +147,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -159,7 +159,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_in_stage_by_user/{id}")]
-        public async Task<ActionResult<SessionResponseStaffAndAdmin>> GetSessionInStageByUser([FromRoute]Guid id)
+        public async Task<ActionResult<SessionResponse>> GetSessionInStageByUser([FromRoute]Guid id)
         {
             try
             {
@@ -170,7 +170,53 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Session, SessionResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_complete_by_user/{id}")]
+        public async Task<ActionResult<SessionResponse>> GetSessionCompleteByUser([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _Common.GetSessionCompleteByUser(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_havent_tranfer_yet_by_user/{id}")]
+        public async Task<ActionResult<SessionResponse>> GetSessionHaventTranferByUser([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _Common.GetSessionHaventTranferByUser(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -364,13 +410,13 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin,Staff")]
         [HttpPost]
-        public async Task<ActionResult<SessionResponseStaffAndAdmin>> PostSession([FromBody] CreateSessionRequest createSessionRequest)
+        public async Task<ActionResult<SessionResponse>> PostSession([FromBody] CreateSessionRequest createSessionRequest)
         {
             try
             {
                 var Session = await _SessionService.AddNewSession(createSessionRequest);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionAdd", Session);
-                return Ok(_mapper.Map<SessionResponseStaffAndAdmin>(Session));
+                return Ok(_mapper.Map<SessionResponse>(Session));
             }
             catch (Exception ex)
             {

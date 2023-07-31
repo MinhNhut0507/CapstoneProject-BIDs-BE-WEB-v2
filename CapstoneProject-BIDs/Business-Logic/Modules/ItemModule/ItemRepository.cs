@@ -55,6 +55,7 @@ namespace Business_Logic.Modules.ItemModule
             }
 
             query = query.Include(s => s.User)
+                .Include(s => s.Images)
                 .Include(s => s.Category)
                 .Include(s => s.BookingItems)
                 .Include(s => s.ItemDescriptions)

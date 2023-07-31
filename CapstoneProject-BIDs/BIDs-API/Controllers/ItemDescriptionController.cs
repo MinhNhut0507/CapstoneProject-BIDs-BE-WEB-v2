@@ -30,7 +30,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ItemDescriptionResponseAdminAndStaff>>> GetItemDescriptionsForAdmin()
+        public async Task<ActionResult<IEnumerable<ItemDescriptionDetailResponse>>> GetItemDescriptionsForAdmin()
         {
             try
             {
@@ -41,7 +41,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<ItemDescription, ItemDescriptionResponseAdminAndStaff>(emp)
+                             emp => _mapper.Map<ItemDescription, ItemDescriptionDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -53,9 +53,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("by_item/{id}")]
-        public async Task<ActionResult<ItemDescriptionResponseUser>> GetItemDescriptionByItem([FromRoute] Guid id)
+        public async Task<ActionResult<ItemDescriptionDetailResponse>> GetItemDescriptionByItem([FromRoute] Guid id)
         {
-            var ItemDescription = _mapper.Map<ItemDescriptionResponseUser>(await _ItemDescriptionService.GetItemDescriptionByItem(id));
+            var ItemDescription = _mapper.Map<ItemDescriptionDetailResponse>(await _ItemDescriptionService.GetItemDescriptionByItem(id));
 
             if (ItemDescription == null)
             {
@@ -67,7 +67,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_staff/{id}")]
-        public async Task<ActionResult<ItemDescriptionResponseAdminAndStaff>> GetItemDescriptionByDescription([FromRoute] Guid id)
+        public async Task<ActionResult<ItemDescriptionDetailResponse>> GetItemDescriptionByDescription([FromRoute] Guid id)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace BIDs_API.Controllers
 
                 var response = list.Select
                            (
-                             emp => _mapper.Map<ItemDescription, ItemDescriptionResponseAdminAndStaff>(emp)
+                             emp => _mapper.Map<ItemDescription, ItemDescriptionDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -92,9 +92,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_id/{id}")]
-        public async Task<ActionResult<ItemDescriptionResponseAdminAndStaff>> GetItemDescriptionByID([FromRoute] Guid id)
+        public async Task<ActionResult<ItemDescriptionDetailResponse>> GetItemDescriptionByID([FromRoute] Guid id)
         {
-            var ItemDescription = _mapper.Map<ItemDescriptionResponseAdminAndStaff>(await _ItemDescriptionService.GetItemDescriptionByID(id));
+            var ItemDescription = _mapper.Map<ItemDescriptionDetailResponse>(await _ItemDescriptionService.GetItemDescriptionByID(id));
 
             if (ItemDescription == null)
             {
@@ -124,7 +124,7 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ItemDescriptionResponseUser>> PostItemDescription([FromBody] CreateItemDescriptionRequest createItemDescriptionRequest)
+        public async Task<ActionResult<ItemDescriptionDetailResponse>> PostItemDescription([FromBody] CreateItemDescriptionRequest createItemDescriptionRequest)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace BIDs_API.Controllers
                 var ItemDescription = await _ItemDescriptionService.GetItemDescriptionByItem(createItemDescriptionRequest.ItemId);
                 await _hubContext.Clients.All.SendAsync("ReceiveItemDescriptionAdd", ItemDescription.First());
 
-                return Ok(_mapper.Map<ItemDescriptionResponseUser>(ItemDescription));
+                return Ok(_mapper.Map<ItemDescriptionDetailResponse>(ItemDescription));
             }
             catch (Exception ex)
             {

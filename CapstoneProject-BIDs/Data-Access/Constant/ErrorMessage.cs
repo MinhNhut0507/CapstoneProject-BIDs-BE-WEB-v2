@@ -86,8 +86,10 @@
             public readonly static string OUT_OF_DATE_BEGIN_ERROR = "Đã quá hạn đăng ký tham gia đấu giá";
             public readonly static string OUT_OF_TIME_ERROR = "Đã quá số lượt tăng giá(Có thể đợi tới lúc sắp kết thúc đấu giá)";
             public readonly static string TIME_ERROR = "Bạn vừa tăng giá, vui lòng đợi một thời gian";
-            public readonly static string AUCTION_TIME_ERROR = "Thời gian đấu giá phải từ 1 ngày trở xuống";
+            public readonly static string AUCTION_TIME_MAX_ERROR = "Thời gian đấu giá tối đa là 7 ngày";
+            public readonly static string AUCTION_TIME_MIN_ERROR = "Thời gian đấu giá tối thiểu là 3 giờ";
             public readonly static string END_TIME_AUCTION = "Cuộc đấu giá đã kết thúc";
+            public readonly static string JOIN_ERROR = "Bạn đã tham gia vào cuộc đấu giá này trước đó, vui lòng kiểm tra lại email để nắm bắt thông tin của cuộc đấu giá.";
 
         }
         #endregion
@@ -105,6 +107,14 @@
             public readonly static string ITEM_NOT_FOUND = "Sản phẩm không tồn tại";
             public readonly static string ITEM_EXISTED = "Sản phẩm đã tồn tại";
             public readonly static string INVALID_STEP_PRICE = "Bước giá không hợp lệ(5-10% giá khởi điểm)";
+        }
+        #endregion
+
+        #region Image error message
+        public static class ImageError
+        {
+            public readonly static string IMAGE_NOT_FOUND = "Hình ảnh không tồn tại";
+            public readonly static string IMAGE_EXISTED = "Hình ảnh đã tồn tại";
         }
         #endregion
 

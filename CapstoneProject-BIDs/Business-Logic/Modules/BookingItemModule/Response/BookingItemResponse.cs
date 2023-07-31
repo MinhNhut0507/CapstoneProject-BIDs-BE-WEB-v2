@@ -1,4 +1,5 @@
-﻿using Common.Helper;
+﻿using Business_Logic.Modules.ImageModule.Response;
+using Common.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,13 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.BookingItemModule.Response
 {
-    public class BookingItemResponseUser
+    public class BookingItemResponse
     {
+        public BookingItemResponse() 
+        {
+            Images = new HashSet<ImageResponseOrther>();
+        }
+
         public Guid BookingItemId { get; set; }
         public Guid ItemId { get; set; }
         public string ItemName { get; set; }
@@ -20,7 +26,7 @@ namespace Business_Logic.Modules.BookingItemModule.Response
         public string CategoryName { get; set; }
         public string DescriptionDetail { get; set; }
         public int Quantity { get; set; }
-        public string Image { get; set; }
+        public ICollection<ImageResponseOrther> Images { get; set; }
         public double FirstPrice { get; set; }
         public double StepPrice { get; set; }
         public bool Deposit { get; set; }

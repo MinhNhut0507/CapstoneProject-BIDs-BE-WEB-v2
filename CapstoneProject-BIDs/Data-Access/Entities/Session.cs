@@ -20,7 +20,6 @@ namespace Data_Access.Entities
         public Guid SessionRuleId { get; set; }
         public string Name { get; set; }
         public DateTime BeginTime { get; set; }
-        public TimeSpan AuctionTime { get; set; }
         public DateTime EndTime { get; set; }
         public double FinalPrice { get; set; }
         public DateTime UpdateDate { get; set; }

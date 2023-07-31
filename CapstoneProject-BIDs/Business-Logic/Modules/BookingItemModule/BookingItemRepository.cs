@@ -46,9 +46,9 @@ namespace Business_Logic.Modules.BookingItemModule
             }
 
             query = query.Include(s => s.Item)
-                .ThenInclude(s => s.Category)
-                .Include(s => s.Item)
-                .ThenInclude(s => s.User)
+                .Include(s => s.Item.Category)
+                .Include(s => s.Item.User)
+                .Include(s => s.Item.Images)
                 .Include(s => s.Staff);
 
             return options != null ? options(query).ToList() : await query.ToListAsync();

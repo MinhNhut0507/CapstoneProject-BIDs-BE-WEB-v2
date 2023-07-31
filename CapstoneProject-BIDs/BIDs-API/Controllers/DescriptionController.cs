@@ -37,7 +37,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DescriptionResponseAdmin>>> GetDescriptionsForAdmin()
+        public async Task<ActionResult<IEnumerable<DescriptionDetailResponse>>> GetDescriptionsForAdmin()
         {
             try
             {
@@ -48,7 +48,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Description, DescriptionResponseAdmin>(emp)
+                             emp => _mapper.Map<Description, DescriptionDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -60,7 +60,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<DescriptionResponseAdmin>>> GetDescriptionByID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<DescriptionDetailResponse>>> GetDescriptionByID([FromRoute] Guid? id)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Description, DescriptionResponseAdmin>(emp)
+                             emp => _mapper.Map<Description, DescriptionDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -83,7 +83,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_category_name/{name}")]
-        public async Task<ActionResult<IEnumerable<DescriptionResponseAdmin>>> GetDescriptionByCategoryName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<DescriptionDetailResponse>>> GetDescriptionByCategoryName([FromRoute] string name)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Description, DescriptionResponseAdmin>(emp)
+                             emp => _mapper.Map<Description, DescriptionDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -124,13 +124,13 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DescriptionResponseAdmin>> PostDescription([FromBody] CreateDescriptionRequest createDescriptionRequest)
+        public async Task<ActionResult<DescriptionDetailResponse>> PostDescription([FromBody] CreateDescriptionRequest createDescriptionRequest)
         {
             try
             {
                 var description = await _DescriptionService.AddNewDescription(createDescriptionRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveDescriptionAdd", description);
-                return Ok(_mapper.Map<DescriptionResponseAdmin>(description));
+                return Ok(_mapper.Map<DescriptionDetailResponse>(description));
             }
             catch (Exception ex)
             {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.StaffModule.Response
 {
-    public class StaffResponseAdmin
+    public class StaffResponse
     {
         public Guid StaffId { get; set; }
         public string StaffName { get; set; }

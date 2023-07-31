@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.UserModule.Response
 {
-    public class UserResponseStaffAndAdmin
+    public class UserResponse
     {
         public Guid UserId { get; set; }
         public string Role { get; set; }

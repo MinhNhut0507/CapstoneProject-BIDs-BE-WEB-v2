@@ -32,36 +32,36 @@ namespace Business_Logic.Modules.SessionModule
 
         public async Task<ICollection<Session>> GetAll()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category", options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images", options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsNotStart()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.NotStart).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsInStage()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.InStage).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsComplete()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.Complete).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsHaventPay()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.HaventTranferYet).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsOutOfDate()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.OutOfDate).ToList());
         }
 
@@ -71,7 +71,7 @@ namespace Business_Logic.Modules.SessionModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category"
+            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images"
                 , options: o => o.Where(x => x.Id == id).ToList());
             if (Session == null)
             {
@@ -86,7 +86,7 @@ namespace Business_Logic.Modules.SessionModule
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category"
+            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images"
                 , options: o => o.Where(x => x.Name == SessionName).ToList());
             if (Session == null)
             {
@@ -146,12 +146,18 @@ namespace Business_Logic.Modules.SessionModule
             //}
 
             TimeSpan timeSpan = (EndTime - BeginTime);
-            TimeSpan checkTime = new TimeSpan(1, 0, 0, 0);
+            TimeSpan checkTimeMax = new TimeSpan(7, 0, 0, 0);
+            TimeSpan checkTimeMin = new TimeSpan(0, 3, 0, 0);
 
-            if (timeSpan > checkTime)
+            if (timeSpan > checkTimeMax)
             {
-                throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_ERROR);
+                throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MAX_ERROR);
             }
+
+            //if (timeSpan < checkTimeMin)
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MIN_ERROR);
+            //}
 
             var item = await _ItemService.GetItemByID(SessionRequest.ItemId);
             var fee = await _FeeService.GetAll();
@@ -171,23 +177,6 @@ namespace Business_Logic.Modules.SessionModule
             }
             newSession.SessionRuleId = SessionRequest.SessionRuleId;
             newSession.BeginTime = BeginTime.AddHours(7);
-            if(timeSpan == checkTime)
-            {
-                newSession.AuctionTime = new TimeSpan(days: 0
-                , hours: (int)(timeSpan.TotalHours - 1)
-                , minutes: 59
-                , seconds: 59);
-                newSession.EndTime = EndTime.AddSeconds(-1);
-                newSession.EndTime = newSession.EndTime.AddHours(7);
-            }
-            else
-            {
-                newSession.AuctionTime = new TimeSpan(days: 0
-                , hours: (int)(timeSpan.TotalHours)
-                , minutes: timeSpan.Minutes
-                , seconds: timeSpan.Seconds);
-                newSession.EndTime = EndTime.AddHours(7);
-            }
             newSession.FinalPrice = item.ElementAt(0).FirstPrice;
             DateTime dateTime = DateTime.UtcNow;
             newSession.CreateDate = dateTime.AddHours(7);
@@ -264,32 +253,23 @@ namespace Business_Logic.Modules.SessionModule
                 //}
 
                 TimeSpan timeSpan = (EndTime - BeginTime);
-                TimeSpan checkTime = new TimeSpan(1, 0, 0, 0);
+                TimeSpan checkTimeMax = new TimeSpan(7, 0, 0, 0);
+                TimeSpan checkTimeMin = new TimeSpan(0, 3, 0, 0);
 
-                if (timeSpan > checkTime)
+                if (timeSpan > checkTimeMax)
                 {
-                    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_ERROR);
+                    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MAX_ERROR);
                 }
+
+                //if (timeSpan < checkTimeMin)
+                //{
+                //    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MIN_ERROR);
+                //}
 
                 SessionUpdate.Name = SessionRequest.SessionName;
                 SessionUpdate.SessionRuleId = SessionRequest.SessionRuleId;
                 SessionUpdate.BeginTime = BeginTime;
-                if (timeSpan == checkTime)
-                {
-                    SessionUpdate.AuctionTime = new TimeSpan(days: 0
-                    , hours: (int)(timeSpan.TotalHours - 1)
-                    , minutes: 59
-                    , seconds: 59);
-                    SessionUpdate.EndTime = EndTime.AddSeconds(-1);
-                }
-                else
-                {
-                    SessionUpdate.AuctionTime = new TimeSpan(days: 0
-                    , hours: (int)(timeSpan.TotalHours)
-                    , minutes: timeSpan.Minutes
-                    , seconds: timeSpan.Seconds);
-                    SessionUpdate.EndTime = EndTime;
-                }
+                SessionUpdate.EndTime = EndTime;
                 DateTime dateTime = DateTime.UtcNow;
                 SessionUpdate.UpdateDate = dateTime.AddHours(7);
 

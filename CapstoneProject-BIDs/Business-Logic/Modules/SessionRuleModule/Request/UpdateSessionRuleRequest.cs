@@ -7,7 +7,6 @@ namespace Business_Logic.Modules.SessionRuleModule.Request
     {
         public Guid SessionRuleId { get; set; }
         public string Name { get; set; }
-        public int IncreaseTime { get; set; }
         public TimeSpan FreeTime { get; set; }
         public TimeSpan DelayTime { get; set; }
         public TimeSpan DelayFreeTime { get; set; }
@@ -19,7 +18,6 @@ namespace Business_Logic.Modules.SessionRuleModule.Request
         {
             RuleFor(x => x.SessionRuleId).NotEmpty().NotNull();
             RuleFor(x => x.Name).NotEmpty().NotNull();
-            RuleFor(x => x.IncreaseTime).NotEmpty().NotNull();
             RuleFor(x => x.FreeTime).NotEmpty().NotNull();
             RuleFor(x => x.DelayTime).NotEmpty().NotNull();
             RuleFor(x => x.DelayFreeTime).NotEmpty().NotNull();

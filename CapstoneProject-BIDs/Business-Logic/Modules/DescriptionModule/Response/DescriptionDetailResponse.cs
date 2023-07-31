@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.DescriptionModule.Response
 {
-    public class DescriptionResponseAdmin
+    public class DescriptionDetailResponse
     {
         public Guid DescriptionId { get; set; }
         public string DescriptionName { get; set; }

@@ -39,7 +39,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>
         [Authorize(Roles = "Admin")]
         [HttpGet]       
-        public async Task<ActionResult<IEnumerable<StaffNotificationDetailResponseAdmin>>> GetStaffNotificationDetailsForAdmin()
+        public async Task<ActionResult<IEnumerable<StaffNotificationDetailResponse>>> GetStaffNotificationDetailsForAdmin()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<StaffNotificationDetail, StaffNotificationDetailResponseAdmin>(emp)
+                             emp => _mapper.Map<StaffNotificationDetail, StaffNotificationDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -63,7 +63,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<StaffNotificationDetailResponseStaff>> GetStaffNotificationDetailByStaff([FromRoute] Guid id)
+        public async Task<ActionResult<StaffNotificationDetailResponse>> GetStaffNotificationDetailByStaff([FromRoute] Guid id)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<StaffNotificationDetail, StaffNotificationDetailResponseStaff>(emp)
+                             emp => _mapper.Map<StaffNotificationDetail, StaffNotificationDetailResponse>(emp)
                            );
                 return Ok(response);
             }

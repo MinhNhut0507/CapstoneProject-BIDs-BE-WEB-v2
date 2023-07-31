@@ -14,6 +14,7 @@ using Data_Access.Entities;
 using Business_Logic.Modules.BanHistoryModule.Request;
 using Business_Logic.Modules.CommonModule.Interface;
 using Data_Access.Constant;
+using Data_Access.Enum;
 
 namespace Business_Logic.Modules.CommonModule
 {
@@ -55,9 +56,9 @@ namespace Business_Logic.Modules.CommonModule
 
                 string content = "Cuộc đấu giá của sản phẩm "
                     + item.ElementAt(0).Name
-                    + " đã bắt đầu và sẽ diễn ra trong thời gian "
-                    + session.AuctionTime.Hours + " giờ "
-                    + session.AuctionTime.Minutes + " phút"
+                    + " đã bắt đầu và sẽ diễn ra trong thời gian từ ngày"
+                    + session.BeginTime+ " đến ngày "
+                    + session.EndTime + " theo giờ Việt Nam"
                     + ". Xin vui lòng truy cập hệ thống để có thể theo dõi những thông tin mới nhất.";
 
                 MailMessage mail = new MailMessage();
@@ -182,7 +183,8 @@ namespace Business_Logic.Modules.CommonModule
                 checkSession = await _SessionService.GetSessionByID(x.SessionId);
                 if (listSession.Count() == 0)
                 {
-                    listSession.Add(checkSession.ElementAt(0));
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.InStage)
+                        listSession.Add(checkSession.ElementAt(0));
                 }
                 else
                 {
@@ -190,7 +192,70 @@ namespace Business_Logic.Modules.CommonModule
                     {
                         if (y.Id == checkSession.ElementAt(0).Id)
                             continue;
+                        if(checkSession.ElementAt(0).Status == (int)SessionStatusEnum.InStage)
+                            listSession.Add(checkSession.ElementAt(0));
+                    }
+                }
+            }
+            return listSession;
+        }
+
+        public async Task<ICollection<Session>> GetSessionCompleteByUser(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            ICollection<Session> listSession = new List<Session>();
+            var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
+            ICollection<Session> checkSession = new List<Session>();
+            foreach (var x in sessionDetail)
+            {
+                checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                if (listSession.Count() == 0)
+                {
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
                         listSession.Add(checkSession.ElementAt(0));
+                }
+                else
+                {
+                    foreach (var y in listSession)
+                    {
+                        if (y.Id == checkSession.ElementAt(0).Id)
+                            continue;
+                        if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                            listSession.Add(checkSession.ElementAt(0));
+                    }
+                }
+            }
+            return listSession;
+        }
+
+        public async Task<ICollection<Session>> GetSessionHaventTranferByUser(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            ICollection<Session> listSession = new List<Session>();
+            var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
+            ICollection<Session> checkSession = new List<Session>();
+            foreach (var x in sessionDetail)
+            {
+                checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                if (listSession.Count() == 0)
+                {
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.HaventTranferYet)
+                        listSession.Add(checkSession.ElementAt(0));
+                }
+                else
+                {
+                    foreach (var y in listSession)
+                    {
+                        if (y.Id == checkSession.ElementAt(0).Id)
+                            continue;
+                        if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.HaventTranferYet)
+                            listSession.Add(checkSession.ElementAt(0));
                     }
                 }
             }

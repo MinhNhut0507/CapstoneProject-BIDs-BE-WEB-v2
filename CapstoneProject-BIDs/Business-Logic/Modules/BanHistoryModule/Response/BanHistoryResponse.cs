@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.BanHistoryModule.Response
 {
-    public class BanHistoryResponseAdminAndStaff
+    public class BanHistoryResponse
     {
         public Guid BanId { get; set; }
         public string UserName { get; set; }

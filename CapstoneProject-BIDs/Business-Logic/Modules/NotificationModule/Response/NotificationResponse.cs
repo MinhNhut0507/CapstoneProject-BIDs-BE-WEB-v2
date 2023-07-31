@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.NotificationModule.Response
 {
-    public class NotificationResponseAdmin
+    public class NotificationResponse
     {
         public Guid Id { get; set; }
         public DateTime CreateDate { get; set; }

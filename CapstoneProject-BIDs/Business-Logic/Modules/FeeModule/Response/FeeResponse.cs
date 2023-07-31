@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.FeeModule.Response
 {
-    public class FeeResponseAdmin
+    public class FeeResponse
     {
         public int FeeId { get; set; }
         public string FeeName { get; set; }

@@ -160,23 +160,17 @@ namespace Business_Logic.Modules.SessionDetailModule
             var item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
             var ListSessionDetailSort = SessionDetail.OrderByDescending(o => o.CreateDate);
 
-            //if(Session.ElementAt(0).EndTime < DateTime.Now)
-            //{
-            //    throw new Exception(ErrorMessage.SessionError.END_TIME_AUCTION);
-            //}
+            if (Session.ElementAt(0).EndTime < DateTime.Now)
+            {
+                throw new Exception(ErrorMessage.SessionError.END_TIME_AUCTION);
+            }
 
-            //if((SessionDetail.Count() >= (SessionRule.IncreaseTime)) 
-            //    && ((Session.ElementAt(0).EndTime - DateTime.Now) > TimeSpan.FromMinutes(5)))
-            //{
-            //    throw new Exception(ErrorMessage.SessionError.OUT_OF_TIME_ERROR);
-            //}
-
-            //if (((DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < TimeSpan.FromMinutes(10))
-            //    || (((Session.ElementAt(0).EndTime - DateTime.Now) > TimeSpan.FromMinutes(5)) 
-            //        && (DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < TimeSpan.FromSeconds(15)))
-            //{
-            //    throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
-            //}
+            if (((DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayTime)
+                || (((Session.ElementAt(0).EndTime - DateTime.Now) > SessionRule.FreeTime)
+                    && (DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayFreeTime))
+            {
+                throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
+            }
 
             var newSessionDetail = new SessionDetail();
 
@@ -206,10 +200,17 @@ namespace Business_Logic.Modules.SessionDetailModule
 
             var Session = await _SessionService.GetSessionByID(jonningRequest.SessionId);
 
-            //if(Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
-            //{
-            //    throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
-            //}
+            if (Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
+            {
+                throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
+            }
+
+            var checkDetail = await _SessionDetailRepository.GetFirstOrDefaultAsync(s => s.UserId == jonningRequest.UserId);
+
+            if(checkDetail != null) 
+            {
+                throw new Exception(ErrorMessage.SessionError.JOIN_ERROR);
+            }
 
             var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 
@@ -236,9 +237,12 @@ namespace Business_Logic.Modules.SessionDetailModule
 
             string content = "Tài khoản " 
                 + user.Email 
-                + " đã đăng ký tham giá vào buổi đấu giá của sản phẩm "
+                + " đã đăng ký tham gia thành công buổi đấu giá của sản phẩm "
                 + item.ElementAt(0).Name
-                + " thành công. Vui lòng đợi tới khi cuộc đấu giá bắt đầu.";
+                + " diễn ra vào ngày "
+                + Session.ElementAt(0).BeginTime + " đến ngày "
+                + Session.ElementAt(0).EndTime
+                + ". Vui lòng đợi tới khi cuộc đấu giá bắt đầu.";
 
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");

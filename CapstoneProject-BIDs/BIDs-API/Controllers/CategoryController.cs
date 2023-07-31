@@ -30,7 +30,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryResponseAdmin>>> GetCategorysForAdmin()
+        public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategorysForAdmin()
         {
             try
             {
@@ -41,7 +41,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Category, CategoryResponseAdmin>(emp)
+                             emp => _mapper.Map<Category, CategoryResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -54,31 +54,49 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<CategoryResponseAdmin>> GetCategoryByID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategoryByID([FromRoute] Guid? id)
         {
-            var Category = _mapper.Map<CategoryResponseAdmin>(await _CategoryService.GetCategoryByID(id));
-
-            if (Category == null)
+            try
             {
-                return NotFound();
+                var list = await _CategoryService.GetCategoryByID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Category, CategoryResponse>(emp)
+                           );
+                return Ok(response);
             }
-
-            return Category;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<CategoryResponseAdmin>> GetCategoryByName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategoryByName([FromRoute] string name)
         {
-            var Category = _mapper.Map<CategoryResponseAdmin>(await _CategoryService.GetCategoryByName(name));
-
-            if (Category == null)
+            try
             {
-                return NotFound();
+                var list = await _CategoryService.GetCategoryByName(name);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Category, CategoryResponse>(emp)
+                           );
+                return Ok(response);
             }
-
-            return Category;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // PUT api/<ValuesController>/5
@@ -103,13 +121,13 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<CategoryResponseAdmin>> PostCategory([FromBody] CreateCategoryRequest createCategoryRequest)
+        public async Task<ActionResult<CategoryResponse>> PostCategory([FromBody] CreateCategoryRequest createCategoryRequest)
         {
             try
             {
                 var Category = await _CategoryService.AddNewCategory(createCategoryRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveCategoryAdd", Category);
-                return Ok(_mapper.Map<CategoryResponseAdmin>(Category));
+                return Ok(_mapper.Map<CategoryResponse>(Category));
             }
             catch (Exception ex)
             {

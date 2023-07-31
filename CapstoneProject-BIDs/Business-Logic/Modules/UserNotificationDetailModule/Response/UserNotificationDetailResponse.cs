@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business_Logic.Modules.StaffNotificationDetailModule.Response
+namespace Business_Logic.Modules.UserNotificationDetailModule.Response
 {
-    public class StaffNotificationDetailResponseAdmin
+    public class UserNotificationDetailResponse
     {
         public Guid NotificationId { get; set; }
         public string Message { get; set; }
-        public Guid StaffId { get; set; }
+        public Guid UserId { get; set; }
         public string TypeName { get; set; }
     }
 }

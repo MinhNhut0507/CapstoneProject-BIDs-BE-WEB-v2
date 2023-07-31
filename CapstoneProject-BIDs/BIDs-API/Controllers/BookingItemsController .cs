@@ -30,7 +30,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemsForAdmin()
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemsForAdmin()
         {
             try
             {
@@ -41,7 +41,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<BookingItem, BookingItemResponseAdminAndStaff>(emp)
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -53,7 +53,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("by_item/{id}")]
-        public async Task<ActionResult<ICollection<BookingItemResponseUser>>> GetBookingItemByItem([FromRoute] Guid id)
+        public async Task<ActionResult<ICollection<BookingItemResponse>>> GetBookingItemByItem([FromRoute] Guid id)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<BookingItem, BookingItemResponseUser>(emp)
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -77,7 +77,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff")]
         [HttpGet("by_staff/{id}")]
-        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaff([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaff([FromRoute] Guid id)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace BIDs_API.Controllers
 
                 var response = list.Select
                            (
-                             emp => _mapper.Map<BookingItem, BookingItemResponseAdminAndStaff>(emp)
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -102,7 +102,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff")]
         [HttpGet("by_staff_watting/{email}")]
-        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaffIsWatting([FromRoute] string email)
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaffIsWatting([FromRoute] string email)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace BIDs_API.Controllers
 
                 var response = list.Select
                            (
-                             emp => _mapper.Map<BookingItem, BookingItemResponseAdminAndStaff>(emp)
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -127,7 +127,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff")]
         [HttpGet("by_staff_to_create_session/{email}")]
-        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByStaffToCreateSession([FromRoute] string email)
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaffToCreateSession([FromRoute] string email)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace BIDs_API.Controllers
 
                 var response = list.Select
                            (
-                             emp => _mapper.Map<BookingItem, BookingItemResponseAdminAndStaff>(emp)
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -152,7 +152,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_id/{id}")]
-        public async Task<ActionResult<IEnumerable<BookingItemResponseAdminAndStaff>>> GetBookingItemByID([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByID([FromRoute] Guid id)
         {
             try
             {
@@ -164,7 +164,7 @@ namespace BIDs_API.Controllers
 
                 var response = list.Select
                            (
-                             emp => _mapper.Map<BookingItem, BookingItemResponseAdminAndStaff>(emp)
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -194,7 +194,7 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<BookingItemResponseUser>> PostBookingItem([FromBody] CreateBookingItemRequest createBookingItemRequest)
+        public async Task<ActionResult<BookingItemResponse>> PostBookingItem([FromBody] CreateBookingItemRequest createBookingItemRequest)
         {
             try
             {
@@ -202,7 +202,7 @@ namespace BIDs_API.Controllers
                 var bookingItem = await _BookingItemService.GetBookingItemByItem(createBookingItemRequest.ItemId);
                 await _hubContext.Clients.All.SendAsync("ReceiveBookingItemAdd", bookingItem.First());
 
-                return Ok(_mapper.Map<BookingItemResponseUser>(bookingItem));
+                return Ok(_mapper.Map<BookingItemResponse>(bookingItem));
             }
             catch (Exception ex)
             {

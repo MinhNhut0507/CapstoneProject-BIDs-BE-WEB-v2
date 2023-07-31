@@ -18,6 +18,7 @@ using Business_Logic.Modules.NotificationModule.Response;
 using Business_Logic.Modules.NotificationTypeModule.Response;
 using Business_Logic.Modules.StaffNotificationDetailModule.Response;
 using Business_Logic.Modules.UserNotificationDetailModule.Response;
+using Business_Logic.Modules.ImageModule.Response;
 
 namespace BIDs_API.Mapper
 {
@@ -37,14 +38,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Month, d => d.MapFrom(s => s.Month))
                 .ForMember(x => x.Day, d => d.MapFrom(s => s.Day));
 
-            CreateMap<Staff, StaffResponseStaff>()
-                .ForMember(x => x.Email, d => d.MapFrom(s => s.Email))
-                .ForMember(x => x.Password, d => d.MapFrom(s => s.Password))
-                .ForMember(x => x.StaffName, d => d.MapFrom(s => s.Name))
-                .ForMember(x => x.DateOfBirth, d => d.MapFrom(s => s.DateOfBirth))
-                .ForMember(x => x.Address, d => d.MapFrom(s => s.Address))
-                .ForMember(x => x.Phone, d => d.MapFrom(s => s.Phone));
-            CreateMap<Staff, StaffResponseAdmin>()
+            CreateMap<Staff, StaffResponse>()
                 .ForMember(x => x.StaffId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.Email, d => d.MapFrom(s => s.Email))
                 .ForMember(x => x.StaffName, d => d.MapFrom(s => s.Name))
@@ -53,21 +47,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Phone, d => d.MapFrom(s => s.Phone))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<Users, UserResponseUser>()
-                .ForMember(x => x.Email, d => d.MapFrom(s => s.Email))
-                .ForMember(x => x.Role, d => d.ConvertUsing(new RoleEnumConverter(), s => s.Role))
-                .ForMember(x => x.Password, d => d.MapFrom(s => s.Password))
-                .ForMember(x => x.UserName, d => d.MapFrom(s => s.Name))
-                .ForMember(x => x.Avatar, d => d.MapFrom(s => s.Avatar))
-                .ForMember(x => x.DateOfBirth, d => d.MapFrom(s => s.DateOfBirth))
-                .ForMember(x => x.Address, d => d.MapFrom(s => s.Address))
-                .ForMember(x => x.Phone, d => d.MapFrom(s => s.Phone))
-                .ForMember(x => x.CCCDNumber, d => d.MapFrom(s => s.Cccdnumber))
-                .ForMember(x => x.CCCDBackImage, d => d.MapFrom(s => s.CccdbackImage))
-                .ForMember(x => x.CCCDFrontImage, d => d.MapFrom(s => s.CccdfrontImage))
-                .ForMember(x => x.Status, d => d.ConvertUsing(new UserStatusEnumConverter(), s => s.Status));
-
-            CreateMap<Users, UserResponseStaffAndAdmin>()
+            CreateMap<Users, UserResponse>()
                 .ForMember(x => x.UserId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.Role, d => d.ConvertUsing(new RoleEnumConverter(), s => s.Role))
                 .ForMember(x => x.Email, d => d.MapFrom(s => s.Email))
@@ -82,29 +62,8 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.CccdfrontImage, d => d.MapFrom(s => s.CccdfrontImage))
                 .ForMember(x => x.Status, d => d.ConvertUsing(new UserStatusEnumConverter(), s => s.Status));
 
-            CreateMap<Session, SessionResponseUser>()
-                .ForMember(x => x.SessionId, d => d.MapFrom(s => s.Id))
-                .ForMember(x => x.FeeId, d => d.MapFrom(s => s.FeeId))
-                .ForMember(x => x.FeeName, d => d.MapFrom(s => s.Fee.Name))
-                .ForMember(x => x.SessionName, d => d.MapFrom(s => s.Name))
-                .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Item.Id))
-                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
-                .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Item.Category.Name))
-                .ForMember(x => x.Image, d => d.MapFrom(s => s.Item.Image))
-                .ForMember(x => x.Description, d => d.MapFrom(s => s.Item.DescriptionDetail))
-                .ForMember(x => x.FreeTime, d => d.MapFrom(s => s.SessionRule.FreeTime))
-                .ForMember(x => x.IncreaseTime, d => d.MapFrom(s => s.SessionRule.IncreaseTime))
-                .ForMember(x => x.DelayTime, d => d.MapFrom(s => s.SessionRule.DelayTime))
-                .ForMember(x => x.DelayFreeTime, d => d.MapFrom(s => s.SessionRule.DelayFreeTime))
-                .ForMember(x => x.BeginTime, d => d.MapFrom(s => s.BeginTime))
-                .ForMember(x => x.AuctionTime, d => d.MapFrom(s => s.AuctionTime))
-                .ForMember(x => x.EndTime, d => d.MapFrom(s => s.EndTime))
-                .ForMember(x => x.FirstPrice, d => d.MapFrom(s => s.Item.FirstPrice))
-                .ForMember(x => x.FinalPrice, d => d.MapFrom(s => s.FinalPrice))
-                .ForMember(x => x.StepPrice, d => d.MapFrom(s => s.Item.StepPrice))
-                .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
-                .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
-                .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
+            CreateMap<Image, ImageResponseOrther>()
+                .ForMember(x => x.Detail, d => d.MapFrom(s => s.DetailImage));
 
             CreateMap<Session, SessionResponseComplete>()
                 .ForMember(x => x.SessionId, d => d.MapFrom(s => s.Id))
@@ -112,15 +71,14 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.SessionName, d => d.MapFrom(s => s.Name))
                 .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
                 .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Item.Category.Name))
-                .ForMember(x => x.Image, d => d.MapFrom(s => s.Item.Image))
+                .ForMember(x => x.Images, d => d.MapFrom(s => s.Item.Images.ToList()))
                 .ForMember(x => x.Description, d => d.MapFrom(s => s.Item.DescriptionDetail))
                 .ForMember(x => x.BeginTime, d => d.MapFrom(s => s.BeginTime))
-                .ForMember(x => x.AuctionTime, d => d.MapFrom(s => s.AuctionTime))
                 .ForMember(x => x.EndTime, d => d.MapFrom(s => s.EndTime))
                 .ForMember(x => x.FinalPrice, d => d.MapFrom(s => s.FinalPrice))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<Session, SessionResponseStaffAndAdmin>()
+            CreateMap<Session, SessionResponse>()
                 .ForMember(x => x.SessionId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.FeeId, d => d.MapFrom(s => s.FeeId))
                 .ForMember(x => x.FeeName, d => d.MapFrom(s => s.Fee.Name))
@@ -128,14 +86,12 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Item.Id))
                 .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
                 .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Item.Category.Name))
-                .ForMember(x => x.Image, d => d.MapFrom(s => s.Item.Image))
+                .ForMember(x => x.Images, d => d.MapFrom(s => s.Item.Images.ToList()))
                 .ForMember(x => x.Description, d => d.MapFrom(s => s.Item.DescriptionDetail))
-                .ForMember(x => x.IncreaseTime, d => d.MapFrom(s => s.SessionRule.IncreaseTime))
                 .ForMember(x => x.FreeTime, d => d.MapFrom(s => s.SessionRule.FreeTime))
                 .ForMember(x => x.DelayTime, d => d.MapFrom(s => s.SessionRule.DelayTime))
                 .ForMember(x => x.DelayFreeTime, d => d.MapFrom(s => s.SessionRule.DelayFreeTime))
                 .ForMember(x => x.BeginTime, d => d.MapFrom(s => s.BeginTime))
-                .ForMember(x => x.AuctionTime, d => d.MapFrom(s => s.AuctionTime))
                 .ForMember(x => x.EndTime, d => d.MapFrom(s => s.EndTime))
                 .ForMember(x => x.FirstPrice, d => d.MapFrom(s => s.Item.FirstPrice))
                 .ForMember(x => x.FinalPrice, d => d.MapFrom(s => s.FinalPrice))
@@ -144,14 +100,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<SessionDetail, SessionDetailResponseUser>()
-                .ForMember(x => x.UserName, d => d.MapFrom(s => s.User.Name))
-                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Session.Item.Name))
-                .ForMember(x => x.SessionName, d => d.MapFrom(s => s.Session.Name))
-                .ForMember(x => x.Price, d => d.MapFrom(s => s.Price))
-                .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate));
-
-            CreateMap<SessionDetail, SessionDetailResponseStaffAndAdmin>()
+            CreateMap<SessionDetail, SessionDetailResponse>()
                 .ForMember(x => x.SessionDetailId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.UserId, d => d.MapFrom(s => s.User.Id))
                 .ForMember(x => x.UserName, d => d.MapFrom(s => s.User.Name))
@@ -167,7 +116,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Name, d => d.MapFrom(s => s.Name))
                 .ForMember(x => x.Id, d => d.MapFrom(s => s.Id));
 
-            CreateMap<Description, DescriptionResponseAdmin>()
+            CreateMap<Description, DescriptionDetailResponse>()
                 .ForMember(x => x.DescriptionId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.DescriptionName, d => d.MapFrom(s => s.Name))
                 .ForMember(x => x.CategoryID, d => d.MapFrom(s => s.CategoryId))
@@ -175,7 +124,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
 
-            CreateMap<Category, CategoryResponseAdmin>()
+            CreateMap<Category, CategoryResponse>()
                 .ForMember(x => x.CategoryId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Name))
                 .ForMember(x => x.Descriptions, d => d.MapFrom(s => s.Descriptions.ToList()))
@@ -190,7 +139,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Description, d => d.MapFrom(s => s.Description.Name))
                 .ForMember(x => x.Detail, d => d.MapFrom(s => s.Detail));
 
-            CreateMap<Item, ItemResponseStaffAndAdmin>()
+            CreateMap<Item, ItemResponse>()
                 .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.UserName, d => d.MapFrom(s => s.User.Name))
                 .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Name))
@@ -198,7 +147,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Descriptions, d => d.MapFrom(s => s.ItemDescriptions.ToList()))
                 .ForMember(x => x.DescriptionDetail, d => d.MapFrom(s => s.DescriptionDetail))
                 .ForMember(x => x.Quantity, d => d.MapFrom(s => s.Quantity))
-                .ForMember(x => x.Image, d => d.MapFrom(s => s.Image))
+                .ForMember(x => x.Images, d => d.MapFrom(s => s.Images.ToList()))
                 .ForMember(x => x.FirstPrice, d => d.MapFrom(s => s.FirstPrice))
                 .ForMember(x => x.StepPrice, d => d.MapFrom(s => s.StepPrice))
                 .ForMember(x => x.Deposit, d => d.MapFrom(s => s.Deposit))
@@ -206,12 +155,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate));
             //.ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<BanHistory, BanHistoryResponseUser>()
-                .ForMember(x => x.UserName, d => d.MapFrom(s => s.User.Name))
-                .ForMember(x => x.Reason, d => d.MapFrom(s => s.Reason))
-                .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate));
-
-            CreateMap<BanHistory, BanHistoryResponseAdminAndStaff>()
+            CreateMap<BanHistory, BanHistoryResponse>()
                 .ForMember(x => x.BanId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.UserName, d => d.MapFrom(s => s.User.Name))
                 .ForMember(x => x.Reason, d => d.MapFrom(s => s.Reason))
@@ -219,13 +163,13 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<BookingItem, BookingItemResponseAdminAndStaff>()
+            CreateMap<BookingItem, BookingItemResponse>()
                 .ForMember(x => x.BookingItemId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Item.Id))
                 .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
                 .ForMember(x => x.UserName, d => d.MapFrom(s => s.Item.User.Name))
                 .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Item.Category.Name))
-                .ForMember(x => x.Image, d => d.MapFrom(s => s.Item.Image))
+                .ForMember(x => x.Images, d => d.MapFrom(s => s.Item.Images.ToList()))
                 .ForMember(x => x.DescriptionDetail, d => d.MapFrom(s => s.Item.DescriptionDetail))
                 .ForMember(x => x.Deposit, d => d.MapFrom(s => s.Item.Deposit))
                 .ForMember(x => x.Quantity, d => d.MapFrom(s => s.Item.Quantity))
@@ -236,24 +180,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
                 .ForMember(x => x.Status, d => d.ConvertUsing(new BookingItemEnumConverter(), s => s.Status));
 
-            CreateMap<BookingItem, BookingItemResponseUser>()
-                .ForMember(x => x.BookingItemId, d => d.MapFrom(s => s.Id))
-                .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Item.Id))
-                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
-                .ForMember(x => x.UserName, d => d.MapFrom(s => s.Item.User.Name))
-                .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Item.Category.Name))
-                .ForMember(x => x.Image, d => d.MapFrom(s => s.Item.Image))
-                .ForMember(x => x.DescriptionDetail, d => d.MapFrom(s => s.Item.DescriptionDetail))
-                .ForMember(x => x.Deposit, d => d.MapFrom(s => s.Item.Deposit))
-                .ForMember(x => x.Quantity, d => d.MapFrom(s => s.Item.Quantity))
-                .ForMember(x => x.FirstPrice, d => d.MapFrom(s => s.Item.FirstPrice))
-                .ForMember(x => x.StepPrice, d => d.MapFrom(s => s.Item.StepPrice))
-                .ForMember(x => x.StaffName, d => d.MapFrom(s => s.Staff.Name))
-                .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
-                .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
-                .ForMember(x => x.Status, d => d.ConvertUsing(new BookingItemEnumConverter(), s => s.Status));
-
-            CreateMap<ItemDescription, ItemDescriptionResponseAdminAndStaff>()
+            CreateMap<ItemDescription, ItemDescriptionDetailResponse>()
                 .ForMember(x => x.ItemDescriptionId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Description.Category.Name))
                 .ForMember(x => x.DescriptionName, d => d.MapFrom(s => s.Description.Name))
@@ -262,14 +189,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-
-            CreateMap<ItemDescription, ItemDescriptionResponseUser>()
-                .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Description.Category.Name))
-                .ForMember(x => x.DescriptionName, d => d.MapFrom(s => s.Description.Name))
-                .ForMember(x => x.Detail, d => d.MapFrom(s => s.Detail))
-                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name));
-
-            CreateMap<Fee, FeeResponseAdmin>()
+            CreateMap<Fee, FeeResponse>()
                 .ForMember(x => x.FeeId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.FeeName, d => d.MapFrom(s => s.Name))
                 .ForMember(x => x.Min, d => d.MapFrom(s => s.Min))
@@ -281,18 +201,9 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<Fee, FeeResponseStaff>()
-                .ForMember(x => x.FeeName, d => d.MapFrom(s => s.Name))
-                .ForMember(x => x.Min, d => d.MapFrom(s => s.Min))
-                .ForMember(x => x.Max, d => d.MapFrom(s => s.Max))
-                .ForMember(x => x.ParticipationFee, d => d.MapFrom(s => s.ParticipationFee))
-                .ForMember(x => x.DepositFee, d => d.MapFrom(s => s.DepositFee))
-                .ForMember(x => x.Surcharge, d => d.MapFrom(s => s.Surcharge));
-
-            CreateMap<SessionRule, SessionRuleResponseAdmin>()
+            CreateMap<SessionRule, SessionRuleResponse>()
                 .ForMember(x => x.SessionRuleId, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.Name, d => d.MapFrom(s => s.Name))
-                .ForMember(x => x.IncreaseTime, d => d.MapFrom(s => s.IncreaseTime))
                 .ForMember(x => x.FreeTime, d => d.MapFrom(s => s.FreeTime))
                 .ForMember(x => x.DelayTime, d => d.MapFrom(s => s.DelayTime))
                 .ForMember(x => x.DelayFreeTime, d => d.MapFrom(s => s.DelayFreeTime))
@@ -300,33 +211,33 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<StaffNotificationDetail, StaffNotificationDetailResponseAdmin>()
+            CreateMap<StaffNotificationDetail, StaffNotificationDetailResponse>()
                 .ForMember(x => x.NotificationId, d => d.MapFrom(s => s.NotificationId))
                 .ForMember(x => x.Message, d => d.MapFrom(s => s.Messages))
                 .ForMember(x => x.StaffId, d => d.MapFrom(s => s.StaffId))
                 .ForMember(x => x.TypeName, d => d.MapFrom(s => s.Type.Name));
 
-            CreateMap<Notification, NotificationResponseAdmin>()
+            CreateMap<Notification, NotificationResponse>()
                 .ForMember(x => x.Id, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.ExpireDate, d => d.MapFrom(s => s.ExpireDate))
                 .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
-            CreateMap<NotificationType, NotificationTypeResponseAdmin>()
+            CreateMap<NotificationType, NotificationTypeResponse>()
                 .ForMember(x => x.Id, d => d.MapFrom(s => s.Id))
                 .ForMember(x => x.Name, d => d.MapFrom(s => s.Name));
 
-            CreateMap<UserNotificationDetail, UserNotificationDetailResponseAdmin>()
+            CreateMap<UserNotificationDetail, UserNotificationDetailResponse>()
                 .ForMember(x => x.NotificationId, d => d.MapFrom(s => s.NotificationId))
                 .ForMember(x => x.Message, d => d.MapFrom(s => s.Messages))
                 .ForMember(x => x.UserId, d => d.MapFrom(s => s.UserId))
                 .ForMember(x => x.TypeName, d => d.MapFrom(s => s.Type.Name));
 
-            CreateMap<UserNotificationDetail, UserNotificationDetailResponseUser>()
-                .ForMember(x => x.Message, d => d.MapFrom(s => s.Messages));
-
-            CreateMap<StaffNotificationDetail, StaffNotificationDetailResponseStaff>()
-                .ForMember(x => x.Message, d => d.MapFrom(s => s.Messages));
+            CreateMap<Image, ImageResponse>()
+                .ForMember(x => x.Id, d => d.MapFrom(s => s.Id))
+                .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Item.Id))
+                .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
+                .ForMember(x => x.Detail, d => d.MapFrom(s => s.DetailImage));
         }
 
         public class RoleEnumConverter : IValueConverter<int, string>

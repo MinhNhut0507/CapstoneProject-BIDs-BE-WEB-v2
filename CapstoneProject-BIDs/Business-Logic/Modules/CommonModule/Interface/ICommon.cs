@@ -13,6 +13,8 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task SendEmailWinnerAuction(Session session);
         public Task SendEmailOutOfDateAuction(Session session);
         public Task<ICollection<Session>> GetSessionInStageByUser(Guid id);
+        public Task<ICollection<Session>> GetSessionCompleteByUser(Guid id);
+        public Task<ICollection<Session>> GetSessionHaventTranferByUser(Guid id);
         public Task<Users> GetUserWinning(Guid id);
     }
 }

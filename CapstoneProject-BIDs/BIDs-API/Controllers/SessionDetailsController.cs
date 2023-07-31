@@ -39,7 +39,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SessionDetailResponseStaffAndAdmin>>> GetSessionDetailsForAdminAndStaff()
+        public async Task<ActionResult<IEnumerable<SessionDetailResponse>>> GetSessionDetailsForAdminAndStaff()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<SessionDetail, SessionDetailResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<SessionDetail, SessionDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -63,7 +63,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<SessionDetailResponseStaffAndAdmin>> GetSessionDetailByID([FromRoute] Guid? id)
+        public async Task<ActionResult<SessionDetailResponse>> GetSessionDetailByID([FromRoute] Guid? id)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<SessionDetail, SessionDetailResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<SessionDetail, SessionDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -86,7 +86,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionDetailResponseUser>>> GetSessionDetailByUser([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<SessionDetailResponse>>> GetSessionDetailByUser([FromRoute] Guid? id)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<SessionDetail, SessionDetailResponseUser>(emp)
+                             emp => _mapper.Map<SessionDetail, SessionDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -109,7 +109,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_session/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionDetailResponseUser>>> GetSessionDetailBySession([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<SessionDetailResponse>>> GetSessionDetailBySession([FromRoute] Guid? id)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<SessionDetail, SessionDetailResponseUser>(emp)
+                             emp => _mapper.Map<SessionDetail, SessionDetailResponse>(emp)
                            );
                 var responseSort = response.OrderByDescending(s => s.CreateDate);
                 return Ok(responseSort);
@@ -133,7 +133,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_session_for_bidder")]
-        public async Task<ActionResult<IEnumerable<SessionDetailResponseUser>>> GetSessionDetailBySessionForBidder([FromHeader] Guid? id, Guid? userId)
+        public async Task<ActionResult<IEnumerable<SessionDetailResponse>>> GetSessionDetailBySessionForBidder([FromHeader] Guid? id, Guid? userId)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<SessionDetail, SessionDetailResponseUser>(emp)
+                             emp => _mapper.Map<SessionDetail, SessionDetailResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -176,7 +176,7 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpPost("increase_price")]
-        public async Task<ActionResult<SessionDetailResponseStaffAndAdmin>> IncreasePrice([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
+        public async Task<ActionResult<SessionDetailResponse>> IncreasePrice([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
         {
             try
             {
@@ -184,7 +184,7 @@ namespace BIDs_API.Controllers
                 var Session = await _SessionService.GetSessionByID(SessionDetail.SessionId);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionUpdate", Session.ElementAt(0));
-                return Ok(_mapper.Map<SessionDetailResponseStaffAndAdmin>(SessionDetail));
+                return Ok(_mapper.Map<SessionDetailResponse>(SessionDetail));
             }
             catch (Exception ex)
             {
@@ -196,7 +196,7 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpPost("joinning")]
-        public async Task<ActionResult<SessionDetailResponseStaffAndAdmin>> Joinning([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
+        public async Task<ActionResult<SessionDetailResponse>> Joinning([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
         {
             try
             {
@@ -204,7 +204,7 @@ namespace BIDs_API.Controllers
                 var Session = await _SessionService.GetSessionByID(SessionDetail.SessionId);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionUpdate", Session.ElementAt(0));
-                return Ok(_mapper.Map<SessionDetailResponseStaffAndAdmin>(SessionDetail));
+                return Ok(_mapper.Map<SessionDetailResponse>(SessionDetail));
             }
             catch (Exception ex)
             {

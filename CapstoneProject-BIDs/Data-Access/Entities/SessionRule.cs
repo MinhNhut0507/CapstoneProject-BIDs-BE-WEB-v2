@@ -15,7 +15,6 @@ namespace Data_Access.Entities
 
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public int IncreaseTime { get; set; }
         public TimeSpan FreeTime { get; set; }
         public TimeSpan DelayTime { get; set; }
         public TimeSpan DelayFreeTime { get; set; }

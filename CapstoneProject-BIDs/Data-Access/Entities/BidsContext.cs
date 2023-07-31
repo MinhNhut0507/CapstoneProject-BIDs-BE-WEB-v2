@@ -55,7 +55,7 @@ namespace Data_Access.Entities
                 });
 
                 optionsBuilder
-                              .UseSqlServer("server=DESKTOP-ARAK6K1\\SQLEXPRESS; database=BIDs; uid=sa; pwd=05072001;")
+                              .UseSqlServer("server=DESKTOP-ARAK6K1\\SQLEXPRESS; database=BIDsLocal; uid=sa; pwd=05072001;")
                               //.UseSqlServer("Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n")
                               .UseLoggerFactory(loggerFactory); // Use the created loggerFactory
             }
@@ -281,9 +281,6 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Deposit).IsRequired().HasColumnName("Deposit");
 
-                entity.Property(e => e.Image).IsRequired()
-                    .HasMaxLength(int.MaxValue).HasColumnName("Image");
-
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -304,6 +301,28 @@ namespace Data_Access.Entities
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Item__UserID__37A5467C");
+            });
+
+            modelBuilder.Entity<Image>(entity =>
+            {
+                entity.ToTable("Image");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.ItemId).IsRequired().HasColumnName("ItemID");
+
+                entity.Property(e => e.DetailImage)
+                    .IsRequired()
+                    .HasMaxLength(int.MaxValue)
+                    .HasColumnName("DetailImage");
+
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.Images)
+                    .HasForeignKey(d => d.ItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Image_Item");
             });
 
             modelBuilder.Entity<ItemDescription>(entity =>
@@ -515,8 +534,6 @@ namespace Data_Access.Entities
                     .ValueGeneratedNever()
                     .HasColumnName("ID");
 
-                entity.Property(e => e.AuctionTime).HasColumnName("AuctionTime").HasColumnType("time(7)");
-
                 entity.Property(e => e.BeginTime).HasColumnType("datetime");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
@@ -596,8 +613,6 @@ namespace Data_Access.Entities
                     .HasColumnName("ID");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.IncreaseTime).IsRequired().HasColumnName("IncreaseTime");
 
                 entity.Property(e => e.FreeTime).IsRequired().HasColumnName("FreeTime").HasColumnType("time(7)"); ;
 

@@ -47,6 +47,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
+using Business_Logic.Modules.ImageModule.Interface;
+using Business_Logic.Modules.ImageModule;
 
 namespace BIDs_API
 {
@@ -185,6 +187,9 @@ namespace BIDs_API
             //User Notification Detail Module
             services.AddScoped<IUserNotificationDetailRepository, UserNotificationDetailRepository>();
             services.AddScoped<IUserNotificationDetailService, UserNotificationDetailService>();
+            //Image Module
+            services.AddScoped<IImageRepository, ImageRepository>();
+            services.AddScoped<IImageService, ImageService>();
             //Login Module
             services.AddScoped<ILoginService, LoginService>();
             //Send Email Module

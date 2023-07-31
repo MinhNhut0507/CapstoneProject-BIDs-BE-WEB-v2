@@ -38,7 +38,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]       
-        public async Task<ActionResult<IEnumerable<SessionRuleResponseAdmin>>> GetSessionRulesForAdmin()
+        public async Task<ActionResult<IEnumerable<SessionRuleResponse>>> GetSessionRulesForAdmin()
         {
             try
             {
@@ -49,7 +49,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<SessionRule, SessionRuleResponseAdmin>(emp)
+                             emp => _mapper.Map<SessionRule, SessionRuleResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -61,9 +61,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SessionRuleResponseAdmin>> GetSessionRuleByID([FromRoute] Guid id)
+        public async Task<ActionResult<SessionRuleResponse>> GetSessionRuleByID([FromRoute] Guid id)
         {
-            var SessionRule = _mapper.Map<SessionRuleResponseAdmin>(await _SessionRuleService.GetSessionRuleByID(id));
+            var SessionRule = _mapper.Map<SessionRuleResponse>(await _SessionRuleService.GetSessionRuleByID(id));
 
             if (SessionRule == null)
             {
@@ -75,9 +75,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<SessionRuleResponseAdmin>> GetSessionRuleByName([FromRoute] string name)
+        public async Task<ActionResult<SessionRuleResponse>> GetSessionRuleByName([FromRoute] string name)
         {
-            var SessionRule = _mapper.Map<SessionRuleResponseAdmin>(await _SessionRuleService.GetSessionRuleByName(name));
+            var SessionRule = _mapper.Map<SessionRuleResponse>(await _SessionRuleService.GetSessionRuleByName(name));
 
             if (SessionRule == null)
             {
@@ -109,13 +109,13 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<SessionRuleResponseAdmin>> PostSessionRule([FromBody] CreateSessionRuleRequest createSessionRuleRequest)
+        public async Task<ActionResult<SessionRuleResponse>> PostSessionRule([FromBody] CreateSessionRuleRequest createSessionRuleRequest)
         {
             try
             {
                 var SessionRule = await _SessionRuleService.AddNewSessionRule(createSessionRuleRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveSessionRuleAdd", SessionRule);
-                return Ok(_mapper.Map<SessionRuleResponseAdmin>(SessionRule));
+                return Ok(_mapper.Map<SessionRuleResponse>(SessionRule));
             }
             catch (Exception ex)
             {

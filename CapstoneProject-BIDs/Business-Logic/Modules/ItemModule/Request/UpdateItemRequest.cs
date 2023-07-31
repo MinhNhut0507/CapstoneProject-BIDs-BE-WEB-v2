@@ -11,7 +11,6 @@ namespace Business_Logic.Modules.ItemModule.Request
         public Guid CategoryId { get; set; }
         public int Quantity { get; set; }
         public bool Deposit { get; set; }
-        public string Image { get; set; }
         public double FirstPrice { get; set; }
         public double StepPrice { get; set; }
     }
@@ -25,7 +24,6 @@ namespace Business_Logic.Modules.ItemModule.Request
             RuleFor(x => x.CategoryId).NotEmpty().NotNull();
             RuleFor(x => x.Deposit).NotNull();
             RuleFor(x => x.Quantity).NotEmpty().NotNull();
-            RuleFor(x => x.Image).NotEmpty().NotNull();
             RuleFor(x => x.FirstPrice).NotEmpty().NotNull();
             RuleFor(x => x.StepPrice).NotEmpty().NotNull();
         }

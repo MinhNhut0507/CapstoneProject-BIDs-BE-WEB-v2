@@ -1,4 +1,5 @@
 ﻿using Business_Logic.Modules.DescriptionModule.Response;
+using Business_Logic.Modules.ImageModule.Response;
 using Business_Logic.Modules.ItemDescriptionModule.Response;
 using Common.Helper;
 using System;
@@ -9,11 +10,12 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.ItemModule.Response
 {
-    public class ItemResponseStaffAndAdmin
+    public class ItemResponse
     {
-        public ItemResponseStaffAndAdmin()
+        public ItemResponse()
         {
             Descriptions = new HashSet<ItemDescriptionResponse>();
+            Images = new HashSet<ImageResponseOrther>();
         }
         public Guid ItemId { get; set; }
         public string UserName { get; set; }
@@ -22,7 +24,7 @@ namespace Business_Logic.Modules.ItemModule.Response
         public ICollection<ItemDescriptionResponse> Descriptions { get; set; }
         public string DescriptionDetail { get; set; }
         public int Quantity { get; set; }
-        public string Image { get; set; }
+        public ICollection<ImageResponseOrther> Images { get; set; }
         public double FirstPrice { get; set; }
         public double StepPrice { get; set; }
         public bool Deposit { get; set; }

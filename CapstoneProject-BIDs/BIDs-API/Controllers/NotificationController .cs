@@ -38,7 +38,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]       
-        public async Task<ActionResult<IEnumerable<NotificationResponseAdmin>>> GetNotificationsForAdmin()
+        public async Task<ActionResult<IEnumerable<NotificationResponse>>> GetNotificationsForAdmin()
         {
             try
             {
@@ -49,7 +49,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Notification, NotificationResponseAdmin>(emp)
+                             emp => _mapper.Map<Notification, NotificationResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -79,13 +79,13 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<NotificationResponseAdmin>> PostNotification([FromBody] CreateNotificationRequest createNotificationRequest)
+        public async Task<ActionResult<NotificationResponse>> PostNotification([FromBody] CreateNotificationRequest createNotificationRequest)
         {
             try
             {
                 var Notification = await _NotificationService.AddNewNotification(createNotificationRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveNotificationAdd", Notification);
-                return Ok(_mapper.Map<NotificationResponseAdmin>(Notification));
+                return Ok(_mapper.Map<NotificationResponse>(Notification));
             }
             catch (Exception ex)
             {

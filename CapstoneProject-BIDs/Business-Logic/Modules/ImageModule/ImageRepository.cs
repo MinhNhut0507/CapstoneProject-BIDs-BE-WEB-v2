@@ -1,4 +1,4 @@
-﻿using Business_Logic.Modules.SessionModule.Interface;
+﻿using Business_Logic.Modules.ImageModule.Interface;
 using Common.Utils.Repository;
 using Data_Access.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -9,24 +9,24 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business_Logic.Modules.SessionModule
+namespace Business_Logic.Modules.ImageModule
 {
-    public class SessionRepository : Repository<Session>, ISessionRepository
+    public class ImageRepository : Repository<Image>, IImageRepository
     {
         private readonly BIDsContext _db;
 
-        public SessionRepository(BIDsContext db) : base(db)
+        public ImageRepository(BIDsContext db) : base(db)
         {
             _db = db;
         }
 
-        public async Task<ICollection<Session>> GetSessionsBy(
-            Expression<Func<Session, bool>> filter = null,
-            Func<IQueryable<Session>, ICollection<Session>> options = null,
+        public async Task<ICollection<Image>> GetImagesBy(
+            Expression<Func<Image, bool>> filter = null,
+            Func<IQueryable<Image>, ICollection<Image>> options = null,
             string includeProperties = null
         )
         {
-            IQueryable<Session> query = DbSet;
+            IQueryable<Image> query = DbSet;
 
             if (filter != null)
             {
@@ -41,12 +41,7 @@ namespace Business_Logic.Modules.SessionModule
                 }
             }
 
-            query = query.Include(s => s.Fee)
-                .Include(s => s.Item)
-                .Include(s => s.Item.Category)
-                .Include(s => s.Item.Images)
-                .Include(s => s.SessionRule);
-            
+            query = query.Include(s => s.Item);
 
             return options != null ? options(query).ToList() : await query.ToListAsync();
         }

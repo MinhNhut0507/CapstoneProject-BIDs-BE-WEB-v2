@@ -72,7 +72,6 @@ namespace Business_Logic.Modules.SessionRuleModule
             var newSessionRule = new SessionRule();
 
             newSessionRule.Name = SessionRuleRequest.Name;
-            newSessionRule.IncreaseTime = SessionRuleRequest.IncreaseTime;
             newSessionRule.DelayTime = SessionRuleRequest.DelayTime;
             newSessionRule.DelayFreeTime = SessionRuleRequest.DelayFreeTime;
             newSessionRule.FreeTime = SessionRuleRequest.FreeTime;
@@ -113,7 +112,6 @@ namespace Business_Logic.Modules.SessionRuleModule
                 }
 
                 SessionRuleUpdate.Name = SessionRuleRequest.Name;
-                SessionRuleUpdate.IncreaseTime = SessionRuleRequest.IncreaseTime;
                 SessionRuleUpdate.DelayTime = SessionRuleRequest.DelayTime;
                 SessionRuleUpdate.DelayFreeTime = SessionRuleRequest.DelayFreeTime;
                 SessionRuleUpdate.FreeTime = SessionRuleRequest.FreeTime;

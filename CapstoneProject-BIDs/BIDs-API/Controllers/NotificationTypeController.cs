@@ -38,7 +38,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [HttpGet]       
-        public async Task<ActionResult<IEnumerable<NotificationTypeResponseAdmin>>> GetNotificationTypesForAdmin()
+        public async Task<ActionResult<IEnumerable<NotificationTypeResponse>>> GetNotificationTypesForAdmin()
         {
             try
             {
@@ -49,7 +49,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<NotificationType, NotificationTypeResponseAdmin>(emp)
+                             emp => _mapper.Map<NotificationType, NotificationTypeResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -79,13 +79,13 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<NotificationTypeResponseAdmin>> PostNotificationType([FromBody] CreateNotificationTypeRequest createNotificationTypeRequest)
+        public async Task<ActionResult<NotificationTypeResponse>> PostNotificationType([FromBody] CreateNotificationTypeRequest createNotificationTypeRequest)
         {
             try
             {
                 var NotificationType = await _NotificationTypeService.AddNewNotificationType(createNotificationTypeRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveNotificationTypeAdd", NotificationType);
-                return Ok(_mapper.Map<NotificationTypeResponseAdmin>(NotificationType));
+                return Ok(_mapper.Map<NotificationTypeResponse>(NotificationType));
             }
             catch (Exception ex)
             {

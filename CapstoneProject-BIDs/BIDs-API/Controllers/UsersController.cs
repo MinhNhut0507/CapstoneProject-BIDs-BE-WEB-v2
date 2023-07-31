@@ -32,7 +32,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserResponseStaffAndAdmin>>> GetUsersForAdmin()
+        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersForAdmin()
         {
             try
             {
@@ -43,7 +43,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Users, UserResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Users, UserResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -56,7 +56,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet("get-active")]
-        public async Task<ActionResult<IEnumerable<UserResponseStaffAndAdmin>>> GetUsersActive()
+        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersActive()
         {
             try
             {
@@ -67,7 +67,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Users, UserResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Users, UserResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -80,7 +80,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet("get-waitting")]
-        public async Task<ActionResult<IEnumerable<UserResponseStaffAndAdmin>>> GetUsersWaitting()
+        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersWaitting()
         {
             try
             {
@@ -91,7 +91,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Users, UserResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Users, UserResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -104,7 +104,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet("get-ban")]
-        public async Task<ActionResult<IEnumerable<UserResponseStaffAndAdmin>>> GetUsersBan()
+        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersBan()
         {
             try
             {
@@ -115,7 +115,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Users, UserResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Users, UserResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -127,9 +127,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserResponseUser>> GetUserByID([FromRoute] Guid id)
+        public async Task<ActionResult<UserResponse>> GetUserByID([FromRoute] Guid id)
         {
-            var user = _mapper.Map<UserResponseUser>(await _userService.GetUserByID(id));
+            var user = _mapper.Map<UserResponse>(await _userService.GetUserByID(id));
 
             if (user == null)
             {
@@ -141,9 +141,9 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<UserResponseStaffAndAdmin>> GetUserByName([FromRoute] string name)
+        public async Task<ActionResult<UserResponse>> GetUserByName([FromRoute] string name)
         {
-            var user = _mapper.Map<UserResponseStaffAndAdmin>(await _userService.GetUserByName(name));
+            var user = _mapper.Map<UserResponse>(await _userService.GetUserByName(name));
 
             if (user == null)
             {
@@ -156,9 +156,9 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<UserResponseUser>> GetUserByEmail([FromRoute] string email)
+        public async Task<ActionResult<UserResponse>> GetUserByEmail([FromRoute] string email)
         {
-            var user = _mapper.Map<UserResponseUser>(await _userService.GetUserByEmail(email));
+            var user = _mapper.Map<UserResponse>(await _userService.GetUserByEmail(email));
 
             if (User == null)
             {
@@ -222,13 +222,13 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<UserResponseUser>> PostUser([FromBody] CreateUserRequest createUserRequest)
+        public async Task<ActionResult<UserResponse>> PostUser([FromBody] CreateUserRequest createUserRequest)
         {
             try
             {
                 var user = await _userService.AddNewUser(createUserRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveUserAdd", user);
-                return Ok(_mapper.Map<UserResponseUser>(user));
+                return Ok(_mapper.Map<UserResponse>(user));
             }
             catch (Exception ex)
             {

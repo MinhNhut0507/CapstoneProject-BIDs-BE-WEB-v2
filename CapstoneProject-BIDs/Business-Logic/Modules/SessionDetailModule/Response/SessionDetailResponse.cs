@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.SessionDetailModule.Response
 {
-    public class SessionDetailResponseStaffAndAdmin
+    public class SessionDetailResponse
     {
         public Guid SessionDetailId { get; set; }
         public Guid UserId { get; set; }

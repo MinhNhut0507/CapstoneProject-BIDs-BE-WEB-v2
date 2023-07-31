@@ -39,7 +39,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ItemResponseStaffAndAdmin>>> GetItemsForAdmin()
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemsForAdmin()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Item, ItemResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Item, ItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -63,37 +63,55 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ItemResponseStaffAndAdmin>> GetItemByID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByID([FromRoute] Guid? id)
         {
-            var Item = _mapper.Map<ItemResponseStaffAndAdmin>(await _ItemService.GetItemByID(id));
-
-            if (Item == null)
+            try
             {
-                return NotFound();
+                var list = await _ItemService.GetItemByID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Item, ItemResponse>(emp)
+                           );
+                return Ok(response);
             }
-
-            return Item;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<ItemResponseStaffAndAdmin>> GetItemByName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByName([FromRoute] string name)
         {
-            var Item = _mapper.Map<ItemResponseStaffAndAdmin>(await _ItemService.GetItemByName(name));
-
-            if (Item == null)
+            try
             {
-                return NotFound();
+                var list = await _ItemService.GetItemByName(name);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Item, ItemResponse>(emp)
+                           );
+                return Ok(response);
             }
-
-            return Item;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet("by_category_name/{name}")]
-        public async Task<ActionResult<IEnumerable<ItemResponseStaffAndAdmin>>> GetItemByCategoryName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryName([FromRoute] string name)
         {
             try
             {
@@ -104,7 +122,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Item, ItemResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Item, ItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -117,7 +135,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpGet("by_user/{id}")]
-        public async Task<ActionResult<IEnumerable<ItemResponseStaffAndAdmin>>> GetItemByUser([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByUser([FromRoute] Guid? id)
         {
             try
             {
@@ -128,7 +146,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Item, ItemResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Item, ItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -141,7 +159,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpGet("by_name_and_user")]
-        public async Task<ActionResult<IEnumerable<ItemResponseStaffAndAdmin>>> GetItemByNameAndUser([FromRoute] string name, Guid id)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByNameAndUser([FromRoute] string name, Guid id)
         {
             try
             {
@@ -152,7 +170,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Item, ItemResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Item, ItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -165,7 +183,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer")]
         [HttpGet("by_category_name_and_user")]
-        public async Task<ActionResult<IEnumerable<ItemResponseStaffAndAdmin>>> GetItemByCategoryNameAndUser([FromRoute] string name, Guid id)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryNameAndUser([FromRoute] string name, Guid id)
         {
             try
             {
@@ -176,7 +194,7 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Item, ItemResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Item, ItemResponse>(emp)
                            );
                 return Ok(response);
             }
@@ -207,7 +225,7 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Auctioneer")]
         [HttpPost]
-        public async Task<ActionResult<ItemResponseStaffAndAdmin>> PostItem([FromBody] CreateItemRequest createItemRequest)
+        public async Task<ActionResult<ItemResponse>> PostItem([FromBody] CreateItemRequest createItemRequest)
         {
             try
             {
@@ -218,7 +236,7 @@ namespace BIDs_API.Controllers
 
                 var response = Item.Select
                            (
-                             emp => _mapper.Map<Item, ItemResponseStaffAndAdmin>(emp)
+                             emp => _mapper.Map<Item, ItemResponse>(emp)
                            );
                 return Ok(response);
             }

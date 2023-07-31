@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.CategoryModule.Response
 {
-    public class CategoryResponseAdmin
+    public class CategoryResponse
     {
-        public CategoryResponseAdmin()
+        public CategoryResponse()
         {
             Descriptions = new HashSet<DescriptionResponse>();
         }

@@ -28,14 +28,14 @@ namespace Business_Logic.Modules.ItemModule
 
         public async Task<ICollection<Item>> GetAll()
         {
-            var items = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+            var items = await _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
                 , options: o => o.OrderByDescending(x => x.UpdateDate).ToList()); 
             return items;
         }
 
         public Task<ICollection<Item>> GetItemsIsValid()
         {
-            return _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description");
+            return _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description");
         }
 
         public async Task<ICollection<Item>> GetItemByID(Guid? id)
@@ -44,7 +44,7 @@ namespace Business_Logic.Modules.ItemModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
                 , options: o => o.Where(x => x.Id == id).ToList());
             if (Item == null)
             {
@@ -59,7 +59,7 @@ namespace Business_Logic.Modules.ItemModule
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
                 , options: o => o.Where(x => x.Name == ItemName).ToList());
             if (Item == null)
             {
@@ -74,7 +74,7 @@ namespace Business_Logic.Modules.ItemModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
                 , options: o => o.Where(x => x.UserId == id).ToList());
             if (Item == null)
             {
@@ -90,7 +90,7 @@ namespace Business_Logic.Modules.ItemModule
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
             var CategoryCheck = await _CategoryService.GetCategoryByName(CategoryName);
-            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
                 , options: o => o.Where(x => x.CategoryId == CategoryCheck.First().Id).ToList());
             if (Item == null)
             {
@@ -106,7 +106,7 @@ namespace Business_Logic.Modules.ItemModule
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
             var CategoryCheck = await _CategoryService.GetCategoryByName(CategoryName);
-            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
                 , options: o => o.Where(x => x.CategoryId == CategoryCheck.First().Id && x.UserId == id).ToList());
             if (Item == null)
             {
@@ -121,7 +121,7 @@ namespace Business_Logic.Modules.ItemModule
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var Item = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+            var Item = await _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
                 , options: o => o.Where(x => x.Name == name && x.UserId == id).ToList());
             if (Item == null)
             {
@@ -154,7 +154,6 @@ namespace Business_Logic.Modules.ItemModule
             newItem.Quantity = ItemRequest.Quantity;
             newItem.FirstPrice = ItemRequest.FirstPrice;
             newItem.StepPrice = ItemRequest.StepPrice;
-            newItem.Image = ItemRequest.Image;
             newItem.CategoryId = ItemRequest.CategoryId;
             newItem.Deposit = ItemRequest.Deposit;
             DateTime dateTime = DateTime.UtcNow;
@@ -167,7 +166,7 @@ namespace Business_Logic.Modules.ItemModule
                 ItemId = newItem.Id,
             };
             await _BookingItemService.AddNewBookingItem(bookingItemRequest);
-            var items = await _ItemRepository.GetAll(includeProperties: "User,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
+            var items = await _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
                 , options: o => o.Where(x => x.Id == newItem.Id).ToList());
             return items;
         }
@@ -211,7 +210,6 @@ namespace Business_Logic.Modules.ItemModule
                 ItemUpdate.Quantity = ItemRequest.Quantity;
                 ItemUpdate.FirstPrice = ItemRequest.FirstPrice;
                 ItemUpdate.StepPrice = ItemRequest.StepPrice;
-                ItemUpdate.Image = ItemRequest.Image;
                 ItemUpdate.Deposit = ItemRequest.Deposit;
                 DateTime dateTime = DateTime.UtcNow;
                 ItemUpdate.UpdateDate = dateTime.AddHours(7);
