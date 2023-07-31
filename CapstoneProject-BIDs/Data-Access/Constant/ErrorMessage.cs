@@ -16,6 +16,7 @@
             public readonly static string PHONE_IS_EXITED = "Số điện thoại đã tồn tại";
             public readonly static string WRONG_PHONE_FORMAT = "Số điện thoại sai định dạng";
             public readonly static string EMAIL_IS_NULL = "Email trống(vui lòng nhập email)";
+            public readonly static string WRONG_IMAGE_FORMAT = "Số điện thoại sai định dạng";
         }
         #endregion
 

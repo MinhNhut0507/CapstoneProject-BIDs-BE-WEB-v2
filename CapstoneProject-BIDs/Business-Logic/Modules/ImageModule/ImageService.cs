@@ -71,6 +71,12 @@ namespace Business_Logic.Modules.ImageModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
+            if (!ImageRequest.DetailImage.EndsWith(".jpg")
+                && !ImageRequest.DetailImage.EndsWith(".png")
+                && !ImageRequest.DetailImage.EndsWith(".gif"))
+            {
+                throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
+            }
 
             var newImage = new Image();
 
@@ -100,6 +106,12 @@ namespace Business_Logic.Modules.ImageModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
+                if (!ImageRequest.DetailImage.EndsWith(".jpg")
+                && !ImageRequest.DetailImage.EndsWith(".png")
+                && !ImageRequest.DetailImage.EndsWith(".gif"))
+                {
+                    throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
+                }
 
                 ImageUpdate.DetailImage = ImageRequest.DetailImage;
 

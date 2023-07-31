@@ -95,16 +95,21 @@ namespace Business_Logic.Modules.UserModule
             }
 
             Users userCheckEmail = _UserRepository.GetFirstOrDefaultAsync(x => x.Email == userRequest.Email).Result;
+
             if (userCheckEmail != null)
             {
                 throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
             }
+
             Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
+
             if (userCheckPhone != null)
             {
                 throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
             }
+
             Users userCheckCCCDNumber = _UserRepository.GetFirstOrDefaultAsync(x => x.Cccdnumber == userRequest.Cccdnumber).Result;
+
             if (userCheckCCCDNumber != null)
             {
                 throw new Exception(ErrorMessage.CommonError.CCCD_NUMBER_IS_EXITED);
@@ -114,6 +119,7 @@ namespace Business_Logic.Modules.UserModule
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_EMAIL_FORMAT);
             }
+
             if ((!userRequest.Phone.StartsWith("09")
                 && !userRequest.Phone.StartsWith("08")
                 && !userRequest.Phone.StartsWith("07")
@@ -123,10 +129,18 @@ namespace Business_Logic.Modules.UserModule
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_PHONE_FORMAT);
             }
+
             if (userRequest.Cccdnumber.Length != 12
                 || !userRequest.Cccdnumber.StartsWith("0"))
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_CCCD_NUMBER_FORMAT);
+            }
+
+            if(!userRequest.Avatar.EndsWith(".jpg")
+                && !userRequest.Avatar.EndsWith(".png")
+                && !userRequest.Avatar.EndsWith(".gif"))
+            {
+                throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
             }
 
             var newUser = new Users();
@@ -213,6 +227,13 @@ namespace Business_Logic.Modules.UserModule
                     || userRequest.Phone.Length != 10)
                 {
                     throw new Exception(ErrorMessage.CommonError.WRONG_PHONE_FORMAT);
+                }
+
+                if (!userRequest.Avatar.EndsWith(".jpg")
+                && !userRequest.Avatar.EndsWith(".png")
+                && !userRequest.Avatar.EndsWith(".gif"))
+                {
+                    throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
                 }
 
                 userUpdate.Name = userRequest.UserName;

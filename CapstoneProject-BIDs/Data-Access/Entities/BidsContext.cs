@@ -562,7 +562,7 @@ namespace Data_Access.Entities
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.FeeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Session__FeeID__4222D4EF");
+                    .HasConstraintName("FK__Session__FeeID__70DDC3D8");
                 entity.HasOne(d => d.SessionRule)
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.SessionRuleId)
@@ -572,7 +572,7 @@ namespace Data_Access.Entities
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.ItemId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Session__Item");
+                    .HasConstraintName("FK_Session_Item");
             });
 
             modelBuilder.Entity<SessionDetail>(entity =>

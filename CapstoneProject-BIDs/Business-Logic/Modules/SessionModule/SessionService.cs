@@ -176,7 +176,8 @@ namespace Business_Logic.Modules.SessionModule
                 }
             }
             newSession.SessionRuleId = SessionRequest.SessionRuleId;
-            newSession.BeginTime = BeginTime.AddHours(7);
+            newSession.BeginTime = BeginTime;
+            newSession.EndTime = EndTime;
             newSession.FinalPrice = item.ElementAt(0).FirstPrice;
             DateTime dateTime = DateTime.UtcNow;
             newSession.CreateDate = dateTime.AddHours(7);

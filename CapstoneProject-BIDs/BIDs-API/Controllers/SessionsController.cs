@@ -36,9 +36,6 @@ namespace BIDs_API.Controllers
             _hubSessionContext = hubSessionContext;
             _mapper = mapper;
             _Common = Common;
-            //_ = RunTasksAtScheduledTimesForNotStart();
-            //_ = RunTasksAtScheduledTimesForHaventTranfer();
-            //_ = RunTasksAtScheduledTimesForInStage();
         }
 
         // GET api/<ValuesController>
@@ -66,7 +63,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SessionResponse>> GetSessionByID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionByID([FromRoute] Guid? id)
         {
             try
             {
@@ -89,7 +86,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<SessionResponse>> GetSessionByName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionByName([FromRoute] string name)
         {
             try
             {
@@ -113,7 +110,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [AllowAnonymous]
         [HttpGet("by_not_start")]
-        public async Task<ActionResult<SessionResponse>> GetSessionNotStart()
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionNotStart()
         {
             try
             {
@@ -136,7 +133,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_in_stage")]
-        public async Task<ActionResult<SessionResponse>> GetSessionInStage()
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStage()
         {
             try
             {
@@ -159,7 +156,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_in_stage_by_user/{id}")]
-        public async Task<ActionResult<SessionResponse>> GetSessionInStageByUser([FromRoute]Guid id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByUser([FromRoute]Guid id)
         {
             try
             {
@@ -182,7 +179,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_complete_by_user/{id}")]
-        public async Task<ActionResult<SessionResponse>> GetSessionCompleteByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionCompleteByUser([FromRoute] Guid id)
         {
             try
             {
@@ -205,7 +202,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_havent_tranfer_yet_by_user/{id}")]
-        public async Task<ActionResult<SessionResponse>> GetSessionHaventTranferByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionHaventTranferByUser([FromRoute] Guid id)
         {
             try
             {
@@ -228,7 +225,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_havent_pay")]
-        public async Task<ActionResult<SessionResponseComplete>> GetSessionHaventPay()
+        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionHaventPay()
         {
             try
             {
@@ -257,7 +254,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_out_of_date")]
-        public async Task<ActionResult<SessionResponseComplete>> GetSessionOutOfDate()
+        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionOutOfDate()
         {
             try
             {
@@ -286,7 +283,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_complete")]
-        public async Task<ActionResult<SessionResponseComplete>> GetSessionComplete()
+        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionComplete()
         {
             try
             {
@@ -438,108 +435,6 @@ namespace BIDs_API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("auto_update_status_for_not_start")]
-        public async Task RunTasksAtScheduledTimesForNotStart()
-        {
-            var listSessionNotStart = await _SessionService.GetSessionsIsNotStart();
-            var sortListSession = listSessionNotStart.OrderBy(s => s.BeginTime).ToList();
-            var listTime = new List<DateTime>();
-            for (int i = 0; i < sortListSession.Count; i++)
-            {
-                listTime.Add(sortListSession.ElementAt(i).BeginTime);
-            }
-            UpdateSessionStatusRequest updateSessionStatusRequest = new UpdateSessionStatusRequest();
-            while (true)
-            {
-                DateTime now = DateTime.Now;
-
-                for (int i = 0; i < listTime.Count; i++)
-                {
-                    if (now >= listTime[i])
-                    {
-                        // Thực hiện tác vụ tương ứng
-                        updateSessionStatusRequest.SessionID = sortListSession.ElementAt(i).Id;
-                        await PutSessionStatusNotStart(updateSessionStatusRequest);
-                        // Xóa mốc thời gian và tác vụ đã hoàn thành
-                        listTime.RemoveAt(i);
-                        sortListSession.RemoveAt(i);
-                        i--;
-                    }
-                }
-
-                // Ngừng một khoảng thời gian trước khi kiểm tra lại
-                await Task.Delay(1000);
-            }
-        }
-
-        [HttpPut("auto_update_status_for_in_stage")]
-        public async Task RunTasksAtScheduledTimesForInStage()
-        {
-            var listSessionNotStart = await _SessionService.GetSessionsIsInStage();
-            var sortListSession = listSessionNotStart.OrderBy(s => s.EndTime).ToList();
-            var listTime = new List<DateTime>();
-            for (int i = 0; i < sortListSession.Count; i++)
-            {
-                listTime.Add(sortListSession.ElementAt(i).EndTime);
-            }
-            UpdateSessionStatusRequest updateSessionStatusRequest = new UpdateSessionStatusRequest();
-            while (true)
-            {
-                DateTime now = DateTime.Now;
-
-                for (int i = 0; i < listTime.Count; i++)
-                {
-                    if (now >= listTime[i])
-                    {
-                        // Thực hiện tác vụ tương ứng
-                        updateSessionStatusRequest.SessionID = sortListSession.ElementAt(i).Id;
-                        await PutSessionStatusInStage(updateSessionStatusRequest);
-                        // Xóa mốc thời gian và tác vụ đã hoàn thành
-                        listTime.RemoveAt(i);
-                        sortListSession.RemoveAt(i);
-                        i--;
-                    }
-                }
-
-                // Ngừng một khoảng thời gian trước khi kiểm tra lại
-                await Task.Delay(1000);
-            }
-        }
-
-        [HttpPut("auto_update_status_for_havent_tranfer")]
-        public async Task RunTasksAtScheduledTimesForHaventTranfer()
-        {
-            var listSessionNotStart = await _SessionService.GetSessionsIsHaventPay();
-            var sortListSession = listSessionNotStart.OrderBy(s => s.EndTime).ToList();
-            var listTime = new List<DateTime>();
-            for (int i = 0; i < sortListSession.Count; i++)
-            {
-                listTime.Add((sortListSession.ElementAt(i).EndTime).AddDays(3));
-            }
-            UpdateSessionStatusRequest updateSessionStatusRequest = new UpdateSessionStatusRequest();
-            while (true)
-            {
-                DateTime now = DateTime.Now;
-
-                for (int i = 0; i < listTime.Count; i++)
-                {
-                    if (now >= listTime[i])
-                    {
-                        // Thực hiện tác vụ tương ứng
-                        updateSessionStatusRequest.SessionID = sortListSession.ElementAt(i).Id;
-                        await PutSessionStatusHaventTranfer(updateSessionStatusRequest);
-                        // Xóa mốc thời gian và tác vụ đã hoàn thành
-                        listTime.RemoveAt(i);
-                        sortListSession.RemoveAt(i);
-                        i--;
-                    }
-                }
-
-                // Ngừng một khoảng thời gian trước khi kiểm tra lại
-                await Task.Delay(1000);
             }
         }
     }
