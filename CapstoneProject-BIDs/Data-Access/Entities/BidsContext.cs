@@ -76,7 +76,7 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Address)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(int.MaxValue)
                     .HasColumnName("Address");
 
                 entity.Property(e => e.Email)
@@ -767,7 +767,7 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.Address)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(int.MaxValue)
                     .HasColumnName("Address");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
