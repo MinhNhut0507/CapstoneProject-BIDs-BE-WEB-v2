@@ -8,6 +8,7 @@ using Business_Logic.Modules.BookingItemModule.Request;
 using Business_Logic.Modules.BookingItemModule.Interface;
 using Data_Access.Enum;
 using Microsoft.EntityFrameworkCore;
+using Business_Logic.Modules.NotificationModule.Request;
 
 namespace Business_Logic.Modules.ItemModule
 {
@@ -166,6 +167,9 @@ namespace Business_Logic.Modules.ItemModule
                 ItemId = newItem.Id,
             };
             await _BookingItemService.AddNewBookingItem(bookingItemRequest);
+
+            //var Notify = new CreateNotificationRequest
+
             var items = await _ItemRepository.GetAll(includeProperties: "User,Images,Category,ItemDescriptions,BookingItems,ItemDescriptions.Description"
                 , options: o => o.Where(x => x.Id == newItem.Id).ToList());
             return items;

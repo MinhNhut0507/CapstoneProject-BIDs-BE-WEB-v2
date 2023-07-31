@@ -45,6 +45,7 @@ namespace Business_Logic.Modules.SessionModule
                 .Include(s => s.Item)
                 .Include(s => s.Item.Category)
                 .Include(s => s.Item.Images)
+                .Include(s => s.Item.ItemDescriptions)
                 .Include(s => s.SessionRule);
             
 

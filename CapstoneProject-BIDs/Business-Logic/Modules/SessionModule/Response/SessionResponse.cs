@@ -17,6 +17,7 @@ namespace Business_Logic.Modules.SessionModule.Response
         public SessionResponse()
         {
             Images = new HashSet<ImageResponseOrther>();
+            Descriptions = new HashSet<ItemDescriptionResponse>();
         }
 
         public Guid SessionId { get; set; }
@@ -24,9 +25,12 @@ namespace Business_Logic.Modules.SessionModule.Response
         public string FeeName { get; set; }
         public string SessionName { get; set; }
         public ICollection<ImageResponseOrther> Images { get; set; }
+        public ICollection<ItemDescriptionResponse> Descriptions { get; set; }
         public Guid ItemId { get; set; }
         public string ItemName { get; set; }
         public string CategoryName { get; set; }
+        public double ParticipationFee { get; set; }
+        public double Deposit { get; set; }
         public string Description { get; set; }
         public TimeSpan FreeTime { get; set; }
         public TimeSpan DelayTime { get; set; }
