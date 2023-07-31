@@ -10,7 +10,7 @@ namespace Business_Logic.Modules.ItemDescriptionModule.Interface
 {
     public interface IItemDescriptionService
     {
-        public Task AddNewItemDescription(CreateItemDescriptionRequest ItemDescriptionCreate);
+        public Task<ItemDescription> AddNewItemDescription(CreateItemDescriptionRequest ItemDescriptionCreate);
 
         public Task<ItemDescription> UpdateStatusItemDescription(UpdateItemDescriptionRequest ItemDescriptionUpdate);
 

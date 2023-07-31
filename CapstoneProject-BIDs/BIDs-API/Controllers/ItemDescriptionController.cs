@@ -128,9 +128,8 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                await _ItemDescriptionService.AddNewItemDescription(createItemDescriptionRequest);
-                var ItemDescription = await _ItemDescriptionService.GetItemDescriptionByItem(createItemDescriptionRequest.ItemId);
-                await _hubContext.Clients.All.SendAsync("ReceiveItemDescriptionAdd", ItemDescription.First());
+                var ItemDescription = await _ItemDescriptionService.AddNewItemDescription(createItemDescriptionRequest);
+                await _hubContext.Clients.All.SendAsync("ReceiveItemDescriptionAdd", ItemDescription);
 
                 return Ok(_mapper.Map<ItemDescriptionDetailResponse>(ItemDescription));
             }

@@ -74,7 +74,7 @@ namespace Business_Logic.Modules.ItemDescriptionModule
             return ItemDescription;
         }
 
-        public async Task AddNewItemDescription(CreateItemDescriptionRequest ItemDescriptionRequest)
+        public async Task<ItemDescription> AddNewItemDescription(CreateItemDescriptionRequest ItemDescriptionRequest)
         {
 
             ValidationResult result = new CreateItemDescriptionRequestValidator().Validate(ItemDescriptionRequest);
@@ -93,6 +93,7 @@ namespace Business_Logic.Modules.ItemDescriptionModule
             newItemDescription.Status = true;
 
             await _ItemDescriptionRepository.AddAsync(newItemDescription);
+            return newItemDescription;
         }
 
         public async Task<ItemDescription> UpdateStatusItemDescription(UpdateItemDescriptionRequest ItemDescriptionRequest)
