@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.SignalR;
 using BIDs_API.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using Business_Logic.Modules.LoginModule.Request;
+using Business_Logic.Modules.CommonModule.Interface;
+using Data_Access.Enum;
 
 namespace BIDs_API.Controllers
 {
@@ -19,14 +21,23 @@ namespace BIDs_API.Controllers
         private readonly IUserService _userService;
         public readonly IMapper _mapper;
         private readonly IHubContext<UserHub> _hubContext;
+        private readonly IHubContext<NotificationHub> _notiHubContext;
+        private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
+        public readonly ICommon _common;
 
         public UsersController(IUserService userService
             , IMapper mapper
-            , IHubContext<UserHub> hubContext)
+            , IHubContext<UserHub> hubContext
+            , IHubContext<NotificationHub> notiHubContext
+            , IHubContext<UserNotificationDetailHub> userNotiHubContext
+            , ICommon common)
         {
             _userService = userService;
             _mapper = mapper;
             _hubContext = hubContext;
+            _notiHubContext = notiHubContext;
+            _common = common;
+            _userNotiHubContext = userNotiHubContext;
         }
 
         // GET api/<ValuesController>
@@ -203,13 +214,17 @@ namespace BIDs_API.Controllers
         }
 
         [Authorize(Roles = "Bidder,Auctioneer")]
-        [HttpPut("update_password/{id}")]
+        [HttpPut("update_password")]
         public async Task<IActionResult> PutPasswordUser([FromBody] UpdatePasswordRequest updatePasswordRequest)
         {
             try
             {
                 var user = await _userService.UpdatePassword(updatePasswordRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
+                string message = "Tài khoản " + user.Name + " vừa cập nhập mật khẩu thành công. Bạn có thể xem chi tiết ở thông tin cá nhân.";
+                var userNoti = await _common.UserNotification(10, (int)NotificationTypeEnum.Account, message, user.Id);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)

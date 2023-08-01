@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Data_Access.Enum
 {
-    public enum NotificationEnum
+    public enum NotificationTypeEnum
     {
-        AuctionNoti = 1,
-        AccountNoti = 2,
-        PaymentNoti = 3
+        Account =1,
+        Item = 2,
+        Booking = 3,
+        Session = 4,
+        Payment =5
     }
 }

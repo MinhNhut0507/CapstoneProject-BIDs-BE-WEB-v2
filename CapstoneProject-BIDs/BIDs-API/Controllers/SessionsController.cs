@@ -155,12 +155,12 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_in_stage_by_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByUser([FromRoute]Guid id)
+        [HttpGet("by_in_stage_by_auctioneer/{id}")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByAuctioneer([FromRoute]Guid id)
         {
             try
             {
-                var list = await _Common.GetSessionInStageByUser(id);
+                var list = await _Common.GetSessionInStageByAuctioneer(id);
                 if (list == null)
                 {
                     return NotFound();
@@ -178,12 +178,12 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_complete_by_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionCompleteByUser([FromRoute] Guid id)
+        [HttpGet("by_complete_by_auctioneer/{id}")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionCompleteByAuctioneer([FromRoute] Guid id)
         {
             try
             {
-                var list = await _Common.GetSessionCompleteByUser(id);
+                var list = await _Common.GetSessionCompleteByAuctioneer(id);
                 if (list == null)
                 {
                     return NotFound();
@@ -201,12 +201,12 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_havent_tranfer_yet_by_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionHaventTranferByUser([FromRoute] Guid id)
+        [HttpGet("by_havent_tranfer_yet_by_auctioneer/{id}")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionHaventTranferByAuctioneer([FromRoute] Guid id)
         {
             try
             {
-                var list = await _Common.GetSessionHaventTranferByUser(id);
+                var list = await _Common.GetSessionHaventTranferByAuctioneer(id);
                 if (list == null)
                 {
                     return NotFound();
@@ -242,7 +242,7 @@ namespace BIDs_API.Controllers
                 for (int i = 0; i < response.Count(); i++)
                 {
                     user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Email = user.Email;
+                    response.ElementAt(i).Winner = user.Name;
                 }
                 return Ok(response);
             }
@@ -271,7 +271,7 @@ namespace BIDs_API.Controllers
                 for (int i = 0; i < response.Count(); i++)
                 {
                     user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Email = user.Email;
+                    response.ElementAt(i).Winner = user.Name;
                 }
                 return Ok(response);
             }
@@ -300,8 +300,141 @@ namespace BIDs_API.Controllers
                 for(int i = 0; i < response.Count(); i++)
                 {
                     user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Email = user.Email;
+                    response.ElementAt(i).Winner = user.Name;
                 }
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_complete_user/{id}")]
+        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionCompleteByUser([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsCompleteByUser(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                    response.ElementAt(i).Winner = user.Name;
+                }
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_havent_pay_user/{id}")]
+        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionHaventPayByUser([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsHaventPayByUser(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                    response.ElementAt(i).Winner = user.Name;
+                }
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_out_of_date_user/{id}")]
+        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionOutOfDateByUser([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsOutOfDateByUser(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                    response.ElementAt(i).Winner = user.Name;
+                }
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_not_start_user/{id}")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionNotStartByUser([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsNotStartByUser(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_in_stage_user/{id}")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByUser([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsInStageByUser(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
+                           );
                 return Ok(response);
             }
             catch

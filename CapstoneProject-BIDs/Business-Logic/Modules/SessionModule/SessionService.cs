@@ -65,6 +65,36 @@ namespace Business_Logic.Modules.SessionModule
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.OutOfDate).ToList());
         }
 
+        public async Task<ICollection<Session>> GetSessionsIsNotStartByUser(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.NotStart).ToList());
+        }
+
+        public async Task<ICollection<Session>> GetSessionsIsInStageByUser(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.InStage).ToList());
+        }
+
+        public async Task<ICollection<Session>> GetSessionsIsCompleteByUser(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.Complete).ToList());
+        }
+
+        public async Task<ICollection<Session>> GetSessionsIsHaventPayByUser(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.HaventTranferYet).ToList());
+        }
+
+        public async Task<ICollection<Session>> GetSessionsIsOutOfDateByUser(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.OutOfDate).ToList());
+        }
+
         public async Task<ICollection<Session>> GetSessionByID(Guid? id)
         {
             if (id == null)

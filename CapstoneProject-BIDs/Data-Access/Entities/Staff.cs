@@ -12,6 +12,7 @@ namespace Data_Access.Entities
             BookingItems = new HashSet<BookingItem>();
             PaymentMethodStaffs = new HashSet<PaymentMethodStaff>();
             PaymentStaffs = new HashSet<PaymentStaff>();
+            StaffNotificationDetails = new HashSet<StaffNotificationDetail>();
         }
 
         public Guid Id { get; set; }
@@ -28,5 +29,6 @@ namespace Data_Access.Entities
         public virtual ICollection<BookingItem> BookingItems { get; set; }
         public virtual ICollection<PaymentMethodStaff> PaymentMethodStaffs { get; set; }
         public virtual ICollection<PaymentStaff> PaymentStaffs { get; set; }
+        public virtual ICollection<StaffNotificationDetail> StaffNotificationDetails { get; set; }
     }
 }

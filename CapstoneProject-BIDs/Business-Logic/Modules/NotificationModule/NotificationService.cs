@@ -51,8 +51,9 @@ namespace Business_Logic.Modules.NotificationModule
             var newNotification = new Notification();
 
             newNotification.Id = Guid.NewGuid();
-            newNotification.ExpireDate = NotificationRequest.ExpireDate;
-            newNotification.CreateDate = DateTime.Now;
+            var date = DateTime.UtcNow;
+            newNotification.CreateDate = date.AddHours(7);
+            newNotification.ExpireDate = newNotification.CreateDate.AddDays(NotificationRequest.ExpireDate);
             newNotification.Status = true;
 
             await _NotificationRepository.AddAsync(newNotification);

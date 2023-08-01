@@ -15,6 +15,15 @@ using Business_Logic.Modules.BanHistoryModule.Request;
 using Business_Logic.Modules.CommonModule.Interface;
 using Data_Access.Constant;
 using Data_Access.Enum;
+using Business_Logic.Modules.NotificationModule.Interface;
+using Business_Logic.Modules.NotificationTypeModule.Interface;
+using Business_Logic.Modules.StaffNotificationDetailModule.Interface;
+using Business_Logic.Modules.UserNotificationDetailModule.Interface;
+using Business_Logic.Modules.NotificationModule;
+using Business_Logic.Modules.NotificationModule.Request;
+using Business_Logic.Modules.UserNotificationDetailModule.Request;
+using Business_Logic.Modules.StaffNotificationDetailModule.Request;
+using Business_Logic.Modules.CommonModule.Response;
 
 namespace Business_Logic.Modules.CommonModule
 {
@@ -25,17 +34,29 @@ namespace Business_Logic.Modules.CommonModule
         private readonly IBanHistoryService _BanHistoryService;
         private readonly ISessionDetailService _SessionDetailService;
         private readonly ISessionService _SessionService;
+        private readonly INotificationService _NotificationService;
+        private readonly INotificationTypeService _NotificationTypeService;
+        private readonly IStaffNotificationDetailService _StaffNotificationDetailService;
+        private readonly IUserNotificationDetailService _UserNotificationDetailService;
         public Common(IUserService UserService
             , IItemService ItemService
             , IBanHistoryService BanHistoryService
             , ISessionDetailService SessionDetailService
-            , ISessionService SessionService)
+            , ISessionService SessionService
+            , INotificationService NotificationService
+            , INotificationTypeService NotificationTypeService
+            , IStaffNotificationDetailService StaffNotificationDetailService
+            , IUserNotificationDetailService UserNotificationDetailService)
         {
             _UserService = UserService;
             _ItemService = ItemService;
             _SessionDetailService = SessionDetailService;
             _SessionService = SessionService;
             _BanHistoryService = BanHistoryService;
+            _NotificationService = NotificationService;
+            _NotificationTypeService = NotificationTypeService;
+            _StaffNotificationDetailService = StaffNotificationDetailService;
+            _UserNotificationDetailService = UserNotificationDetailService;
         }
 
         public async Task SendEmailBeginAuction(Session session)
@@ -169,7 +190,7 @@ namespace Business_Logic.Modules.CommonModule
             await _BanHistoryService.AddNewBanHistory(createBanHistoryRequest);
         }
 
-        public async Task<ICollection<Session>> GetSessionInStageByUser(Guid id)
+        public async Task<ICollection<Session>> GetSessionInStageByAuctioneer(Guid id)
         {
             if(id == null)
             {
@@ -200,7 +221,7 @@ namespace Business_Logic.Modules.CommonModule
             return listSession;
         }
 
-        public async Task<ICollection<Session>> GetSessionCompleteByUser(Guid id)
+        public async Task<ICollection<Session>> GetSessionCompleteByAuctioneer(Guid id)
         {
             if (id == null)
             {
@@ -231,7 +252,7 @@ namespace Business_Logic.Modules.CommonModule
             return listSession;
         }
 
-        public async Task<ICollection<Session>> GetSessionHaventTranferByUser(Guid id)
+        public async Task<ICollection<Session>> GetSessionHaventTranferByAuctioneer(Guid id)
         {
             if (id == null)
             {
@@ -271,6 +292,53 @@ namespace Business_Logic.Modules.CommonModule
             var sessionDetailWinner = await _SessionDetailService.Getwinner(id);
             var Winner = await _UserService.GetUserByID(sessionDetailWinner.UserId);
             return Winner;
+        }
+
+        public async Task<UserNotiResponse> UserNotification(int ExDay, int TypeId, string message, Guid UserId)
+        {
+            var CreateNotification = new CreateNotificationRequest()
+            {
+                ExpireDate = ExDay
+            };
+            var Notification = await _NotificationService.AddNewNotification(CreateNotification);
+            var CreateUserNotification = new CreateUserNotificationDetailRequest()
+            {
+                UserId = UserId,
+                NotificationId = Notification.Id,
+                TypeId = TypeId,
+                Messages = message
+            };
+            var userNoti =  await _UserNotificationDetailService.AddNewUserNotificationDetail(CreateUserNotification);
+            var response = new UserNotiResponse()
+            {
+                UserNotificationDetail = userNoti,
+                Notification = Notification
+            };
+            return response;
+        }
+
+        public async Task<StaffNotiResponse> StaffNotification(int ExDay, int TypeId, string message, Guid StaffId)
+        {
+            var CreateNotification = new CreateNotificationRequest()
+            {
+                ExpireDate = ExDay
+            };
+            var Notification = await _NotificationService.AddNewNotification(CreateNotification);
+            var CreateStaffNotification = new CreateStaffNotificationDetailRequest()
+            {
+                StaffId = StaffId,
+                NotificationId = Notification.Id,
+                TypeId = TypeId,
+                Messages = message
+            };
+            var staffNoti = await _StaffNotificationDetailService.AddNewStaffNotificationDetail(CreateStaffNotification);
+
+            var response = new StaffNotiResponse()
+            {
+                StaffNotificationDetail = staffNoti,
+                Notification = Notification
+            };
+            return response;
         }
     }
 }

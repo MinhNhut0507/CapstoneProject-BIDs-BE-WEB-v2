@@ -630,35 +630,35 @@ namespace Data_Access.Entities
 
             modelBuilder.Entity<StaffNotificationDetail>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.NotificationId, e.TypeId, e.StaffId });
 
                 entity.ToTable("StaffNotificationDetail");
 
-                entity.Property(e => e.Messages).IsRequired();
-
                 entity.Property(e => e.NotificationId).HasColumnName("NotificationID");
-
-                entity.Property(e => e.StaffId).HasColumnName("StaffID");
 
                 entity.Property(e => e.TypeId).HasColumnName("TypeID");
 
+                entity.Property(e => e.StaffId).HasColumnName("StaffID");
+
+                entity.Property(e => e.Messages).IsRequired();
+
                 entity.HasOne(d => d.Notification)
-                    .WithMany()
+                    .WithMany(p => p.StaffNotificationDetails)
                     .HasForeignKey(d => d.NotificationId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__StaffNoti__Notif__5812160E");
+                    .HasConstraintName("FK__StaffNoti__Notif__75A278F5");
 
                 entity.HasOne(d => d.Staff)
-                    .WithMany()
+                    .WithMany(p => p.StaffNotificationDetails)
                     .HasForeignKey(d => d.StaffId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__StaffNoti__Staff__59FA5E80");
+                    .HasConstraintName("FK__StaffNoti__Staff__76969D2E");
 
                 entity.HasOne(d => d.Type)
-                    .WithMany()
+                    .WithMany(p => p.StaffNotificationDetails)
                     .HasForeignKey(d => d.TypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__StaffNoti__TypeI__59063A47");
+                    .HasConstraintName("FK__StaffNoti__TypeI__778AC167");
             });
 
             modelBuilder.Entity<Users>(entity =>
@@ -726,11 +726,9 @@ namespace Data_Access.Entities
 
             modelBuilder.Entity<UserNotificationDetail>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.NotificationId, e.TypeId, e.UserId });
 
                 entity.ToTable("UserNotificationDetail");
-
-                entity.Property(e => e.Messages).IsRequired();
 
                 entity.Property(e => e.NotificationId).HasColumnName("NotificationID");
 
@@ -738,23 +736,25 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
+                entity.Property(e => e.Messages).IsRequired();
+
                 entity.HasOne(d => d.Notification)
-                    .WithMany()
+                    .WithMany(p => p.UserNotificationDetails)
                     .HasForeignKey(d => d.NotificationId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserNotif__Notif__5441852A");
+                    .HasConstraintName("FK__UserNotif__Notif__787EE5A0");
 
                 entity.HasOne(d => d.Type)
-                    .WithMany()
+                    .WithMany(p => p.UserNotificationDetails)
                     .HasForeignKey(d => d.TypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserNotif__TypeI__5535A963");
+                    .HasConstraintName("FK__UserNotif__TypeI__797309D9");
 
                 entity.HasOne(d => d.User)
-                    .WithMany()
+                    .WithMany(p => p.UserNotificationDetails)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserNotif__UserI__5629CD9C");
+                    .HasConstraintName("FK__UserNotif__UserI__7A672E12");
             });
 
             modelBuilder.Entity<Staff>(entity =>

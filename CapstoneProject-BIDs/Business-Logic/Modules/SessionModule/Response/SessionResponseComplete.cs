@@ -21,7 +21,7 @@ namespace Business_Logic.Modules.SessionModule.Response
 
         public Guid SessionId { get; set; }
         public string FeeName { get; set; }
-        public string Email { get; set; }
+        public string Winner { get; set; }
         public string SessionName { get; set; }
         public ICollection<ImageResponseOrther> Images { get; set; }
         public ICollection<ItemDescriptionResponse> Descriptions { get; set; }
