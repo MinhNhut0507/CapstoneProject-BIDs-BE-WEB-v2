@@ -14,6 +14,7 @@ using Business_Logic.Modules.SessionModule.Response;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Business_Logic.Modules.CommonModule.Interface;
+using System.Runtime.InteropServices;
 
 namespace BIDs_API.Controllers
 {
@@ -241,8 +242,17 @@ namespace BIDs_API.Controllers
                 var user = new Users();
                 for (int i = 0; i < response.Count(); i++)
                 {
-                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Winner = user.Name;
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if(check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
                 }
                 return Ok(response);
             }
@@ -253,12 +263,12 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_out_of_date")]
-        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionOutOfDate()
+        [HttpGet("by_fail")]
+        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionFail()
         {
             try
             {
-                var list = await _SessionService.GetSessionsIsOutOfDate();
+                var list = await _SessionService.GetSessionsIsFail();
                 if (list == null)
                 {
                     return NotFound();
@@ -270,8 +280,22 @@ namespace BIDs_API.Controllers
                 var user = new Users();
                 for (int i = 0; i < response.Count(); i++)
                 {
-                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Winner = user.Name;
+                    var checkJoing = await _Common.CheckSessionJoining(response.ElementAt(i).SessionId);
+                    if( checkJoing == false)
+                    {
+                        continue;
+                    }
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
                 }
                 return Ok(response);
             }
@@ -297,10 +321,19 @@ namespace BIDs_API.Controllers
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
                 var user = new Users();
-                for(int i = 0; i < response.Count(); i++)
+                for (int i = 0; i < response.Count(); i++)
                 {
-                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Winner = user.Name;
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
                 }
                 return Ok(response);
             }
@@ -328,8 +361,17 @@ namespace BIDs_API.Controllers
                 var user = new Users();
                 for (int i = 0; i < response.Count(); i++)
                 {
-                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Winner = user.Name;
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
                 }
                 return Ok(response);
             }
@@ -357,8 +399,17 @@ namespace BIDs_API.Controllers
                 var user = new Users();
                 for (int i = 0; i < response.Count(); i++)
                 {
-                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Winner = user.Name;
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
                 }
                 return Ok(response);
             }
@@ -369,12 +420,12 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_out_of_date_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionOutOfDateByUser([FromRoute] Guid id)
+        [HttpGet("by_fail_user/{id}")]
+        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionFailByUser([FromRoute] Guid id)
         {
             try
             {
-                var list = await _SessionService.GetSessionsIsOutOfDateByUser(id);
+                var list = await _SessionService.GetSessionsIsFailByUser(id);
                 if (list == null)
                 {
                     return NotFound();
@@ -386,8 +437,22 @@ namespace BIDs_API.Controllers
                 var user = new Users();
                 for (int i = 0; i < response.Count(); i++)
                 {
-                    user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                    response.ElementAt(i).Winner = user.Name;
+                    var checkJoing = await _Common.CheckSessionJoining(response.ElementAt(i).SessionId);
+                    if (checkJoing == false)
+                    {
+                        continue;
+                    }
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+                        response.ElementAt(i).Winner = user.Name;
+                    }
                 }
                 return Ok(response);
             }
@@ -488,10 +553,20 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var session = await _SessionService.UpdateSessionStatusInStage(updateSessionRequest);
-                await _Common.SendEmailWinnerAuction(session);
-                await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
-                return Ok();
+                var checkSession = await _Common.CheckSessionJoining(updateSessionRequest.SessionID);
+                if(checkSession == true)
+                {
+                    var session = await _SessionService.UpdateSessionStatusInStage(updateSessionRequest);
+                    await _Common.SendEmailWinnerAuction(session);
+                    await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                    return Ok();
+                }
+                else
+                {
+                    var session = await _SessionService.UpdateSessionStatusFail(updateSessionRequest);
+                    await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                    return Ok();
+                }
             }
             catch (Exception ex)
             {
@@ -502,13 +577,13 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [AllowAnonymous]
-        [HttpPut("session_status_to_out_of_date")]
+        [HttpPut("session_status_to_fail")]
         public async Task<IActionResult> PutSessionStatusHaventTranfer([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
             try
             {
-                var session = await _SessionService.UpdateSessionStatusHaventTranfer(updateSessionRequest);
-                await _Common.SendEmailOutOfDateAuction(session);
+                var session = await _SessionService.UpdateSessionStatusFail(updateSessionRequest);
+                await _Common.SendEmailFailAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 return Ok();
             }

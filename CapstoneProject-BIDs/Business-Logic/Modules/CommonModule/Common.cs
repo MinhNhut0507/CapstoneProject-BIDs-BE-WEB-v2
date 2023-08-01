@@ -24,6 +24,10 @@ using Business_Logic.Modules.NotificationModule.Request;
 using Business_Logic.Modules.UserNotificationDetailModule.Request;
 using Business_Logic.Modules.StaffNotificationDetailModule.Request;
 using Business_Logic.Modules.CommonModule.Response;
+using Business_Logic.Modules.ItemModule.Request;
+using Business_Logic.Modules.BookingItemModule;
+using Business_Logic.Modules.BookingItemModule.Interface;
+using Business_Logic.Modules.BookingItemModule.Request;
 
 namespace Business_Logic.Modules.CommonModule
 {
@@ -31,6 +35,7 @@ namespace Business_Logic.Modules.CommonModule
     {
         private readonly IUserService _UserService;
         private readonly IItemService _ItemService;
+        private readonly IBookingItemService _BookingItemService;
         private readonly IBanHistoryService _BanHistoryService;
         private readonly ISessionDetailService _SessionDetailService;
         private readonly ISessionService _SessionService;
@@ -40,6 +45,7 @@ namespace Business_Logic.Modules.CommonModule
         private readonly IUserNotificationDetailService _UserNotificationDetailService;
         public Common(IUserService UserService
             , IItemService ItemService
+            , IBookingItemService BookingItemService
             , IBanHistoryService BanHistoryService
             , ISessionDetailService SessionDetailService
             , ISessionService SessionService
@@ -50,6 +56,7 @@ namespace Business_Logic.Modules.CommonModule
         {
             _UserService = UserService;
             _ItemService = ItemService;
+            _BookingItemService = BookingItemService;
             _SessionDetailService = SessionDetailService;
             _SessionService = SessionService;
             _BanHistoryService = BanHistoryService;
@@ -105,8 +112,18 @@ namespace Business_Logic.Modules.CommonModule
         public async Task SendEmailWinnerAuction(Session session)
         {
             var item = await _ItemService.GetItemByID(session.ItemId);
-            var SessionWinner = await _SessionDetailService.Getwinner(session.Id);
-            var Winner = await _UserService.GetUserByID(SessionWinner.UserId);
+            var check = await CheckSessionJoining(session.Id);
+            var SessionWinner = new SessionDetail();
+            var Winner = new Users();
+            if (check == true)
+            {
+                SessionWinner = await _SessionDetailService.Getwinner(session.Id);
+                Winner = await _UserService.GetUserByID(SessionWinner.UserId);
+            }
+            else
+            {
+                Winner = await GetUserWinningByJoining(session.Id);
+            }
 
             string _gmail = "bidauctionfloor@gmail.com";
             string _password = "gnauvhbfubtgxjow";
@@ -141,11 +158,22 @@ namespace Business_Logic.Modules.CommonModule
             SmtpServer.Send(mail);
         }
 
-        public async Task SendEmailOutOfDateAuction(Session session)
+        public async Task SendEmailFailAuction(Session session)
         {
             var item = await _ItemService.GetItemByID(session.ItemId);
-            var SessionWinner = await _SessionDetailService.Getwinner(session.Id);
-            var Winner = await _UserService.GetUserByID(SessionWinner.UserId);
+            var check = await CheckSessionJoining(session.Id);
+            var SessionWinner = new SessionDetail();
+            var Winner = new Users();
+            if (check == true) 
+            {
+                SessionWinner = await _SessionDetailService.Getwinner(session.Id);
+                Winner = await _UserService.GetUserByID(SessionWinner.UserId);
+            }
+            else
+            {
+                Winner = await GetUserWinningByJoining(session.Id);
+            }
+            
 
             string _gmail = "bidauctionfloor@gmail.com";
             string _password = "gnauvhbfubtgxjow";
@@ -339,6 +367,62 @@ namespace Business_Logic.Modules.CommonModule
                 Notification = Notification
             };
             return response;
+        }
+
+        public async Task<bool> CheckSessionJoining(Guid id)
+        {
+            var SessionDetail = await _SessionDetailService.GetSessionDetailBySession(id);
+            if (SessionDetail.Count() == 0) 
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> CheckSessionIncrease(Guid id)
+        {
+            var SessionDetail = await _SessionDetailService.GetSessionDetailBySession(id);
+            var sort = SessionDetail.OrderByDescending(s => s.CreateDate);
+            var Session = await _SessionService.GetSessionByID(id);
+            if (SessionDetail.ElementAt(0).Price == Session.ElementAt(0).FinalPrice)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<Users> GetUserWinningByJoining(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var sessionDetailJoining = await _SessionDetailService.GetSessionDetailBySession(id);
+            var sortList = sessionDetailJoining.OrderBy(s => s.CreateDate);
+            var Winner = await _UserService.GetUserByID(sortList.ElementAt(0).UserId);
+            return Winner;
+        }
+
+        public async Task<BookingItem> ReAuction(UpdateItemRequest updateItemRequest, Guid id)
+        {
+            try
+            {
+                await _ItemService.UpdateItem(updateItemRequest);
+
+                var bookingRequest = new UpdateBookingItemRequest()
+                {
+                    Id = id,
+                    Status = (int)BookingItemEnum.Waitting
+                };
+
+                var result =  await _BookingItemService.UpdateStatusBookingItem(bookingRequest);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

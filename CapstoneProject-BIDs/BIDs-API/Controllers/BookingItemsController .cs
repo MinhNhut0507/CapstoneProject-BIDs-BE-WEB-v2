@@ -3,6 +3,9 @@ using BIDs_API.SignalR;
 using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.BookingItemModule.Request;
 using Business_Logic.Modules.BookingItemModule.Response;
+using Business_Logic.Modules.CommonModule.Interface;
+using Business_Logic.Modules.ItemModule.Interface;
+using Business_Logic.Modules.ItemModule.Request;
 using Data_Access.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,16 +19,25 @@ namespace BIDs_API.Controllers
     public class BookingItemsController : ControllerBase
     {
         private readonly IBookingItemService _BookingItemService;
+        private readonly IItemService _ItemService;
+        private readonly ICommon _Common;
         public readonly IMapper _mapper;
         private readonly IHubContext<BookingItemHub> _hubContext;
+        private readonly IHubContext<ItemHub> _itemHubContext;
 
         public BookingItemsController(IBookingItemService BookingItemService
             , IMapper mapper
-            , IHubContext<BookingItemHub> hubContext)
+            , IHubContext<BookingItemHub> hubContext
+            , IHubContext<ItemHub> itemHubContext
+            , IItemService ItemService
+            , ICommon Common)
         {
             _BookingItemService = BookingItemService;
             _mapper = mapper;
             _hubContext = hubContext;
+            _ItemService = ItemService;
+            _itemHubContext = itemHubContext;
+            _Common = Common;
         }
 
         // GET api/<ValuesController>
@@ -283,6 +295,25 @@ namespace BIDs_API.Controllers
             {
                 var BookingItem = await _BookingItemService.UpdateStatusBookingItem(updateBookingItemRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT api/<ValuesController>/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("re_auction/{id}")]
+        public async Task<IActionResult> ReAuction([FromBody] UpdateItemRequest updateItemRequest, [FromRoute] Guid id)
+        {
+            try
+            {
+                var BookingItem = await _Common.ReAuction(updateItemRequest, id);
+                var item = await _ItemService.GetItemByID(updateItemRequest.ItemId);
+                await _hubContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem);
+                await _itemHubContext.Clients.All.SendAsync("ReceiveItemUpdate", item);
                 return Ok();
             }
             catch (Exception ex)

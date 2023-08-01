@@ -1,10 +1,5 @@
 ﻿using Business_Logic.Modules.BookingItemModule.Request;
 using Data_Access.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business_Logic.Modules.BookingItemModule.Interface
 {
@@ -32,6 +27,5 @@ namespace Business_Logic.Modules.BookingItemModule.Interface
         public Task<ICollection<BookingItem>> GetBookingItemByUserIsNotCreateSession(Guid id);
         public Task<ICollection<BookingItem>> GetBookingItemByUserIsAccepted(Guid id);
         public Task<ICollection<BookingItem>> GetBookingItemByUserIsDenied(Guid id);
-
     }
 }

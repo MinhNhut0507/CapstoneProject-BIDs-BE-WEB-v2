@@ -1,5 +1,7 @@
 ﻿using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.BookingItemModule.Request;
+using Business_Logic.Modules.ItemModule.Interface;
+using Business_Logic.Modules.ItemModule.Request;
 using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.UserModule.Interface;
 using Data_Access.Constant;
@@ -15,7 +17,7 @@ namespace Business_Logic.Modules.BookingItemModule
         private readonly IBookingItemRepository _BookingItemRepository;
         private readonly IStaffRepository _StaffRepository;
         public BookingItemService(IBookingItemRepository BookingItemRepository
-            ,IStaffRepository staffRepository)
+            , IStaffRepository staffRepository)
         {
             _BookingItemRepository = BookingItemRepository;
             _StaffRepository = staffRepository;
@@ -290,7 +292,5 @@ namespace Business_Logic.Modules.BookingItemModule
             }
 
         }
-
-
     }
 }

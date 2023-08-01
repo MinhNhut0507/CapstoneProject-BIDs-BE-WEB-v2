@@ -17,10 +17,9 @@ namespace Business_Logic.Modules.SessionModule.Interface
         public Task UpdatePriceSession(Guid id, double price);
 
         public Task<Session> UpdateSessionStatusInStage(UpdateSessionStatusRequest SessionUpdate);
-
         public Task<Session> UpdateSessionStatusNotStart(UpdateSessionStatusRequest SessionUpdate);
-        public Task<Session> UpdateSessionStatusHaventTranfer(UpdateSessionStatusRequest SessionUpdate);
         public Task<Session> UpdateSessionStatusComplete(UpdateSessionStatusRequest SessionUpdate);
+        public Task<Session> UpdateSessionStatusFail(UpdateSessionStatusRequest SessionRequest);
 
         public Task<Session> DeleteSession(Guid? SessionDeleteID);
 
@@ -38,7 +37,7 @@ namespace Business_Logic.Modules.SessionModule.Interface
 
         public Task<ICollection<Session>> GetSessionsIsHaventPay();
 
-        public Task<ICollection<Session>> GetSessionsIsOutOfDate();
+        public Task<ICollection<Session>> GetSessionsIsFail();
 
         public Task<ICollection<Session>> GetSessionsIsNotStartByUser(Guid id);
 
@@ -48,6 +47,6 @@ namespace Business_Logic.Modules.SessionModule.Interface
 
         public Task<ICollection<Session>> GetSessionsIsHaventPayByUser(Guid id);
 
-        public Task<ICollection<Session>> GetSessionsIsOutOfDateByUser(Guid id);
+        public Task<ICollection<Session>> GetSessionsIsFailByUser(Guid id);
     }
 }

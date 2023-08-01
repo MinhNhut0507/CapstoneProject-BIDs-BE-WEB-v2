@@ -59,10 +59,10 @@ namespace Business_Logic.Modules.SessionModule
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.HaventTranferYet).ToList());
         }
 
-        public async Task<ICollection<Session>> GetSessionsIsOutOfDate()
+        public async Task<ICollection<Session>> GetSessionsIsFail()
         {
             return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions"
-                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.OutOfDate).ToList());
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.Fail).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsNotStartByUser(Guid id)
@@ -89,10 +89,10 @@ namespace Business_Logic.Modules.SessionModule
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.HaventTranferYet).ToList());
         }
 
-        public async Task<ICollection<Session>> GetSessionsIsOutOfDateByUser(Guid id)
+        public async Task<ICollection<Session>> GetSessionsIsFailByUser(Guid id)
         {
             return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
-                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.OutOfDate).ToList());
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.Fail).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionByID(Guid? id)
@@ -306,8 +306,6 @@ namespace Business_Logic.Modules.SessionModule
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
 
-                var item = _ItemService.GetItemByID(SessionUpdate.ItemId);
-
                 //CreateUserNotificationDetailRequest request = new CreateUserNotificationDetailRequest()
                 //{
                 //    Messages = "Buổi đấu giá cho sản phẩm " + item.ElementAt(0).Name + " vừa được tạo thành công và sẽ bắt đầu vào lúc "
@@ -414,7 +412,7 @@ namespace Business_Logic.Modules.SessionModule
             }
         }
 
-        public async Task<Session> UpdateSessionStatusHaventTranfer(UpdateSessionStatusRequest SessionRequest)
+        public async Task<Session> UpdateSessionStatusFail(UpdateSessionStatusRequest SessionRequest)
         {
             try
             {
@@ -431,7 +429,7 @@ namespace Business_Logic.Modules.SessionModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                SessionUpdate.Status = (int)SessionStatusEnum.OutOfDate;
+                SessionUpdate.Status = (int)SessionStatusEnum.Fail;
                 DateTime dateTime = DateTime.UtcNow;
                 SessionUpdate.UpdateDate = dateTime.AddHours(7);
 

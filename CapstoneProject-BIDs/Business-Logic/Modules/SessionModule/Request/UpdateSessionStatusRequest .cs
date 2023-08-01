@@ -6,7 +6,7 @@ namespace Business_Logic.Modules.SessionModule.Request
 {
     public class UpdateSessionStatusRequest
     {
-        public Guid? SessionID { get; set; }
+        public Guid SessionID { get; set; }
     }
     public class UpdateSessionStatusRequestValidator : AbstractValidator<UpdateSessionStatusRequest>
     {

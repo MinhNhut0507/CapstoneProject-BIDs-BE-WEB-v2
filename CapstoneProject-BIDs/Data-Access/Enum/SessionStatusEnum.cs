@@ -12,7 +12,7 @@ namespace Data_Access.Enum
         InStage = 2,
         HaventTranferYet = 3,
         Complete = 4,
-        OutOfDate = 5,
+        Fail = 5,
         Delete = -1
     }
 }
