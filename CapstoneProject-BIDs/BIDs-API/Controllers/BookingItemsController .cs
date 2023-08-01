@@ -12,7 +12,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Staff,Auctioneer")]
+    //[Authorize(Roles = "Admin,Staff,Auctioneer")]
     public class BookingItemsController : ControllerBase
     {
         private readonly IBookingItemService _BookingItemService;
@@ -107,6 +107,106 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _BookingItemService.GetBookingItemByStaffIsWatting(email);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        //[Authorize(Roles = "Auctioneer")]
+        [HttpGet("by_user_watting/{id}")]
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsWatting([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _BookingItemService.GetBookingItemByUserIsWaiting(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        //[Authorize(Roles = "Auctioneer")]
+        [HttpGet("by_user_waiting_create_session/{id}")]
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsNotCreateSessionYet([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _BookingItemService.GetBookingItemByUserIsNotCreateSession(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        //[Authorize(Roles = "Auctioneer")]
+        [HttpGet("by_user_accepted/{id}")]
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsAccepted([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _BookingItemService.GetBookingItemByUserIsAccepted(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        //[Authorize(Roles = "Auctioneer")]
+        [HttpGet("by_user_denied/{id}")]
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsDenied([FromRoute] Guid id)
+        {
+            try
+            {
+                var list = await _BookingItemService.GetBookingItemByUserIsDenied(id);
                 if (list == null)
                 {
                     return NotFound();

@@ -75,6 +75,74 @@ namespace Business_Logic.Modules.BookingItemModule
             return BookingItem;
         }
 
+        public async Task<ICollection<BookingItem>> GetBookingItemByUserIsWaiting(Guid id)
+        {
+
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.Waitting).ToList());
+            if (BookingItem == null)
+            {
+                throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+            }
+            return BookingItem;
+        }
+
+        public async Task<ICollection<BookingItem>> GetBookingItemByUserIsNotCreateSession(Guid id)
+        {
+
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.NotCreateSessionYet).ToList());
+            if (BookingItem == null)
+            {
+                throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+            }
+            return BookingItem;
+        }
+
+        public async Task<ICollection<BookingItem>> GetBookingItemByUserIsAccepted(Guid id)
+        {
+
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.Accepted).ToList());
+            if (BookingItem == null)
+            {
+                throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+            }
+            return BookingItem;
+        }
+
+        public async Task<ICollection<BookingItem>> GetBookingItemByUserIsDenied(Guid id)
+        {
+
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.Denied).ToList());
+            if (BookingItem == null)
+            {
+                throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+            }
+            return BookingItem;
+        }
+
         public async Task<ICollection<BookingItem>> GetBookingItemByStaffToCreateSession(string email)
         {
 
