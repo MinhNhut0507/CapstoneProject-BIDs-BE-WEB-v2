@@ -10,6 +10,7 @@ using Data_Access.Enum;
 using FluentValidation.Results;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 
 namespace Business_Logic.Modules.UserModule
 {
@@ -255,11 +256,11 @@ namespace Business_Logic.Modules.UserModule
 
         }
 
-        public async Task<Users> UpdateRoleAccount(Guid id)
+        public async Task<Users> UpdateRoleAccount(string email)
         {
             try
             {
-                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id && x.Status == (int)UserStatusEnum.Acctive);
+                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Email == email && x.Status == (int)UserStatusEnum.Acctive);
                 if (user == null)
                 {
                     throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
@@ -339,6 +340,5 @@ namespace Business_Logic.Modules.UserModule
                 throw new Exception(ex.Message);
             }
         }
-
     }
 }

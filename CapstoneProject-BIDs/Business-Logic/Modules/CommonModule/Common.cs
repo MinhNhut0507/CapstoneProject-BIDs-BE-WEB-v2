@@ -28,6 +28,8 @@ using Business_Logic.Modules.ItemModule.Request;
 using Business_Logic.Modules.BookingItemModule;
 using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.BookingItemModule.Request;
+using Business_Logic.Modules.UserModule;
+using Business_Logic.Modules.CommonModule.Data;
 
 namespace Business_Logic.Modules.CommonModule
 {
@@ -43,6 +45,7 @@ namespace Business_Logic.Modules.CommonModule
         private readonly INotificationTypeService _NotificationTypeService;
         private readonly IStaffNotificationDetailService _StaffNotificationDetailService;
         private readonly IUserNotificationDetailService _UserNotificationDetailService;
+        private string UTCCode = "";
         public Common(IUserService UserService
             , IItemService ItemService
             , IBookingItemService BookingItemService
@@ -85,7 +88,7 @@ namespace Business_Logic.Modules.CommonModule
                 string content = "Cuộc đấu giá của sản phẩm "
                     + item.ElementAt(0).Name
                     + " đã bắt đầu và sẽ diễn ra trong thời gian từ ngày"
-                    + session.BeginTime+ " đến ngày "
+                    + session.BeginTime + " đến ngày "
                     + session.EndTime + " theo giờ Việt Nam"
                     + ". Xin vui lòng truy cập hệ thống để có thể theo dõi những thông tin mới nhất.";
 
@@ -164,7 +167,7 @@ namespace Business_Logic.Modules.CommonModule
             var check = await CheckSessionJoining(session.Id);
             var SessionWinner = new SessionDetail();
             var Winner = new Users();
-            if (check == true) 
+            if (check == true)
             {
                 SessionWinner = await _SessionDetailService.Getwinner(session.Id);
                 Winner = await _UserService.GetUserByID(SessionWinner.UserId);
@@ -173,7 +176,7 @@ namespace Business_Logic.Modules.CommonModule
             {
                 Winner = await GetUserWinningByJoining(session.Id);
             }
-            
+
 
             string _gmail = "bidauctionfloor@gmail.com";
             string _password = "gnauvhbfubtgxjow";
@@ -220,14 +223,14 @@ namespace Business_Logic.Modules.CommonModule
 
         public async Task<ICollection<Session>> GetSessionInStageByAuctioneer(Guid id)
         {
-            if(id == null)
+            if (id == null)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
             ICollection<Session> listSession = new List<Session>();
             var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
             ICollection<Session> checkSession = new List<Session>();
-            foreach(var x in sessionDetail)
+            foreach (var x in sessionDetail)
             {
                 checkSession = await _SessionService.GetSessionByID(x.SessionId);
                 if (listSession.Count() == 0)
@@ -241,7 +244,7 @@ namespace Business_Logic.Modules.CommonModule
                     {
                         if (y.Id == checkSession.ElementAt(0).Id)
                             continue;
-                        if(checkSession.ElementAt(0).Status == (int)SessionStatusEnum.InStage)
+                        if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.InStage)
                             listSession.Add(checkSession.ElementAt(0));
                     }
                 }
@@ -336,7 +339,7 @@ namespace Business_Logic.Modules.CommonModule
                 TypeId = TypeId,
                 Messages = message
             };
-            var userNoti =  await _UserNotificationDetailService.AddNewUserNotificationDetail(CreateUserNotification);
+            var userNoti = await _UserNotificationDetailService.AddNewUserNotificationDetail(CreateUserNotification);
             var response = new UserNotiResponse()
             {
                 UserNotificationDetail = userNoti,
@@ -372,7 +375,7 @@ namespace Business_Logic.Modules.CommonModule
         public async Task<bool> CheckSessionJoining(Guid id)
         {
             var SessionDetail = await _SessionDetailService.GetSessionDetailBySession(id);
-            if (SessionDetail.Count() == 0) 
+            if (SessionDetail.Count() == 0)
             {
                 return false;
             }
@@ -415,7 +418,7 @@ namespace Business_Logic.Modules.CommonModule
                     Status = (int)BookingItemEnum.Waitting
                 };
 
-                var result =  await _BookingItemService.UpdateStatusBookingItem(bookingRequest);
+                var result = await _BookingItemService.UpdateStatusBookingItem(bookingRequest);
                 return result;
             }
             catch (Exception ex)
@@ -424,5 +427,75 @@ namespace Business_Logic.Modules.CommonModule
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<UTCCode> ConfirmEmail(string email)
+        {
+            try
+            {
+
+                string _gmail = "bidauctionfloor@gmail.com";
+                string _password = "gnauvhbfubtgxjow";
+
+                string sendto = email;
+                string subject = "BIDs - Nâng Cấp Tài Khoản";
+
+                UTCCode = RandomString(6);
+
+                string UTCCODE = "Mã kích hoạt email của bạn là " + UTCCode + ".";
+
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+
+                mail.From = new MailAddress(_gmail);
+                mail.To.Add(sendto);
+                mail.Subject = subject;
+                mail.IsBodyHtml = true;
+                mail.Body = UTCCODE;
+
+                mail.Priority = MailPriority.High;
+
+                SmtpServer.Port = 587;
+                SmtpServer.UseDefaultCredentials = false;
+                SmtpServer.Credentials = new NetworkCredential(_gmail, _password);
+                SmtpServer.EnableSsl = true;
+
+                SmtpServer.Send(mail);
+
+                var response = new UTCCode()
+                {
+                    email = email,
+                    code = UTCCode,
+                };
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> CheckUTCCode(string codeInput, string codeCheck)
+        {
+            if(codeInput == codeCheck)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private string RandomString(int size)
+        {
+            StringBuilder builder = new StringBuilder();
+            Random random = new Random();
+            char ch;
+            for (int i = 0; i < size; i++)
+            {
+                ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
+                builder.Append(ch);
+            }
+            return builder.ToString();
+        }
+
     }
 }

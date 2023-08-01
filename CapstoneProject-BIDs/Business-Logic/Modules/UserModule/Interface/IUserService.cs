@@ -15,7 +15,7 @@ namespace Business_Logic.Modules.UserModule.Interface
 
         public Task<Users> UpdateUser(UpdateUserRequest UserUpdate);
         public Task<Users> UpdatePassword(UpdatePasswordRequest UserUpdate);
-        public Task<Users> UpdateRoleAccount(Guid id);
+        public Task<Users> UpdateRoleAccount(string email);
 
         public Task<ICollection<Users>> GetAll();
 

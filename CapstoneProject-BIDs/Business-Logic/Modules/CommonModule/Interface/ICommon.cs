@@ -1,4 +1,5 @@
-﻿using Business_Logic.Modules.CommonModule.Response;
+﻿using Business_Logic.Modules.CommonModule.Data;
+using Business_Logic.Modules.CommonModule.Response;
 using Business_Logic.Modules.ItemModule.Request;
 using Data_Access.Entities;
 using System;
@@ -24,6 +25,8 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<Users> GetUserWinningByJoining(Guid id);
         public Task<bool> CheckSessionIncrease(Guid id);
         public Task<BookingItem> ReAuction(UpdateItemRequest updateItemRequest, Guid id);
+        public Task<UTCCode> ConfirmEmail(string email);
+        public Task<bool> CheckUTCCode(string codeInput, string codeCheck);
 
     }
 }

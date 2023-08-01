@@ -10,12 +10,14 @@ using Microsoft.AspNetCore.Authorization;
 using Business_Logic.Modules.LoginModule.Request;
 using Business_Logic.Modules.CommonModule.Interface;
 using Data_Access.Enum;
+using Business_Logic.Modules.CommonModule.Data;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -24,7 +26,7 @@ namespace BIDs_API.Controllers
         private readonly IHubContext<NotificationHub> _notiHubContext;
         private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
         public readonly ICommon _common;
-
+        private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
         public UsersController(IUserService userService
             , IMapper mapper
             , IHubContext<UserHub> hubContext
@@ -198,14 +200,43 @@ namespace BIDs_API.Controllers
         }
 
         [Authorize(Roles = "Bidder")]
-        [HttpPut("update_role_account/{id}")]
-        public async Task<IActionResult> PutRoleUser([FromRoute] Guid id)
+        [HttpPut("confirm_email/{email}")]
+        public async Task<IActionResult> ConfirmEmailUser([FromRoute] string email)
         {
             try
             {
-                var user = await _userService.UpdateRoleAccount(id);
-                await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
+                var codeResponse = await _common.ConfirmEmail(email);
+                _cache.Set(email, codeResponse.code, TimeSpan.FromMinutes(1));
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Bidder")]
+        [HttpPut("update_role_user")]
+        public async Task<IActionResult> PutRoleUser([FromBody] UTCCode code)
+        {
+            try
+            {
+                var codeCheck = _cache.Get(code.email).ToString();
+                if(codeCheck == null)
+                {
+                    return BadRequest();
+                };
+                var check = await _common.CheckUTCCode(code.code, codeCheck);
+                if(check == true)
+                {
+                    var user = await _userService.UpdateRoleAccount(code.email);
+                    await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
             catch (Exception ex)
             {
@@ -250,26 +281,5 @@ namespace BIDs_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
-        //// DELETE api/<ValuesController>/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
-        //{
-        //    try
-        //    {
-        //        await _userService.DeleteUser(id);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
-
-        //private bool UserExists(Guid id)
-        //{
-        //    return (_context.Users?.Any(e => e.UserId == id)).GetValueOrDefault();
-        //}
     }
 }
