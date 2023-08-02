@@ -191,6 +191,10 @@ namespace BIDs_API.Controllers
             {
                 var user = await _userService.UpdateUser(updateUserRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
+                string message = "Tài khoản " + user.Name + " vừa cập nhập thông tin tài khoản thành công. Bạn có thể xem chi tiết ở thông tin cá nhân.";
+                var userNoti = await _common.UserNotification(10, (int)NotificationTypeEnum.Account, message, user.Id);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)
@@ -231,6 +235,10 @@ namespace BIDs_API.Controllers
                 {
                     var user = await _userService.UpdateRoleAccount(code.email);
                     await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
+                    string message = "Tài khoản " + user.Name + " có email là " + user.Email + " vừa cập nhập được nâng cấp thành người bán. Từ giờ bạn có thêm chức năng đăng bán sản phẩm đấu giá.";
+                    var userNoti = await _common.UserNotification(10, (int)NotificationTypeEnum.Account, message, user.Id);
+                    await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                    await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                     return Ok();
                 }
                 else

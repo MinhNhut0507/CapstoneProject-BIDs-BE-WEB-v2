@@ -13,7 +13,7 @@ namespace Business_Logic.Modules.CommonModule.Interface
     public interface ICommon
     {
         public Task SendEmailBeginAuction(Session session);
-        public Task SendEmailWinnerAuction(Session session);
+        public Task<Users> SendEmailWinnerAuction(Session session);
         public Task SendEmailFailAuction(Session session);
         public Task<ICollection<Session>> GetSessionInStageByAuctioneer(Guid id);
         public Task<ICollection<Session>> GetSessionCompleteByAuctioneer(Guid id);

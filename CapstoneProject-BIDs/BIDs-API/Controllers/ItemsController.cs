@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using BIDs_API.SignalR;
 using Business_Logic.Modules.BookingItemModule.Interface;
+using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.ItemModule.Request;
 using Business_Logic.Modules.ItemModule.Response;
 using Data_Access.Entities;
+using Data_Access.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -17,23 +19,32 @@ namespace BIDs_API.Controllers
     [Authorize]
     public class ItemsController : ControllerBase
     {
-        private readonly IItemService _ItemService;
         public readonly IMapper _mapper;
         private readonly IHubContext<ItemHub> _hubContext;
         private readonly IHubContext<BookingItemHub> _hubBookingContext;
         private readonly IBookingItemService _BookingItemService;
+        private readonly IItemService _ItemService;
+        private readonly IHubContext<NotificationHub> _notiHubContext;
+        private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
+        public readonly ICommon _common;
 
         public ItemsController(IItemService ItemService
             , IMapper mapper
-            , IHubContext<ItemHub> hubContext
             , IHubContext<BookingItemHub> hubBookingContext
-            , IBookingItemService BookingItemService)
+            , IBookingItemService BookingItemService
+            , IHubContext<ItemHub> hubContext
+            , IHubContext<NotificationHub> notiHubContext
+            , IHubContext<UserNotificationDetailHub> userNotiHubContext
+            , ICommon common)
         {
-            _ItemService = ItemService;
             _mapper = mapper;
             _hubContext = hubContext;
             _hubBookingContext = hubBookingContext;
             _BookingItemService = BookingItemService;
+            _common = common;
+            _notiHubContext = notiHubContext;
+            _userNotiHubContext = userNotiHubContext;
+            _ItemService = ItemService;
         }
 
         // GET api/<ValuesController>
@@ -206,6 +217,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Auctioneer")]
         [HttpPut]
         public async Task<IActionResult> PutItem([FromBody] UpdateItemRequest updateItemRequest)
         {
@@ -213,6 +225,10 @@ namespace BIDs_API.Controllers
             {
                 var Item = await _ItemService.UpdateItem(updateItemRequest);
                 await _hubContext.Clients.All.SendAsync("ReceiveItemUpdate", Item);
+                string message = "Bạn vừa cập nhập thông tinh vật phẩm có tên là " + Item.Name + " thành công. Bạn có thể xem lại thông tin sản phẩm ở chi tiết sản phẩm.";
+                var userNoti = await _common.UserNotification(10, (int)NotificationTypeEnum.Item, message, Item.UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)

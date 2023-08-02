@@ -15,6 +15,11 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Business_Logic.Modules.CommonModule.Interface;
 using System.Runtime.InteropServices;
+using Data_Access.Enum;
+using Business_Logic.Modules.ItemModule.Interface;
+using Business_Logic.Modules.ItemModule;
+using System.Reflection;
+using static System.Collections.Specialized.BitVector32;
 
 namespace BIDs_API.Controllers
 {
@@ -27,16 +32,26 @@ namespace BIDs_API.Controllers
         private readonly IHubContext<SessionHub> _hubSessionContext;
         private readonly IMapper _mapper;
         private readonly ICommon _Common;
+        private readonly IItemService _ItemService;
+        private readonly IHubContext<NotificationHub> _notiHubContext;
+        private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
 
         public SessionsController(ISessionService SessionService
             , IHubContext<SessionHub> hubSessionContext
             , IMapper mapper
-            , ICommon Common)
+            , ICommon Common
+            , IItemService ItemService
+            , IHubContext<ItemHub> hubContext
+            , IHubContext<NotificationHub> notiHubContext
+            , IHubContext<UserNotificationDetailHub> userNotiHubContext)
         {
             _SessionService = SessionService;
             _hubSessionContext = hubSessionContext;
             _mapper = mapper;
             _Common = Common;
+            _notiHubContext = notiHubContext;
+            _userNotiHubContext = userNotiHubContext;
+            _ItemService = ItemService;
         }
 
         // GET api/<ValuesController>
@@ -518,6 +533,11 @@ namespace BIDs_API.Controllers
             {
                 var session = await _SessionService.UpdateSession(updateSessionRequest);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                var item = await _ItemService.GetItemByID(session.ItemId);
+                string message = "Phiên đấu giá vật phẩm " + item.ElementAt(0).Name + " của bạn vừa được cập nhập thành công. Bạn có thể xem lại thông tin chi tiết ở phiên đấu giá của tôi.";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)
@@ -537,6 +557,11 @@ namespace BIDs_API.Controllers
                 var session = await _SessionService.UpdateSessionStatusNotStart(updateSessionRequest);
                 await _Common.SendEmailBeginAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                var item = await _ItemService.GetItemByID(session.ItemId);
+                string message = "Phiên đấu giá vật phẩm " + item.ElementAt(0).Name + " của bạn đã bắt đầu. Bạn có thể xem lại thông tin chi tiết ở phiên đấu giá của tôi.";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)
@@ -557,8 +582,14 @@ namespace BIDs_API.Controllers
                 if(checkSession == true)
                 {
                     var session = await _SessionService.UpdateSessionStatusInStage(updateSessionRequest);
-                    await _Common.SendEmailWinnerAuction(session);
+                    var winner = await _Common.SendEmailWinnerAuction(session);
                     await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                    var item = await _ItemService.GetItemByID(session.ItemId);
+                    string message = "Phiên đấu giá vật phẩm " + item.ElementAt(0).Name + " của bạn đã kết thúc. Người thắng cuộc là tài khoản có email là " + winner.Email + " với mức giá cuối cùng được đưa ra là " + session.FinalPrice + ". Bạn có thể xem lại thông tin chi tiết ở phiên đấu giá của tôi.";
+                    var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                    await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                    await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                    string messageForWinner = "Bạn đã đấu giá thành công sản phẩm " + item.ElementAt(0).Name + " với mức giá đưa ra là " + session.FinalPrice + ". Bạn hãy thanh toán trong vòng 3 ngày sau khi nhận được thông báo này. Nếu sau 3 ngày vẫn chưa thanh toán bạn sẽ bị khóa tài khoản và sẽ không được nhận lại phí đặt cọc khi tham gia đấu giá. Bạn có thể từ chối thanh toán ngay bằng cách từ chối thanh toán trong mục các phiên đấu giá thắng cuộc.";
                     return Ok();
                 }
                 else
@@ -585,6 +616,11 @@ namespace BIDs_API.Controllers
                 var session = await _SessionService.UpdateSessionStatusFail(updateSessionRequest);
                 await _Common.SendEmailFailAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                var item = await _ItemService.GetItemByID(session.ItemId);
+                string message = "Phiên đấu giá vật phẩm " + item.ElementAt(0).Name + " của bạn đã thất bại do không có người tham gia trả giá hoặc người trúng đấu giá đã từ chối thanh toán sản phẩm. Bạn có thể đăng ký lại phiên đấu giá trong mục phiên đấu của tôi -> phiên đấu giá thất bại.";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)
@@ -603,6 +639,11 @@ namespace BIDs_API.Controllers
             {
                 var session = await _SessionService.UpdateSessionStatusComplete(updateSessionRequest);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                var item = await _ItemService.GetItemByID(session.ItemId);
+                string message = "Phiên đấu giá vật phẩm " + item.ElementAt(0).Name + " của bạn đã thành công, người trúng giải đã thanh toán cho hệ thống. Sau khi xác nhận sản phẩm, hệ thống sẽ thanh toán cho bạn(đã trừ phí phụ thu).";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)
@@ -621,6 +662,11 @@ namespace BIDs_API.Controllers
             {
                 var Session = await _SessionService.AddNewSession(createSessionRequest);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionAdd", Session);
+                var item = await _ItemService.GetItemByID(Session.ItemId);
+                string message = "Phiên đấu giá vật phẩm " + item.ElementAt(0).Name + " của bạn đã được tạo thành công. Bạn có thể xem thông tin chi tiết ở phiên đấu giá của tôi.";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 return Ok(_mapper.Map<SessionResponse>(Session));
             }
             catch (Exception ex)

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using BIDs_API.SignalR;
+using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.LoginModule.Request;
 using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.StaffModule.Request;
 using Business_Logic.Modules.StaffModule.Response;
 using Data_Access.Entities;
+using Data_Access.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -20,15 +22,27 @@ namespace BIDs_API.Controllers
         private readonly IMapper _mapper;
         private readonly IHubContext<UserHub> _hubUserContext;
         private readonly IHubContext<StaffHub> _hubStaffContext;
+        private readonly IHubContext<NotificationHub> _notiHubContext;
+        private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
+        private readonly IHubContext<StaffNotificationDetailHub> _staffNotiHubContext;
+        public readonly ICommon _common;
         public StaffsController(IStaffService StaffService
             , IMapper mapper
             , IHubContext<UserHub> hubUserContext
-            , IHubContext<StaffHub> hubStaffContext)
+            , IHubContext<StaffHub> hubStaffContext
+            , IHubContext<NotificationHub> notiHubContext
+            , IHubContext<UserNotificationDetailHub> userNotiHubContext
+            , IHubContext<StaffNotificationDetailHub> staffNotiHubContext
+            , ICommon common)
         {
             _StaffService = StaffService;
             _mapper = mapper;
             _hubUserContext = hubUserContext;
             _hubStaffContext = hubStaffContext;
+            _notiHubContext = notiHubContext;
+            _common = common;
+            _userNotiHubContext = userNotiHubContext;
+            _staffNotiHubContext = staffNotiHubContext;
         }
 
         // GET api/<ValuesController>
@@ -109,6 +123,10 @@ namespace BIDs_API.Controllers
             {
                 var staff = await _StaffService.UpdateStaff(updateStaffRequest);
                 await _hubStaffContext.Clients.All.SendAsync("ReceiveStaffUpdate", staff);
+                string message = "Tài khoản " + staff.Name + " vừa được cập nhập thành công. Bạn có thể xem lại ở phần thông tin tài khoản.";
+                var staffNoti = await _common.StaffNotification(10, (int)NotificationTypeEnum.Account, message, staff.Id);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", staffNoti.Notification);
+                await _staffNotiHubContext.Clients.All.SendAsync("ReceiveStaffNotificationDetailAdd", staffNoti.StaffNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)
@@ -127,6 +145,10 @@ namespace BIDs_API.Controllers
             {
                 var staff = await _StaffService.UpdatePassword(updateStaffRequest);
                 await _hubStaffContext.Clients.All.SendAsync("ReceiveStaffUpdate", staff);
+                string message = "Tài khoản " + staff.Name + " vừa được cập nhập mật khẩu thành công. Bạn có thể xem lại ở phần thông tin tài khoản.";
+                var staffNoti = await _common.StaffNotification(10, (int)NotificationTypeEnum.Account, message, staff.Id);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", staffNoti.Notification);
+                await _staffNotiHubContext.Clients.All.SendAsync("ReceiveStaffNotificationDetailAdd", staffNoti.StaffNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)
@@ -179,6 +201,10 @@ namespace BIDs_API.Controllers
             {
                 var user = await _StaffService.AcceptCreateAccount(AcceptID);
                 await _hubUserContext.Clients.All.SendAsync("ReceiveUserActive", user);
+                string message = "Chào mừng tài khoản " + user.Name + " đăng ký thành công. Bạn có thể tham gia đấu giá các sản phẩm trong hệ thống. Nếu muốn đăng bán sản phẩm đấu giá vui lòng xác nhận email ở phần thông tin cá nhân.";
+                var userNoti = await _common.UserNotification(10, (int)NotificationTypeEnum.Account, message, user.Id);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 return Ok();
             }
             catch (Exception ex)

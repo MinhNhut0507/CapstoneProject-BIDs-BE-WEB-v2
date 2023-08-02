@@ -112,7 +112,7 @@ namespace Business_Logic.Modules.CommonModule
             }
         }
 
-        public async Task SendEmailWinnerAuction(Session session)
+        public async Task<Users> SendEmailWinnerAuction(Session session)
         {
             var item = await _ItemService.GetItemByID(session.ItemId);
             var check = await CheckSessionJoining(session.Id);
@@ -140,7 +140,10 @@ namespace Business_Logic.Modules.CommonModule
                 + item.ElementAt(0).Name
                 + " với mức giá "
                 + SessionWinner.Price
-                + ". Xin vui lòng thanh toán trong vòng 3 ngày kể từ lúc nhận được thông báo này.";
+                + ". Xin vui lòng thanh toán trong vòng 3 ngày kể từ lúc nhận được thông báo này."
+                + " Nếu không sẽ coi như bạn từ chối thanh toán, tài khoản của bạn sẽ bị khóa"
+                + " và bạn sẽ không được nhận lại phí đặt cọc khi tham gia đấu giá."
+                + " Bạn có thể từ chối thanh toán ngay bằng cách từ chối thanh toán trong mục phiên đấu giá thắng cuộc.";
 
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
@@ -159,6 +162,7 @@ namespace Business_Logic.Modules.CommonModule
             SmtpServer.EnableSsl = true;
 
             SmtpServer.Send(mail);
+            return Winner;
         }
 
         public async Task SendEmailFailAuction(Session session)
