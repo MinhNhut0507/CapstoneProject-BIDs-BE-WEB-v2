@@ -206,8 +206,8 @@ namespace Business_Logic.Modules.SessionModule
                 }
             }
             newSession.SessionRuleId = SessionRequest.SessionRuleId;
-            newSession.BeginTime = BeginTime;
-            newSession.EndTime = EndTime;
+            newSession.BeginTime = SessionRequest.BeginTime;
+            newSession.EndTime = SessionRequest.EndTime;
             newSession.FinalPrice = item.ElementAt(0).FirstPrice;
             DateTime dateTime = DateTime.UtcNow;
             newSession.CreateDate = dateTime.AddHours(7);
@@ -330,8 +330,7 @@ namespace Business_Logic.Modules.SessionModule
         {
             try
             {
-                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == id
-                && x.Status == (int)SessionStatusEnum.InStage);
+                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == id);
                 if (SessionUpdate == null)
                 {
                     throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
