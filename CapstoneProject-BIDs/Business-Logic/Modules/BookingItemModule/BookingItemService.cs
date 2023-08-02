@@ -25,7 +25,7 @@ namespace Business_Logic.Modules.BookingItemModule
 
         public async Task<ICollection<BookingItem>> GetAll()
         {
-            return await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            return await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
@@ -36,7 +36,7 @@ namespace Business_Logic.Modules.BookingItemModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.Id == id).ToList());
             if (BookingItem == null)
             {
@@ -51,7 +51,7 @@ namespace Business_Logic.Modules.BookingItemModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.StaffId == id).ToList());
             if (BookingItem == null)
             {
@@ -68,7 +68,7 @@ namespace Business_Logic.Modules.BookingItemModule
                 throw new Exception(ErrorMessage.CommonError.EMAIL_IS_NULL);
             }
             var staff = await _StaffRepository.GetFirstOrDefaultAsync(x => x.Email == email);
-            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.StaffId == staff.Id && x.Status == (int) BookingItemEnum.Waitting).ToList());
             if (BookingItem == null)
             {
@@ -85,7 +85,7 @@ namespace Business_Logic.Modules.BookingItemModule
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
 
-            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.Waitting).ToList());
             if (BookingItem == null)
             {
@@ -102,7 +102,7 @@ namespace Business_Logic.Modules.BookingItemModule
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
 
-            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.NotCreateSessionYet).ToList());
             if (BookingItem == null)
             {
@@ -119,7 +119,7 @@ namespace Business_Logic.Modules.BookingItemModule
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
 
-            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.Accepted).ToList());
             if (BookingItem == null)
             {
@@ -136,7 +136,7 @@ namespace Business_Logic.Modules.BookingItemModule
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
 
-            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.Denied).ToList());
             if (BookingItem == null)
             {
@@ -153,7 +153,7 @@ namespace Business_Logic.Modules.BookingItemModule
                 throw new Exception(ErrorMessage.CommonError.EMAIL_IS_NULL);
             }
             var staff = await _StaffRepository.GetFirstOrDefaultAsync(x => x.Email == email);
-            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.StaffId == staff.Id && x.Status == (int)BookingItemEnum.NotCreateSessionYet).ToList());
             if (BookingItem == null)
             {
@@ -168,7 +168,7 @@ namespace Business_Logic.Modules.BookingItemModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.ItemId == id).ToList());
             if (BookingItem == null)
             {
@@ -206,7 +206,7 @@ namespace Business_Logic.Modules.BookingItemModule
         {
             try
             {
-                var BookingItemUpdate = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+                var BookingItemUpdate = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.Id == BookingItemRequest.Id).ToList());
 
                 if (BookingItemUpdate == null)
@@ -241,7 +241,7 @@ namespace Business_Logic.Modules.BookingItemModule
         {
             try
             {
-                var BookingItemUpdate = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+                var BookingItemUpdate = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.Id == id).ToList());
 
                 if (BookingItemUpdate == null)
@@ -269,7 +269,7 @@ namespace Business_Logic.Modules.BookingItemModule
         {
             try
             {
-                var BookingItemUpdate = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images"
+                var BookingItemUpdate = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.Id == id).ToList());
 
                 if (BookingItemUpdate == null)
