@@ -170,12 +170,12 @@ namespace Business_Logic.Modules.SessionDetailModule
                 throw new Exception(ErrorMessage.SessionError.END_TIME_AUCTION);
             }
 
-            if (((DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayTime)
-                || (((Session.ElementAt(0).EndTime - DateTime.Now) < SessionRule.FreeTime)
-                    && (DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayFreeTime))
-            {
-                throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
-            }
+            //if (((DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayTime)
+            //    || (((Session.ElementAt(0).EndTime - DateTime.Now) < SessionRule.FreeTime)
+            //        && (DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayFreeTime))
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
+            //}
 
             newSessionDetail.Id = Guid.NewGuid();
             newSessionDetail.UserId = SessionDetailRequest.UserId;
