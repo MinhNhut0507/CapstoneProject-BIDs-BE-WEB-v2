@@ -20,6 +20,7 @@ using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.ItemModule;
 using System.Reflection;
 using static System.Collections.Specialized.BitVector32;
+using Business_Logic.Modules.UserModule.Response;
 
 namespace BIDs_API.Controllers
 {
@@ -574,7 +575,7 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [AllowAnonymous]
         [HttpPut("session_status_to_haven't_pay")]
-        public async Task<IActionResult> PutSessionStatusInStage([FromBody] UpdateSessionStatusRequest updateSessionRequest)
+        public async Task<ActionResult<SessionResponseComplete>> PutSessionStatusInStage([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
             try
             {
@@ -590,7 +591,9 @@ namespace BIDs_API.Controllers
                     await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
                     await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                     string messageForWinner = "Bạn đã đấu giá thành công sản phẩm " + item.ElementAt(0).Name + " với mức giá đưa ra là " + session.FinalPrice + ". Bạn hãy thanh toán trong vòng 3 ngày sau khi nhận được thông báo này. Nếu sau 3 ngày vẫn chưa thanh toán bạn sẽ bị khóa tài khoản và sẽ không được nhận lại phí đặt cọc khi tham gia đấu giá. Bạn có thể từ chối thanh toán ngay bằng cách từ chối thanh toán trong mục các phiên đấu giá thắng cuộc.";
-                    return Ok();
+                    var response = _mapper.Map<SessionResponseComplete>(session);
+                    response.Winner = winner.Name;
+                    return Ok(response);
                 }
                 else
                 {
