@@ -154,8 +154,28 @@ namespace Business_Logic.Modules.SessionDetailModule
             }
 
             var Session = await _SessionService.GetSessionByID(SessionDetailRequest.SessionId);
+            if (Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
+            {
+                throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
+            }
             var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: x => x.OrderByDescending(o => o.UserId == SessionDetailRequest.UserId && o.SessionId == SessionDetailRequest.SessionId).ToList());
+            var newSessionDetail = new SessionDetail();
+            DateTime dateTime = DateTime.UtcNow;
+            if (SessionDetail.Count == 0) 
+            {
+                var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
+
+                newSessionDetail.Id = Guid.NewGuid();
+                newSessionDetail.UserId = SessionDetailRequest.UserId;
+                newSessionDetail.SessionId = SessionDetailRequest.SessionId;
+                newSessionDetail.Price = Item.ElementAt(0).FirstPrice;
+                newSessionDetail.CreateDate = dateTime.AddHours(7);
+                newSessionDetail.Status = true;
+
+                await _SessionDetailRepository.AddAsync(newSessionDetail);
+                return newSessionDetail;
+            }
             var SessionRule = await _SessionRuleService.GetSessionRuleByID(Session.ElementAt(0).SessionRuleId);
             var item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
             var ListSessionDetailSort = SessionDetail.OrderByDescending(o => o.CreateDate);
@@ -172,13 +192,10 @@ namespace Business_Logic.Modules.SessionDetailModule
                 throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
             }
 
-            var newSessionDetail = new SessionDetail();
-
             newSessionDetail.Id = Guid.NewGuid();
             newSessionDetail.UserId = SessionDetailRequest.UserId;
             newSessionDetail.SessionId = SessionDetailRequest.SessionId;
             newSessionDetail.Price = Session.ElementAt(0).FinalPrice + item.ElementAt(0).StepPrice;
-            DateTime dateTime = DateTime.UtcNow;
             newSessionDetail.CreateDate = dateTime.AddHours(7);
             newSessionDetail.Status = true;
 
@@ -226,7 +243,6 @@ namespace Business_Logic.Modules.SessionDetailModule
 
             await _SessionDetailRepository.AddAsync(newSessionDetail);
 
-            var item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
             var user = await _UserService.GetUserByID(newSessionDetail.UserId);
 
             string _gmail = "bidauctionfloor@gmail.com";
@@ -238,7 +254,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             string content = "Tài khoản " 
                 + user.Email 
                 + " đã đăng ký tham gia thành công buổi đấu giá của sản phẩm "
-                + item.ElementAt(0).Name
+                + Item.ElementAt(0).Name
                 + " diễn ra vào ngày "
                 + Session.ElementAt(0).BeginTime + " đến ngày "
                 + Session.ElementAt(0).EndTime
