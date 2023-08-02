@@ -147,7 +147,7 @@ namespace Business_Logic.Modules.SessionDetailModule
                 , options: x => x.OrderByDescending(o => o.UserId == SessionDetailRequest.UserId && o.SessionId == SessionDetailRequest.SessionId).ToList());
             var newSessionDetail = new SessionDetail();
             DateTime dateTime = DateTime.UtcNow;
-            if (SessionDetail.Count == 0) 
+            if (SessionDetail.Count == 0 || SessionDetail == null) 
             {
                 var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 
