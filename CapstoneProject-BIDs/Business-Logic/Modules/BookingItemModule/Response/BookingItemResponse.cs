@@ -1,4 +1,5 @@
 ﻿using Business_Logic.Modules.ImageModule.Response;
+using Business_Logic.Modules.ItemDescriptionModule.Response;
 using Common.Helper;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Business_Logic.Modules.BookingItemModule.Response
     {
         public BookingItemResponse() 
         {
+            Descriptions = new HashSet<ItemDescriptionResponse>();
             Images = new HashSet<ImageResponseOrther>();
         }
 
@@ -26,6 +28,7 @@ namespace Business_Logic.Modules.BookingItemModule.Response
         public string CategoryName { get; set; }
         public string DescriptionDetail { get; set; }
         public int Quantity { get; set; }
+        public ICollection<ItemDescriptionResponse> Descriptions { get; set; }
         public ICollection<ImageResponseOrther> Images { get; set; }
         public double FirstPrice { get; set; }
         public double StepPrice { get; set; }

@@ -176,6 +176,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
                 .ForMember(x => x.UserName, d => d.MapFrom(s => s.Item.User.Name))
                 .ForMember(x => x.CategoryName, d => d.MapFrom(s => s.Item.Category.Name))
+                .ForMember(x => x.Descriptions, d => d.MapFrom(s => s.ItemDescriptions.ToList()))
                 .ForMember(x => x.Images, d => d.MapFrom(s => s.Item.Images.ToList()))
                 .ForMember(x => x.DescriptionDetail, d => d.MapFrom(s => s.Item.DescriptionDetail))
                 .ForMember(x => x.Deposit, d => d.MapFrom(s => s.Item.Deposit))
