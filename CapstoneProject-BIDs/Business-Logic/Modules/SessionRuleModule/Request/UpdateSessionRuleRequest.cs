@@ -18,9 +18,9 @@ namespace Business_Logic.Modules.SessionRuleModule.Request
         {
             RuleFor(x => x.SessionRuleId).NotEmpty().NotNull();
             RuleFor(x => x.Name).NotEmpty().NotNull();
-            RuleFor(x => x.FreeTime).NotEmpty().NotNull();
-            RuleFor(x => x.DelayTime).NotEmpty().NotNull();
-            RuleFor(x => x.DelayFreeTime).NotEmpty().NotNull();
+            RuleFor(x => x.FreeTime);
+            RuleFor(x => x.DelayTime);
+            RuleFor(x => x.DelayFreeTime);
             RuleFor(x => x.Status);
         }
     }

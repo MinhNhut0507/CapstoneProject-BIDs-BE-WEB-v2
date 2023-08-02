@@ -73,7 +73,7 @@ namespace Business_Logic.Modules.ImageModule
 
             if (!ImageRequest.DetailImage.EndsWith(".jpg")
                 && !ImageRequest.DetailImage.EndsWith(".png")
-                && !ImageRequest.DetailImage.EndsWith(".gif"))
+                && !ImageRequest.DetailImage.EndsWith(".heic"))
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
             }
@@ -108,7 +108,7 @@ namespace Business_Logic.Modules.ImageModule
 
                 if (!ImageRequest.DetailImage.EndsWith(".jpg")
                 && !ImageRequest.DetailImage.EndsWith(".png")
-                && !ImageRequest.DetailImage.EndsWith(".gif"))
+                && !ImageRequest.DetailImage.EndsWith(".heic"))
                 {
                     throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
                 }

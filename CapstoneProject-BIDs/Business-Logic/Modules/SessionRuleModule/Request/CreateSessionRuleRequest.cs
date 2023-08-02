@@ -15,9 +15,9 @@ namespace Business_Logic.Modules.SessionRuleModule.Request
         public CreateSessionRuleRequestValidator()
         {
             RuleFor(x => x.Name).NotEmpty().NotNull();
-            RuleFor(x => x.FreeTime).NotEmpty().NotNull();
-            RuleFor(x => x.DelayTime).NotEmpty().NotNull();
-            RuleFor(x => x.DelayFreeTime).NotEmpty().NotNull();
+            RuleFor(x => x.FreeTime);
+            RuleFor(x => x.DelayTime);
+            RuleFor(x => x.DelayFreeTime);
         }
     }
 }

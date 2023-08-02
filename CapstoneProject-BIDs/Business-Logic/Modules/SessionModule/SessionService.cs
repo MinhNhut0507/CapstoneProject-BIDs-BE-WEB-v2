@@ -32,66 +32,66 @@ namespace Business_Logic.Modules.SessionModule
 
         public async Task<ICollection<Session>> GetAll()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions", options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions", options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsNotStart()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.NotStart).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsInStage()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.InStage).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsComplete()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.Complete).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsHaventPay()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.HaventTranferYet).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsFail()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.Fail).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsNotStartByUser(Guid id)
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.NotStart).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsInStageByUser(Guid id)
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.InStage).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsCompleteByUser(Guid id)
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.Complete).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsHaventPayByUser(Guid id)
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.HaventTranferYet).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsFailByUser(Guid id)
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User"
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.Fail).ToList());
         }
 
@@ -101,7 +101,7 @@ namespace Business_Logic.Modules.SessionModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions"
+            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Id == id).ToList());
             if (Session == null)
             {
@@ -116,7 +116,7 @@ namespace Business_Logic.Modules.SessionModule
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions"
+            var Session = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Name == SessionName).ToList());
             if (Session == null)
             {

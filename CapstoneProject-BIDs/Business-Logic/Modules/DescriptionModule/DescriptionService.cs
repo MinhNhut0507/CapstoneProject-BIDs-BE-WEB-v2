@@ -72,7 +72,7 @@ namespace Business_Logic.Modules.DescriptionModule
             }
 
             var Category = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Id == DescriptionRequest.CategoryId);
-            Description DescriptionCheck = _DescriptionRepository.GetFirstOrDefaultAsync(x => x.CategoryId == DescriptionRequest.CategoryId).Result;
+            Description DescriptionCheck = await _DescriptionRepository.GetFirstOrDefaultAsync(x => x.Name == DescriptionRequest.Detail);
 
             if (DescriptionCheck != null)
             {
@@ -105,6 +105,16 @@ namespace Business_Logic.Modules.DescriptionModule
                 if (!result.IsValid)
                 {
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                Description DescriptionCheck = await _DescriptionRepository.GetFirstOrDefaultAsync(x => x.Name == DescriptionRequest.Detail);
+
+                if (DescriptionCheck != null)
+                {
+                    if(DescriptionCheck.Id == DescriptionRequest.DescriptionId)
+                    {
+                        throw new Exception(ErrorMessage.DescriptionError.DESCRIPTION_EXISTED);
+                    }
                 }
 
                 DescriptionUpdate.Name = DescriptionRequest.Detail;

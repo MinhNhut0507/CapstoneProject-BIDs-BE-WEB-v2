@@ -79,7 +79,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin,Staff")]
+        //[Authorize(Roles = "Admin,Staff")]
         [HttpPost]
         public async Task<ActionResult> PostUserNotificationDetail([FromBody] CreateUserNotificationDetailRequest createUserNotificationDetailRequest)
         {

@@ -137,7 +137,21 @@ namespace Business_Logic.Modules.UserModule
 
             if(!userRequest.Avatar.EndsWith(".jpg")
                 && !userRequest.Avatar.EndsWith(".png")
-                && !userRequest.Avatar.EndsWith(".gif"))
+                && !userRequest.Avatar.EndsWith(".heic"))
+            {
+                throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
+            }
+
+            if (!userRequest.CccdfrontImage.EndsWith(".jpg")
+                && !userRequest.CccdfrontImage.EndsWith(".png")
+                && !userRequest.CccdfrontImage.EndsWith(".heic"))
+            {
+                throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
+            }
+
+            if (!userRequest.CccdbackImage.EndsWith(".jpg")
+                && !userRequest.CccdbackImage.EndsWith(".png")
+                && !userRequest.CccdfrontImage.EndsWith(".heic"))
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
             }
@@ -230,7 +244,7 @@ namespace Business_Logic.Modules.UserModule
 
                 if (!userRequest.Avatar.EndsWith(".jpg")
                 && !userRequest.Avatar.EndsWith(".png")
-                && !userRequest.Avatar.EndsWith(".gif"))
+                && !userRequest.Avatar.EndsWith(".heic"))
                 {
                     throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
                 }

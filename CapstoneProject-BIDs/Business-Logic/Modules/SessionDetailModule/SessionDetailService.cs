@@ -129,21 +129,6 @@ namespace Business_Logic.Modules.SessionDetailModule
             return SessionDetail.ElementAt(0);
         }
 
-        //public async Task<SessionDetail> GetSessionDetailByType(string Category)
-        //{
-        //    if (Category == null)
-        //    {
-        //        throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
-        //    }
-        //    var type = _CategoryRepository.GetFirstOrDefaultAsync(x => x.CategoryName == Category).Result;
-        //    var SessionDetail = await _SessionDetailRepository.GetFirstOrDefaultAsync(x => x.CategoryId == type.CategoryId);
-        //    if (SessionDetail == null)
-        //    {
-        //        throw new Exception(ErrorMessage.SessionDetailError.SessionDetail_NOT_FOUND);
-        //    }
-        //    return SessionDetail;
-        //}
-
         public async Task<SessionDetail> IncreasePrice(CreateSessionDetailRequest SessionDetailRequest)
         {
 
@@ -154,10 +139,10 @@ namespace Business_Logic.Modules.SessionDetailModule
             }
 
             var Session = await _SessionService.GetSessionByID(SessionDetailRequest.SessionId);
-            if (Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
-            {
-                throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
-            }
+            //if (Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
+            //}
             var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: x => x.OrderByDescending(o => o.UserId == SessionDetailRequest.UserId && o.SessionId == SessionDetailRequest.SessionId).ToList());
             var newSessionDetail = new SessionDetail();
