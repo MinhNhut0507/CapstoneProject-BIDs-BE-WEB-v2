@@ -135,26 +135,26 @@ namespace Business_Logic.Modules.UserModule
                 throw new Exception(ErrorMessage.CommonError.WRONG_CCCD_NUMBER_FORMAT);
             }
 
-            if(!userRequest.Avatar.EndsWith(".jpg")
-                && !userRequest.Avatar.EndsWith(".png")
-                && !userRequest.Avatar.EndsWith(".heic"))
-            {
-                throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
-            }
+            //if(!userRequest.Avatar.EndsWith(".jpg")
+            //    && !userRequest.Avatar.EndsWith(".png")
+            //    && !userRequest.Avatar.EndsWith(".heic"))
+            //{
+            //    throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
+            //}
 
-            if (!userRequest.CccdfrontImage.EndsWith(".jpg")
-                && !userRequest.CccdfrontImage.EndsWith(".png")
-                && !userRequest.CccdfrontImage.EndsWith(".heic"))
-            {
-                throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
-            }
+            //if (!userRequest.CccdfrontImage.EndsWith(".jpg")
+            //    && !userRequest.CccdfrontImage.EndsWith(".png")
+            //    && !userRequest.CccdfrontImage.EndsWith(".heic"))
+            //{
+            //    throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
+            //}
 
-            if (!userRequest.CccdbackImage.EndsWith(".jpg")
-                && !userRequest.CccdbackImage.EndsWith(".png")
-                && !userRequest.CccdfrontImage.EndsWith(".heic"))
-            {
-                throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
-            }
+            //if (!userRequest.CccdbackImage.EndsWith(".jpg")
+            //    && !userRequest.CccdbackImage.EndsWith(".png")
+            //    && !userRequest.CccdfrontImage.EndsWith(".heic"))
+            //{
+            //    throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
+            //}
 
             var newUser = new Users();
 
