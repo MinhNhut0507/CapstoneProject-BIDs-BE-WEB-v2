@@ -13,7 +13,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ImagesController : ControllerBase
     {
         private readonly IImageService _ImageService;
@@ -86,7 +86,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Auctioneer")]
+        //[Authorize(Roles = "Auctioneer")]
         [HttpPost]
         public async Task<ActionResult<ImageResponse>> PostImage([FromBody] CreateImageRequest createImageRequest)
         {
