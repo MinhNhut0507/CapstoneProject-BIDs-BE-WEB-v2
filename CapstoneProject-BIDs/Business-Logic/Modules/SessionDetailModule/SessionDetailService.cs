@@ -171,7 +171,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             }
 
             if (((DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayTime)
-                || (((Session.ElementAt(0).EndTime - DateTime.Now) > SessionRule.FreeTime)
+                || (((Session.ElementAt(0).EndTime - DateTime.Now) < SessionRule.FreeTime)
                     && (DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayFreeTime))
             {
                 throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
