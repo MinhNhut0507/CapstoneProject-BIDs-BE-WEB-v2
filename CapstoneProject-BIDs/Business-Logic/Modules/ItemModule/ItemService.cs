@@ -9,6 +9,8 @@ using Business_Logic.Modules.BookingItemModule.Interface;
 using Data_Access.Enum;
 using Microsoft.EntityFrameworkCore;
 using Business_Logic.Modules.NotificationModule.Request;
+using Business_Logic.Modules.FeeModule.Interface;
+using System.Linq;
 
 namespace Business_Logic.Modules.ItemModule
 {
@@ -17,14 +19,17 @@ namespace Business_Logic.Modules.ItemModule
         private readonly IItemRepository _ItemRepository;
         private readonly ICategoryService _CategoryService;
         private readonly IBookingItemService _BookingItemService;
+        private readonly IFeeService _FeeService;
 
         public ItemService(IItemRepository ItemRepository
             , ICategoryService CategoryService
-            , IBookingItemService BookingItemService)
+            , IBookingItemService BookingItemService
+            , IFeeService FeeService)
         {
             _ItemRepository = ItemRepository;
             _CategoryService = CategoryService;
             _BookingItemService = BookingItemService;
+            _FeeService = FeeService;
         }
 
         public async Task<ICollection<Item>> GetAll()
@@ -145,6 +150,14 @@ namespace Business_Logic.Modules.ItemModule
             {
                 throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
             }
+
+            var fee = await _FeeService.GetAll();
+            var sortFee = fee.OrderByDescending(s => s.Min).ToList();
+
+            if (ItemRequest.FirstPrice < sortFee.ElementAt(sortFee.Count()-1).Min)
+            {
+                throw new Exception(ErrorMessage.ItemError.INVALID_FIRST_PRICE);
+            };
 
             var newItem = new Item();
 

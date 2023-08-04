@@ -139,10 +139,6 @@ namespace Business_Logic.Modules.SessionDetailModule
             }
 
             var Session = await _SessionService.GetSessionByID(SessionDetailRequest.SessionId);
-            //if (Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
-            //{
-            //    throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
-            //}
             var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
                 , options: x => x.OrderByDescending(o => o.UserId == SessionDetailRequest.UserId && o.SessionId == SessionDetailRequest.SessionId).ToList());
             var newSessionDetail = new SessionDetail();

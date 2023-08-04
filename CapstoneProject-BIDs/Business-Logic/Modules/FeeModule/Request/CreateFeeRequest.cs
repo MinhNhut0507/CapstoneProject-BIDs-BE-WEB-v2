@@ -17,11 +17,11 @@ namespace Business_Logic.Modules.FeeModule.Request
         public CreateFeeRequestValidator()
         {
             RuleFor(x => x.Name).NotEmpty().NotNull();
-            RuleFor(x => x.Min).NotEmpty().NotNull();
-            RuleFor(x => x.Max).NotEmpty().NotNull();
-            RuleFor(x => x.ParticipationFee).NotEmpty().NotNull();
+            RuleFor(x => x.Min);
+            RuleFor(x => x.Max);
+            RuleFor(x => x.ParticipationFee);
             RuleFor(x => x.DepositFee);
-            RuleFor(x => x.Surcharge).NotEmpty().NotNull();
+            RuleFor(x => x.Surcharge);
             //RuleFor(x => x.Status).NotEmpty().NotNull();
         }
     }
