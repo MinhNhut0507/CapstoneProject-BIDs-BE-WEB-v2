@@ -133,7 +133,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_session_for_bidder")]
-        public async Task<ActionResult<IEnumerable<SessionDetailResponse>>> GetSessionDetailBySessionForBidder([FromHeader] Guid? id, Guid? userId)
+        public async Task<ActionResult<IEnumerable<SessionDetailResponse>>> GetSessionDetailBySessionForBidder( Guid? id, Guid? userId)
         {
             try
             {

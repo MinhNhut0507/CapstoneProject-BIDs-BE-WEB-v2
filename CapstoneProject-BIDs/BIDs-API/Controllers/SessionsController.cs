@@ -126,6 +126,53 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [AllowAnonymous]
+        [HttpGet("by_not_start_in_stage")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionNotStartAndInstage()
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsNotStartAndInStage();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var date = DateTime.UtcNow.AddHours(7);
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    
+                    if (list.ElementAt(i).BeginTime <= date)
+                    {
+                        var request = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        await PutSessionStatusNotStart(request);
+                    }
+                    if (list.ElementAt(i ).EndTime <= date)
+                    {
+                        var request = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i ).Id
+                        };
+                        await PutSessionStatusInStage(request);
+                        list.Remove(list.ElementAt(i));
+                        i--;
+                    }
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [AllowAnonymous]
         [HttpGet("by_not_start")]
         public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionNotStart()
         {
@@ -139,14 +186,16 @@ namespace BIDs_API.Controllers
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
+                    
                     if (list.ElementAt(i).BeginTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
-                            SessionID = list.ElementAt(i).Id
+                            SessionID = list.ElementAt(i ).Id
                         };
                         await PutSessionStatusNotStart(request);
                         list.Remove(list.ElementAt(i));
+                        i--;
                     }
                 }
                 var response = list.Select
@@ -172,16 +221,19 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(7))
+                    
+                    if (list.ElementAt(i).EndTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
-                            SessionID = list.ElementAt(i).Id
+                            SessionID = list.ElementAt(i ).Id
                         };
                         await PutSessionStatusInStage(request);
                         list.Remove(list.ElementAt(i));
+                        i--;
                     }
                 }
                 var response = list.Select
@@ -207,16 +259,19 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(7))
+                    
+                    if (list.ElementAt(i).EndTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
-                            SessionID = list.ElementAt(i).Id
+                            SessionID = list.ElementAt(i ).Id
                         };
                         await PutSessionStatusInStage(request);
                         list.Remove(list.ElementAt(i));
+                        i--;
                     }
                 }
                 var response = list.Select
@@ -267,10 +322,13 @@ namespace BIDs_API.Controllers
                 }
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(79))
+                    var date = list.ElementAt(i).EndTime.AddDays(3);
+                    if (date <= DateTime.UtcNow.AddHours(7))
                     {
                         list.ElementAt(i).Status = (int)SessionStatusEnum.Fail;
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", list.ElementAt(i));
                         list.Remove(list.ElementAt(i));
+                        i--;
                     }
                 }
                 var response = list.Select
@@ -287,7 +345,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_havent_pay")]
-        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionHaventPay()
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionHaventPay()
         {
             try
             {
@@ -298,10 +356,13 @@ namespace BIDs_API.Controllers
                 }
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(79))
+                    var date = list.ElementAt(i).EndTime.AddDays(3);
+                    if (date <= DateTime.UtcNow.AddHours(7))
                     {
                         list.ElementAt(i).Status = (int)SessionStatusEnum.Fail;
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", list.ElementAt(i));
                         list.Remove(list.ElementAt(i));
+                        i--;
                     }
                 }
                 var response = list.Select
@@ -309,21 +370,33 @@ namespace BIDs_API.Controllers
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
                 var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
                 for (int i = 0; i < response.Count(); i++)
                 {
                     var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
                     if(check == true)
                     {
+                        
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                 }
-                return Ok(response);
+                return Ok(Response);
             }
             catch
             {
@@ -333,7 +406,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_fail")]
-        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionFail()
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionFail()
         {
             try
             {
@@ -347,6 +420,7 @@ namespace BIDs_API.Controllers
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
                 var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
                 for (int i = 0; i < response.Count(); i++)
                 {
                     var checkJoing = await _Common.CheckSessionJoining(response.ElementAt(i).SessionId);
@@ -358,15 +432,27 @@ namespace BIDs_API.Controllers
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                 }
-                return Ok(response);
+                return Ok(Response);
             }
             catch
             {
@@ -376,7 +462,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_complete")]
-        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionComplete()
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionComplete()
         {
             try
             {
@@ -390,21 +476,34 @@ namespace BIDs_API.Controllers
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
                 var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
                 for (int i = 0; i < response.Count(); i++)
                 {
                     var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                 }
-                return Ok(response);
+                return Ok(Response);
             }
             catch
             {
@@ -414,7 +513,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_complete_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionCompleteByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionCompleteByUser([FromRoute] Guid id)
         {
             try
             {
@@ -428,21 +527,34 @@ namespace BIDs_API.Controllers
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
                 var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
                 for (int i = 0; i < response.Count(); i++)
                 {
                     var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                 }
-                return Ok(response);
+                return Ok(Response);
             }
             catch
             {
@@ -452,7 +564,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_havent_pay_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionHaventPayByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionHaventPayByUser([FromRoute] Guid id)
         {
             try
             {
@@ -461,12 +573,15 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(79))
+                    var date = list.ElementAt(i).EndTime.AddDays(3);
+                    if (date <= DateTime.UtcNow.AddHours(7))
                     {
                         list.ElementAt(i).Status = (int)SessionStatusEnum.Fail;
                         list.Remove(list.ElementAt(i));
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", list.ElementAt(i));
                     }
                 }
                 var response = list.Select
@@ -474,21 +589,33 @@ namespace BIDs_API.Controllers
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
                 var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
                 for (int i = 0; i < response.Count(); i++)
                 {
                     var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                 }
-                return Ok(response);
+                return Ok(Response);
             }
             catch
             {
@@ -498,7 +625,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_fail_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponseComplete>>> GetSessionFailByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionFailByUser([FromRoute] Guid id)
         {
             try
             {
@@ -512,6 +639,7 @@ namespace BIDs_API.Controllers
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
                 var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
                 for (int i = 0; i < response.Count(); i++)
                 {
                     var checkJoing = await _Common.CheckSessionJoining(response.ElementAt(i).SessionId);
@@ -523,15 +651,25 @@ namespace BIDs_API.Controllers
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Email;
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
                     }
                 }
-                return Ok(response);
+                return Ok(Response);
             }
             catch
             {
@@ -550,16 +688,19 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    if (list.ElementAt(i).BeginTime <= DateTime.UtcNow.AddHours(7))
+                    
+                    if (list.ElementAt(i).BeginTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
-                            SessionID = list.ElementAt(i).Id
+                            SessionID = list.ElementAt(i ).Id
                         };
                         await PutSessionStatusNotStart(request);
                         list.Remove(list.ElementAt(i));
+                        i--;
                     }
                 }
                 var response = list.Select
@@ -585,9 +726,11 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(7))
+                    
+                    if (list.ElementAt(i).EndTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
@@ -595,6 +738,7 @@ namespace BIDs_API.Controllers
                         };
                         await PutSessionStatusInStage(request);
                         list.Remove(list.ElementAt(i));
+                        i--;
                     }
                 }
                 var response = list.Select
@@ -660,7 +804,7 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [AllowAnonymous]
         [HttpPut("session_status_to_haven't_pay")]
-        public async Task<ActionResult<SessionResponseComplete>> PutSessionStatusInStage([FromBody] UpdateSessionStatusRequest updateSessionRequest)
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> PutSessionStatusInStage([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
             try
             {
@@ -677,8 +821,14 @@ namespace BIDs_API.Controllers
                     await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                     string messageForWinner = "Bạn đã đấu giá thành công sản phẩm " + item.ElementAt(0).Name + " với mức giá đưa ra là " + session.FinalPrice + ". Bạn hãy thanh toán trong vòng 3 ngày sau khi nhận được thông báo này. Nếu sau 3 ngày vẫn chưa thanh toán bạn sẽ bị khóa tài khoản và sẽ không được nhận lại phí đặt cọc khi tham gia đấu giá. Bạn có thể từ chối thanh toán ngay bằng cách từ chối thanh toán trong mục các phiên đấu giá thắng cuộc.";
                     var response = _mapper.Map<SessionResponseComplete>(session);
-                    response.Winner = winner.Email;
-                    return Ok(response);
+                    var Response = new List<SessionWinnerResponse>();
+                    var test = new SessionWinnerResponse()
+                    {
+                        sessionResponseCompletes = response,
+                        winner = winner.Email
+                    };
+                    Response.Add(test);
+                    return Ok(Response);
                 }
                 else
                 {

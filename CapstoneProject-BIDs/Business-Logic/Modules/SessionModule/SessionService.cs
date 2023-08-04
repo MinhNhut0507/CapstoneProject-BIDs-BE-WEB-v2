@@ -10,6 +10,7 @@ using FluentValidation.Results;
 using System;
 using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.BookingItemModule.Request;
+using Business_Logic.Modules.SessionModule.Response;
 
 namespace Business_Logic.Modules.SessionModule
 {
@@ -35,6 +36,13 @@ namespace Business_Logic.Modules.SessionModule
             return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions", options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
+        public async Task<ICollection<Session>> GetSessionsIsNotStartAndInStage()
+        {
+            var list = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.NotStart || x.Status == (int)SessionStatusEnum.InStage).ToList());
+            return list;
+        }
+
         public async Task<ICollection<Session>> GetSessionsIsNotStart()
         {
             var list =  await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
@@ -56,8 +64,10 @@ namespace Business_Logic.Modules.SessionModule
 
         public async Task<ICollection<Session>> GetSessionsIsHaventPay()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
+            var list =  await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.HaventTranferYet).ToList());
+            
+            return list;
         }
 
         public async Task<ICollection<Session>> GetSessionsIsFail()

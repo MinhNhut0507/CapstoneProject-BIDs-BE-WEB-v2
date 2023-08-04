@@ -88,7 +88,7 @@ namespace Business_Logic.Modules.CommonModule
 
                 string content = "Cuộc đấu giá của sản phẩm "
                     + item.ElementAt(0).Name
-                    + " đã bắt đầu và sẽ diễn ra trong thời gian từ ngày"
+                    + " đã bắt đầu và sẽ diễn ra trong thời gian từ ngày "
                     + session.BeginTime + " đến ngày "
                     + session.EndTime + " theo giờ Việt Nam"
                     + ". Xin vui lòng truy cập hệ thống để có thể theo dõi những thông tin mới nhất.";
@@ -116,7 +116,7 @@ namespace Business_Logic.Modules.CommonModule
         public async Task<Users> SendEmailWinnerAuction(Session session)
         {
             var item = await _ItemService.GetItemByID(session.ItemId);
-            var check = await CheckSessionJoining(session.Id);
+            var check = await CheckSessionIncrease(session.Id);
             var SessionWinner = new SessionDetail();
             var Winner = new Users();
             if (check == true)
@@ -140,7 +140,7 @@ namespace Business_Logic.Modules.CommonModule
                 + " đã đấu giá thành công sản phẩm "
                 + item.ElementAt(0).Name
                 + " với mức giá "
-                + SessionWinner.Price
+                + session.FinalPrice
                 + ". Xin vui lòng thanh toán trong vòng 3 ngày kể từ lúc nhận được thông báo này."
                 + " Nếu không sẽ coi như bạn từ chối thanh toán, tài khoản của bạn sẽ bị khóa"
                 + " và bạn sẽ không được nhận lại phí đặt cọc khi tham gia đấu giá."
@@ -390,9 +390,10 @@ namespace Business_Logic.Modules.CommonModule
         public async Task<bool> CheckSessionIncrease(Guid id)
         {
             var SessionDetail = await _SessionDetailService.GetSessionDetailBySession(id);
-            var sort = SessionDetail.OrderByDescending(s => s.CreateDate);
+            var sort = SessionDetail.OrderByDescending(s => s.Price);
             var Session = await _SessionService.GetSessionByID(id);
-            if (SessionDetail.ElementAt(0).Price == Session.ElementAt(0).FinalPrice)
+            var item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
+            if (item.ElementAt(0).FirstPrice == sort.ElementAt(0).Price)
             {
                 return false;
             }
@@ -406,8 +407,8 @@ namespace Business_Logic.Modules.CommonModule
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
             var sessionDetailJoining = await _SessionDetailService.GetSessionDetailBySession(id);
-            var sortList = sessionDetailJoining.OrderBy(s => s.CreateDate);
-            var Winner = await _UserService.GetUserByID(sortList.ElementAt(0).UserId);
+            var sortList = sessionDetailJoining.OrderByDescending(s => s.CreateDate);
+            var Winner = await _UserService.GetUserByID(sortList.ElementAt(sortList.Count()-1).UserId);
             return Winner;
         }
 

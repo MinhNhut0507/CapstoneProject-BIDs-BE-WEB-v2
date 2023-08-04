@@ -110,7 +110,7 @@ namespace Business_Logic.Modules.SessionDetailModule
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
             var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule",
-                options: o => o.OrderBy(x => x.SessionId == sessionId && x.UserId == userId).ToList());
+                options: o => o.Where(x => x.SessionId == sessionId && x.UserId == userId).ToList());
             if (SessionDetail == null)
             {
                 throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);
@@ -120,13 +120,13 @@ namespace Business_Logic.Modules.SessionDetailModule
 
         public async Task<SessionDetail> Getwinner(Guid id)
         {
-            var SessionDetail = await _SessionDetailRepository.GetAll(options: o => o.OrderBy(x => x.SessionId == id).ToList());
-            var result = SessionDetail.OrderByDescending(x => x.CreateDate).ToList();
+            var SessionDetail = await _SessionDetailRepository.GetAll(options: o => o.Where(x => x.SessionId == id).ToList());
+            var result = SessionDetail.OrderByDescending(x => x.Price).ToList();
             if (SessionDetail == null)
             {
                 throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);
             }
-            return SessionDetail.ElementAt(0);
+            return result.ElementAt(0);
         }
 
         public async Task<SessionDetail> IncreasePrice(CreateSessionDetailRequest SessionDetailRequest)
