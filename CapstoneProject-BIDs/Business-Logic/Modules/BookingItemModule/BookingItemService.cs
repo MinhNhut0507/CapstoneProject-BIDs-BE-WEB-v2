@@ -3,12 +3,15 @@ using Business_Logic.Modules.BookingItemModule.Request;
 using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.ItemModule.Request;
 using Business_Logic.Modules.StaffModule.Interface;
+using Business_Logic.Modules.UserModule;
 using Business_Logic.Modules.UserModule.Interface;
 using Data_Access.Constant;
 using Data_Access.Entities;
 using Data_Access.Enum;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
+using System.Net;
 
 namespace Business_Logic.Modules.BookingItemModule
 {
@@ -255,6 +258,33 @@ namespace Business_Logic.Modules.BookingItemModule
                 bookingAccept.Status = (int)BookingItemEnum.NotCreateSessionYet;
 
                 await _BookingItemRepository.UpdateAsync(bookingAccept);
+
+                string _gmail = "bidauctionfloor@gmail.com";
+                string _password = "gnauvhbfubtgxjow";
+
+                string sendto = BookingItemUpdate.ElementAt(0).Item.User.Email;
+                string subject = "[BIDs] - Vật Phẩm Đấu Giá";
+                string content = "Vật phẩm " + BookingItemUpdate.ElementAt(0).Item.Name + " đã được chấp thuận và sẽ được đưa lên hệ thống. Xin chân thành cảm ơn vì đã sử dụng hệ thống của chúng tôi.";
+
+
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+
+                mail.From = new MailAddress(_gmail);
+                mail.To.Add(sendto);
+                mail.Subject = subject;
+                mail.IsBodyHtml = true;
+                mail.Body = content;
+
+                mail.Priority = MailPriority.High;
+
+                SmtpServer.Port = 587;
+                SmtpServer.UseDefaultCredentials = false;
+                SmtpServer.Credentials = new NetworkCredential(_gmail, _password);
+                SmtpServer.EnableSsl = true;
+
+                SmtpServer.Send(mail);
+
                 return bookingAccept;
             }
             catch (Exception ex)
@@ -265,7 +295,7 @@ namespace Business_Logic.Modules.BookingItemModule
 
         }
 
-        public async Task<BookingItem> DenyStatusBookingItem(Guid id)
+        public async Task<BookingItem> DenyStatusBookingItem(Guid id, string reason)
         {
             try
             {
@@ -283,6 +313,36 @@ namespace Business_Logic.Modules.BookingItemModule
                 bookingAccept.Status = (int)BookingItemEnum.Denied;
 
                 await _BookingItemRepository.UpdateAsync(bookingAccept);
+
+                string _gmail = "bidauctionfloor@gmail.com";
+                string _password = "gnauvhbfubtgxjow";
+
+                string sendto = BookingItemUpdate.ElementAt(0).Item.User.Email;
+                string subject = "[BIDs] - Vật Phẩm Đấu Giá";
+                string content = "Vật phẩm " + BookingItemUpdate.ElementAt(0).Item.Name + " khởi tạo không thành công vì thông tin bạn cung cấp không chính xác!"
+                    + " Cụ thể lỗi ở việc "
+                    + reason
+                    + ". Bạn hãy cung cấp đúng thông tin hơn trong lần tiếp theo.";
+
+
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+
+                mail.From = new MailAddress(_gmail);
+                mail.To.Add(sendto);
+                mail.Subject = subject;
+                mail.IsBodyHtml = true;
+                mail.Body = content;
+
+                mail.Priority = MailPriority.High;
+
+                SmtpServer.Port = 587;
+                SmtpServer.UseDefaultCredentials = false;
+                SmtpServer.Credentials = new NetworkCredential(_gmail, _password);
+                SmtpServer.EnableSsl = true;
+
+                SmtpServer.Send(mail);
+
                 return bookingAccept;
             }
             catch (Exception ex)

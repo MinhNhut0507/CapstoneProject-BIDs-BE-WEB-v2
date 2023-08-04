@@ -37,7 +37,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpGet]       
         public async Task<ActionResult<IEnumerable<StaffNotificationDetailResponse>>> GetStaffNotificationDetailsForAdmin()
         {
@@ -61,7 +61,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("{id}")]
         public async Task<ActionResult<StaffNotificationDetailResponse>> GetStaffNotificationDetailByStaff([FromRoute] Guid id)
         {

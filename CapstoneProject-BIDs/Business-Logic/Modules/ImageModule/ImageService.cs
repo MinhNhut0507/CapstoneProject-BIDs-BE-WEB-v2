@@ -71,9 +71,9 @@ namespace Business_Logic.Modules.ImageModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
-            if (!ImageRequest.DetailImage.EndsWith(".jpg")
-                && !ImageRequest.DetailImage.EndsWith(".png")
-                && !ImageRequest.DetailImage.EndsWith(".heic"))
+            if (!ImageRequest.DetailImage.Contains(".jpg")
+                && !ImageRequest.DetailImage.Contains(".png")
+                && !ImageRequest.DetailImage.Contains(".heic"))
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
             }
@@ -106,9 +106,9 @@ namespace Business_Logic.Modules.ImageModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                if (!ImageRequest.DetailImage.EndsWith(".jpg")
-                && !ImageRequest.DetailImage.EndsWith(".png")
-                && !ImageRequest.DetailImage.EndsWith(".heic"))
+                if (!ImageRequest.DetailImage.Contains(".jpg")
+                && !ImageRequest.DetailImage.Contains(".png")
+                && !ImageRequest.DetailImage.Contains(".heic"))
                 {
                     throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
                 }

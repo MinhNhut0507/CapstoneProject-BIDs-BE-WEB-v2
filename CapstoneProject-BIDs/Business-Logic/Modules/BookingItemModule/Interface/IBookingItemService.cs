@@ -11,7 +11,7 @@ namespace Business_Logic.Modules.BookingItemModule.Interface
 
         public Task<BookingItem> AcceptStatusBookingItem(Guid id);
 
-        public Task<BookingItem> DenyStatusBookingItem(Guid id);
+        public Task<BookingItem> DenyStatusBookingItem(Guid id, string reason);
 
         public Task<ICollection<BookingItem>> GetAll();
         public Task<ICollection<BookingItem>> GetBookingItemByID(Guid id);

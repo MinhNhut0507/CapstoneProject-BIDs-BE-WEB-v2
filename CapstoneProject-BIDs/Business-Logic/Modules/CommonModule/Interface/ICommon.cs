@@ -27,6 +27,7 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<BookingItem> ReAuction(UpdateItemRequest updateItemRequest, Guid id);
         public Task<UTCCode> ConfirmEmail(string email);
         public Task<bool> CheckUTCCode(string codeInput, string codeCheck);
+        public Task<double> Exchange();
 
     }
 }

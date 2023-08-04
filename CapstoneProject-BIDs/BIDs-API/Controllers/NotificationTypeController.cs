@@ -20,7 +20,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Dev")]
     public class NotificationTypeController : ControllerBase
     {
         private readonly INotificationTypeService _NotificationTypeService;

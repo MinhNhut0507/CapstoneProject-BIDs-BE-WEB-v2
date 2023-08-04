@@ -37,8 +37,9 @@ namespace Business_Logic.Modules.SessionModule
 
         public async Task<ICollection<Session>> GetSessionsIsNotStart()
         {
-            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
+            var list =  await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.NotStart).ToList());
+            return list;
         }
 
         public async Task<ICollection<Session>> GetSessionsIsInStage()

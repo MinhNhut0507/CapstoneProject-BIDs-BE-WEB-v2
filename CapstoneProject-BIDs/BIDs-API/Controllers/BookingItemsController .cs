@@ -100,7 +100,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff,Dev")]
         [HttpGet("by_staff/{id}")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaff([FromRoute] Guid id)
         {
@@ -125,7 +125,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff,Dev")]
         [HttpGet("by_staff_watting/{email}")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaffIsWatting([FromRoute] string email)
         {
@@ -250,7 +250,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff,Dev")]
         [HttpGet("by_staff_to_create_session/{email}")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaffToCreateSession([FromRoute] string email)
         {
@@ -376,7 +376,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff,Dev")]
         [HttpPut("accept/{id}")]
         public async Task<IActionResult> AcceptBookingItem([FromRoute] Guid id)
         {
@@ -397,13 +397,13 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff,Dev")]
         [HttpPut("deny/{id}")]
-        public async Task<IActionResult> DenyBookingItem([FromRoute] Guid id)
+        public async Task<IActionResult> DenyBookingItem([FromRoute] Guid id, [FromRoute] string reason)
         {
             try
             {
-                var BookingItem = await _BookingItemService.DenyStatusBookingItem(id);
+                var BookingItem = await _BookingItemService.DenyStatusBookingItem(id,reason);
                 await _hubContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem);
                 var item = await _ItemService.GetItemByID(BookingItem.ItemId);
                 string message = "Sản phẩm của bạn có tên là " + item.ElementAt(0).Name + " KHÔNG được chấp thuận bán đấu giá trên hệ thống. Nếu bạn vẫn muốn đấu giá vật phẩm đó, hãy tạo mới sản phẩm và cung cấp thông tin chính xác, cụ thể và chi tiết hơn.";

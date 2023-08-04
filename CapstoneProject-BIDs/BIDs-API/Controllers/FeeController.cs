@@ -20,7 +20,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class FeeController : ControllerBase
     {
         private readonly IFeeService _FeeService;
@@ -89,7 +89,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpPut]
         public async Task<IActionResult> PutFee([FromBody] UpdateFeeRequest updateFeeRequest)
         {
@@ -107,7 +107,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpPost]
         public async Task<ActionResult<FeeResponse>> PostFee([FromBody] CreateFeeRequest createFeeRequest)
         {
@@ -124,7 +124,7 @@ namespace BIDs_API.Controllers
         }
 
         // DELETE api/<ValuesController>/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFee([FromRoute] int id)
         {

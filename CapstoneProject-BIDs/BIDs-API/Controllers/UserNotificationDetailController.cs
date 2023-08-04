@@ -30,7 +30,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff,Dev")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserNotificationDetailResponse>>> GetUserNotificationDetailsForAdmin()
         {
@@ -54,7 +54,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [Authorize(Roles = "Bidder,Auction,Admin,Staff")]
+        [Authorize(Roles = "Bidder,Auction,Admin,Staff,Dev")]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserNotificationDetailResponse>> GetUserNotificationDetailByUser([FromRoute] Guid id)
         {

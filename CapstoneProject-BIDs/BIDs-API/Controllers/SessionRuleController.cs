@@ -89,7 +89,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpPut]
         public async Task<IActionResult> PutSessionRule([FromBody] UpdateSessionRuleRequest updateSessionRuleRequest)
         {
@@ -107,7 +107,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpPost]
         public async Task<ActionResult<SessionRuleResponse>> PostSessionRule([FromBody] CreateSessionRuleRequest createSessionRuleRequest)
         {
@@ -124,7 +124,7 @@ namespace BIDs_API.Controllers
         }
 
         // DELETE api/<ValuesController>/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSessionRule([FromRoute] Guid id)
         {

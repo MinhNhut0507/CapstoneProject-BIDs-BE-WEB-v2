@@ -48,7 +48,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemsForAdmin()
         {
@@ -72,7 +72,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByID([FromRoute] Guid? id)
         {
@@ -96,7 +96,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("by_name/{name}")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByName([FromRoute] string name)
         {
@@ -120,7 +120,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("by_category_name/{name}")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryName([FromRoute] string name)
         {
@@ -144,7 +144,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpGet("by_user/{id}")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByUser([FromRoute] Guid? id)
         {
@@ -168,7 +168,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpGet("by_name_and_user")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByNameAndUser([FromRoute] string name, Guid id)
         {
@@ -192,7 +192,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpGet("by_category_name_and_user")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryNameAndUser([FromRoute] string name, Guid id)
         {
@@ -217,7 +217,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Auctioneer")]
+        [Authorize(Roles = "Auctioneer,Dev")]
         [HttpPut]
         public async Task<IActionResult> PutItem([FromBody] UpdateItemRequest updateItemRequest)
         {
@@ -239,7 +239,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Auctioneer")]
+        [Authorize(Roles = "Auctioneer,Dev")]
         [HttpPost]
         public async Task<ActionResult<ItemResponse>> PostItem([FromBody] CreateItemRequest createItemRequest)
         {

@@ -15,7 +15,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Staff,Admin")]
+    [Authorize(Roles = "Staff,Admin,Dev")]
     public class StaffsController : ControllerBase
     {
         private readonly IStaffService _StaffService;
@@ -46,7 +46,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff,Dev")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StaffResponse>>> GetStaffsForAdmin()
         {
@@ -85,7 +85,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpGet("by_name/{name}")]
         public async Task<ActionResult<StaffResponse>> GetStaffByName([FromRoute] string name)
         {
@@ -115,7 +115,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff,Dev")]
         [HttpPut]
         public async Task<IActionResult> PutStaff([FromBody] UpdateStaffRequest updateStaffRequest)
         {
@@ -137,7 +137,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff,Dev")]
         [HttpPut("update_password")]
         public async Task<IActionResult> PutPassword([FromBody] UpdatePasswordRequest updateStaffRequest)
         {
@@ -159,7 +159,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpPost]
         public async Task<ActionResult<StaffResponse>> PostStaff([FromBody] CreateStaffRequest createStaffRequest)
         {
@@ -176,7 +176,7 @@ namespace BIDs_API.Controllers
         }
 
         // DELETE api/<ValuesController>/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStaff([FromRoute] Guid id)
         {
@@ -216,11 +216,11 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("deny_user/{DenyID}")]
-        public async Task<IActionResult> DenyAccountCreate([FromRoute] Guid DenyID)
+        public async Task<IActionResult> DenyAccountCreate([FromRoute] Guid DenyID, [FromRoute] string reason)
         {
             try
             {
-                var user = await _StaffService.DenyCreate(DenyID);
+                var user = await _StaffService.DenyCreate(DenyID,reason);
                 await _hubUserContext.Clients.All.SendAsync("ReceiveUserDeny", user);
                 return Ok();
             }

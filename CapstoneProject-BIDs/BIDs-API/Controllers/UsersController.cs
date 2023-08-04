@@ -43,7 +43,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersForAdmin()
         {
@@ -67,7 +67,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("get-active")]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersActive()
         {
@@ -91,7 +91,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("get-waitting")]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersWaitting()
         {
@@ -115,7 +115,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("get-ban")]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersBan()
         {
@@ -167,7 +167,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpGet("by_email/{email}")]
         public async Task<ActionResult<UserResponse>> GetUserByEmail([FromRoute] string email)
         {
@@ -183,7 +183,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpPut]
         public async Task<IActionResult> PutUser([FromBody] UpdateUserRequest updateUserRequest)
         {
@@ -203,7 +203,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Bidder")]
+        [Authorize(Roles = "Bidder,Dev")]
         [HttpPut("confirm_email/{email}")]
         public async Task<IActionResult> ConfirmEmailUser([FromRoute] string email)
         {
@@ -219,7 +219,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Bidder")]
+        [Authorize(Roles = "Bidder,Dev")]
         [HttpPut("update_role_user")]
         public async Task<IActionResult> PutRoleUser([FromBody] UTCCode code)
         {
@@ -252,7 +252,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpPut("update_password")]
         public async Task<IActionResult> PutPasswordUser([FromBody] UpdatePasswordRequest updatePasswordRequest)
         {

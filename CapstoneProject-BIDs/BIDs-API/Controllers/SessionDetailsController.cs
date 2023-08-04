@@ -37,7 +37,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SessionDetailResponse>>> GetSessionDetailsForAdminAndStaff()
         {
@@ -61,7 +61,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("{id}")]
         public async Task<ActionResult<SessionDetailResponse>> GetSessionDetailByID([FromRoute] Guid? id)
         {
@@ -156,7 +156,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpPut]
         public async Task<IActionResult> PutSessionDetail([FromBody] UpdateSessionDetailRequest updateSessionDetailRequest)
         {
@@ -174,7 +174,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpPost("increase_price")]
         public async Task<ActionResult<SessionDetailResponse>> IncreasePrice([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
         {
@@ -194,7 +194,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Bidder,Auctioneer")]
+        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpPost("joinning")]
         public async Task<ActionResult<SessionDetailResponse>> Joinning([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
         {
@@ -213,7 +213,7 @@ namespace BIDs_API.Controllers
         }
 
         // DELETE api/<ValuesController>/5
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSessionDetail([FromRoute] Guid? id)
         {

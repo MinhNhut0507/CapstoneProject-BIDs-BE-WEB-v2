@@ -136,6 +136,19 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                var date = DateTime.UtcNow.AddHours(7);
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (list.ElementAt(i).BeginTime <= date)
+                    {
+                        var request = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        await PutSessionStatusNotStart(request);
+                        list.Remove(list.ElementAt(i));
+                    }
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Session, SessionResponse>(emp)
@@ -159,6 +172,18 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(7))
+                    {
+                        var request = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        await PutSessionStatusInStage(request);
+                        list.Remove(list.ElementAt(i));
+                    }
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Session, SessionResponse>(emp)
@@ -181,6 +206,18 @@ namespace BIDs_API.Controllers
                 if (list == null)
                 {
                     return NotFound();
+                }
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(7))
+                    {
+                        var request = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        await PutSessionStatusInStage(request);
+                        list.Remove(list.ElementAt(i));
+                    }
                 }
                 var response = list.Select
                            (
@@ -228,6 +265,14 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(79))
+                    {
+                        list.ElementAt(i).Status = (int)SessionStatusEnum.Fail;
+                        list.Remove(list.ElementAt(i));
+                    }
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Session, SessionResponse>(emp)
@@ -251,6 +296,14 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(79))
+                    {
+                        list.ElementAt(i).Status = (int)SessionStatusEnum.Fail;
+                        list.Remove(list.ElementAt(i));
+                    }
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
@@ -262,12 +315,12 @@ namespace BIDs_API.Controllers
                     if(check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                 }
                 return Ok(response);
@@ -305,12 +358,12 @@ namespace BIDs_API.Controllers
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                 }
                 return Ok(response);
@@ -343,12 +396,12 @@ namespace BIDs_API.Controllers
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                 }
                 return Ok(response);
@@ -381,12 +434,12 @@ namespace BIDs_API.Controllers
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                 }
                 return Ok(response);
@@ -408,6 +461,14 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(79))
+                    {
+                        list.ElementAt(i).Status = (int)SessionStatusEnum.Fail;
+                        list.Remove(list.ElementAt(i));
+                    }
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Session, SessionResponseComplete>(emp)
@@ -419,12 +480,12 @@ namespace BIDs_API.Controllers
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                 }
                 return Ok(response);
@@ -462,12 +523,12 @@ namespace BIDs_API.Controllers
                     if (check == true)
                     {
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                     else
                     {
                         user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
-                        response.ElementAt(i).Winner = user.Name;
+                        response.ElementAt(i).Winner = user.Email;
                     }
                 }
                 return Ok(response);
@@ -488,6 +549,18 @@ namespace BIDs_API.Controllers
                 if (list == null)
                 {
                     return NotFound();
+                }
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (list.ElementAt(i).BeginTime <= DateTime.UtcNow.AddHours(7))
+                    {
+                        var request = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        await PutSessionStatusNotStart(request);
+                        list.Remove(list.ElementAt(i));
+                    }
                 }
                 var response = list.Select
                            (
@@ -511,6 +584,18 @@ namespace BIDs_API.Controllers
                 if (list == null)
                 {
                     return NotFound();
+                }
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (list.ElementAt(i).EndTime <= DateTime.UtcNow.AddHours(7))
+                    {
+                        var request = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        await PutSessionStatusInStage(request);
+                        list.Remove(list.ElementAt(i));
+                    }
                 }
                 var response = list.Select
                            (
@@ -592,7 +677,7 @@ namespace BIDs_API.Controllers
                     await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                     string messageForWinner = "Bạn đã đấu giá thành công sản phẩm " + item.ElementAt(0).Name + " với mức giá đưa ra là " + session.FinalPrice + ". Bạn hãy thanh toán trong vòng 3 ngày sau khi nhận được thông báo này. Nếu sau 3 ngày vẫn chưa thanh toán bạn sẽ bị khóa tài khoản và sẽ không được nhận lại phí đặt cọc khi tham gia đấu giá. Bạn có thể từ chối thanh toán ngay bằng cách từ chối thanh toán trong mục các phiên đấu giá thắng cuộc.";
                     var response = _mapper.Map<SessionResponseComplete>(session);
-                    response.Winner = winner.Name;
+                    response.Winner = winner.Email;
                     return Ok(response);
                 }
                 else
@@ -657,7 +742,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff,Dev")]
         [HttpPost]
         public async Task<ActionResult<SessionResponse>> PostSession([FromBody] CreateSessionRequest createSessionRequest)
         {
@@ -679,7 +764,7 @@ namespace BIDs_API.Controllers
         }
 
         // DELETE api/<ValuesController>/5
-        [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff,Dev")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSession([FromRoute] Guid? id)
         {

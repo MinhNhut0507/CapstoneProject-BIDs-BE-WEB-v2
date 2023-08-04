@@ -13,7 +13,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ImagesController : ControllerBase
     {
         private readonly IImageService _ImageService;
@@ -30,7 +30,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ImageResponse>>> GetImagesForAdmin()
         {

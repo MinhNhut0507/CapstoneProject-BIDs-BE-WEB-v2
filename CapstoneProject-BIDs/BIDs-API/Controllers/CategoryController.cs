@@ -53,7 +53,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategoryByID([FromRoute] Guid? id)
         {
             try
@@ -77,7 +77,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategoryByName([FromRoute] string name)
         {
             try
@@ -102,7 +102,7 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         public async Task<IActionResult> PutCategory([FromBody] UpdateCategoryRequest updateCategoryRequest)
         {
             try
@@ -120,7 +120,7 @@ namespace BIDs_API.Controllers
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         public async Task<ActionResult<CategoryResponse>> PostCategory([FromBody] CreateCategoryRequest createCategoryRequest)
         {
             try
@@ -137,7 +137,7 @@ namespace BIDs_API.Controllers
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Dev")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid? id)
         {
             try

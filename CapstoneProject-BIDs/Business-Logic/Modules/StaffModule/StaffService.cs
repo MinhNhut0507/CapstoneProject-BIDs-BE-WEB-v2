@@ -310,7 +310,7 @@ namespace Business_Logic.Modules.StaffModule
             }
         }
 
-        public async Task<Users> DenyCreate(Guid? accountCreateID)
+        public async Task<Users> DenyCreate(Guid? accountCreateID, string reason)
         {
             try
             {
@@ -331,7 +331,10 @@ namespace Business_Logic.Modules.StaffModule
 
                 string sendto = UserCreate.Email;
                 string subject = "[BIDs] - Dịch vụ tài khoản";
-                string content = "Tài khoản" + UserCreate.Name + " khởi tạo không thành công vì thông tin bạn cung cấp không chính xác!";
+                string content = "Tài khoản" + UserCreate.Name + " khởi tạo không thành công vì thông tin bạn cung cấp không chính xác!"
+                    + " Cụ thể lỗi ở việc "
+                    + reason
+                    + ". Bạn hãy cung cấp đúng thông tin hơn trong lần tiếp theo.";
 
                 UserCreate.Status = (int)UserStatusEnum.Deny;
                 await _UserRepository.RemoveAsync(UserCreate);
@@ -383,7 +386,7 @@ namespace Business_Logic.Modules.StaffModule
 
                 string sendto = UserBan.Email;
                 string subject = "[BIDs] - Dịch vụ tài khoản";
-                string content = "Tài khoản" + UserBan.Name + "đã bị khóa, bạn sẽ không thể sử dụng dịch vụ của hệ thống chúng tôi! ";
+                string content = "Tài khoản" + UserBan.Name + "đã bị khóa vì vi phạm điều luật của hệ thống chúng tôi, bạn sẽ không thể sử dụng dịch vụ của hệ thống chúng tôi! ";
 
                 UserBan.Status = (int)UserStatusEnum.Ban;
                 await _UserRepository.UpdateAsync(UserBan);

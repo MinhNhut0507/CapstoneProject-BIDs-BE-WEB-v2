@@ -1,4 +1,5 @@
 ﻿using BIDs_API.SignalR;
+using Business_Logic.Modules.LoginModule.Data;
 using Business_Logic.Modules.LoginModule.InterFace;
 using Business_Logic.Modules.LoginModule.Request;
 using Business_Logic.Modules.StaffModule.Interface;
@@ -9,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BIDs_API.Controllers
 {
@@ -38,9 +41,21 @@ namespace BIDs_API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest login)
         {
-            var result = _LoginService.Login(login);
-
-            if(result == null)
+            var emailDev = _configuration["AdminLogin:email"];
+            var passwordDev = _configuration["AdminLogin:password"];
+            var roleDev = _configuration["AdminLogin:role"];
+            var result = new ReturnAccountLogin();
+            if (login.Email == emailDev && login.Password == passwordDev)
+            {
+                result.Id = Guid.NewGuid();
+                result.Email = emailDev;
+                result.Role = roleDev;
+            }
+            else 
+            {
+                result = _LoginService.Login(login);
+            }
+            if (result == null)
                 return BadRequest(new LoginRespone { Successful = false, Error = "Sai tài khoản hoặc mật khẩu"});
 
             var jwtToken = new JwtSecurityTokenHandler();

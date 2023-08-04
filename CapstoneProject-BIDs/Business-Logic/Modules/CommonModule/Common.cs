@@ -30,6 +30,7 @@ using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.BookingItemModule.Request;
 using Business_Logic.Modules.UserModule;
 using Business_Logic.Modules.CommonModule.Data;
+using System.Text.Json;
 
 namespace Business_Logic.Modules.CommonModule
 {
@@ -501,5 +502,58 @@ namespace Business_Logic.Modules.CommonModule
             return builder.ToString();
         }
 
+        public async Task<double> Exchange()
+        {
+            string apiKey = "b686ea94a7a54287af0bfadc71cf1103"; // Thay bằng API Key của bạn
+
+            using (HttpClient httpClient = new HttpClient())
+            {
+                string url = $"https://openexchangerates.org/api/latest.json?app_id={apiKey}";
+                HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    // Parse content to get the exchange rates
+                    // Rates are usually stored in JSON format
+
+                    string jsonResponse = content;
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    var exchangeRates = JsonSerializer.Deserialize<ExchangeRates>(jsonResponse, options);
+
+                    if (exchangeRates != null && exchangeRates.Rates.TryGetValue("VND", out var vndRate))
+                    {
+                        return vndRate;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+
+                    //content = "{\"rates\":{\"VND\":23275.00,...}}";
+                    // You can use a JSON library to parse the content and extract the rate for VND.
+                    // After extracting the rate for VND, you can use it for conversion.
+                }
+                else
+                {
+                    Console.WriteLine("Error: Unable to fetch exchange rates.");
+                }
+            }
+            return 0;
+        }
+        class ExchangeRates
+        {
+            public Dictionary<string, double> Rates { get; set; }
+        }
+
+        public async Task ReportByDateForAdmin()
+        {
+
+        }
     }
 }

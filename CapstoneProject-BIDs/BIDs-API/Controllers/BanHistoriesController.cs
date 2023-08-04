@@ -12,7 +12,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Staff,Admin")]
+    [Authorize(Roles = "Staff,Admin,Dev")]
     public class BanHistoriesController : ControllerBase
     {
         private readonly IBanHistoryService _BanHistoryService;
