@@ -10,7 +10,6 @@ namespace Data_Access.Entities
         public Staff()
         {
             BookingItems = new HashSet<BookingItem>();
-            PaymentMethodStaffs = new HashSet<PaymentMethodStaff>();
             PaymentStaffs = new HashSet<PaymentStaff>();
             StaffNotificationDetails = new HashSet<StaffNotificationDetail>();
         }
@@ -27,7 +26,6 @@ namespace Data_Access.Entities
         public bool Status { get; set; }
 
         public virtual ICollection<BookingItem> BookingItems { get; set; }
-        public virtual ICollection<PaymentMethodStaff> PaymentMethodStaffs { get; set; }
         public virtual ICollection<PaymentStaff> PaymentStaffs { get; set; }
         public virtual ICollection<StaffNotificationDetail> StaffNotificationDetails { get; set; }
     }

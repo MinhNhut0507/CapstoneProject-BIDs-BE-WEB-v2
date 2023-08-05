@@ -11,7 +11,7 @@ namespace Data_Access.Entities
         {
             BanHistories = new HashSet<BanHistory>();
             Items = new HashSet<Item>();
-            PaymentMethodUsers = new HashSet<PaymentMethodUser>();
+            PaymentMethodUsers = new HashSet<UserPaymentInformation>();
             PaymentUsers = new HashSet<PaymentUser>();
             SessionDetails = new HashSet<SessionDetail>();
             UserNotificationDetails = new HashSet<UserNotificationDetail>();
@@ -36,7 +36,7 @@ namespace Data_Access.Entities
         public virtual ICollection<BanHistory> BanHistories { get; set; }
         public virtual ICollection<Item> Items { get; set; }
         public virtual ICollection<SessionDetail> SessionDetails { get; set; }
-        public virtual ICollection<PaymentMethodUser> PaymentMethodUsers { get; set; }
+        public virtual ICollection<UserPaymentInformation> PaymentMethodUsers { get; set; }
         public virtual ICollection<PaymentUser> PaymentUsers { get; set; }
         public virtual ICollection<UserNotificationDetail> UserNotificationDetails { get; set; }
 

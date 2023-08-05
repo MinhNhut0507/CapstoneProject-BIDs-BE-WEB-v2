@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-#nullable disable
-
-namespace Data_Access.Entities
+namespace Business_Logic.Modules.PaymentUserModule.Response
 {
-    public partial class PaymentStaff
+    public class PaymentUserResponse
     {
         public Guid Id { get; set; }
         public Guid StaffId { get; set; }
@@ -16,9 +17,5 @@ namespace Data_Access.Entities
         public double Amount { get; set; }
         public DateTime PaymentDate { get; set; }
         public bool Status { get; set; }
-
-        public virtual UserPaymentInformation PaymentInformation { get; set; }
-        public virtual Session Session { get; set; }
-        public virtual Staff Staff { get; set; }
     }
 }

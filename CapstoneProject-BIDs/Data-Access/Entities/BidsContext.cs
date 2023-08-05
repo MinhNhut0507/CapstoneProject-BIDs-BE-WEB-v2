@@ -30,8 +30,7 @@ namespace Data_Access.Entities
         public virtual DbSet<ItemDescription> ItemDescriptions { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<NotificationType> NotificationTypes { get; set; }
-        public virtual DbSet<PaymentMethodStaff> PaymentMethodStaffs { get; set; }
-        public virtual DbSet<PaymentMethodUser> PaymentMethodUsers { get; set; }
+        public virtual DbSet<UserPaymentInformation> UserPaymentInformations { get; set; }
         public virtual DbSet<PaymentStaff> PaymentStaffs { get; set; }
         public virtual DbSet<PaymentUser> PaymentUsers { get; set; }
         public virtual DbSet<Session> Sessions { get; set; }
@@ -381,36 +380,7 @@ namespace Data_Access.Entities
                     .HasMaxLength(100);
             });
 
-            modelBuilder.Entity<PaymentMethodStaff>(entity =>
-            {
-                entity.ToTable("PaymentMethodStaff");
-
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID");
-
-                entity.Property(e => e.BankName)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.Number)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.OwnerName)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.StaffId).HasColumnName("StaffID");
-
-                entity.HasOne(d => d.Staff)
-                    .WithMany(p => p.PaymentMethodStaffs)
-                    .HasForeignKey(d => d.StaffId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PaymentMe__Staff__2D27B809");
-            });
-
-            modelBuilder.Entity<PaymentMethodUser>(entity =>
+            modelBuilder.Entity<UserPaymentInformation>(entity =>
             {
                 entity.ToTable("PaymentMethodUser");
 
@@ -418,17 +388,9 @@ namespace Data_Access.Entities
                     .ValueGeneratedNever()
                     .HasColumnName("ID");
 
-                entity.Property(e => e.BankName)
+            entity.Property(e => e.PayPalAccount)
                     .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.Number)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.OwnerName)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(int.MaxValue);
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
@@ -436,7 +398,7 @@ namespace Data_Access.Entities
                     .WithMany(p => p.PaymentMethodUsers)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PaymentMe__UserI__2A4B4B5E");
+                    .HasConstraintName("FK_UserPaymentInfomation_Users");
             });
 
             modelBuilder.Entity<PaymentStaff>(entity =>
@@ -447,39 +409,40 @@ namespace Data_Access.Entities
                     .ValueGeneratedNever()
                     .HasColumnName("ID");
 
-                entity.Property(e => e.Date).HasColumnType("datetime");
+                entity.Property(e => e.PaymentDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Detail)
+                entity.Property(e => e.PaymentDetail)
                     .IsRequired()
-                    .HasMaxLength(100);
+                    .HasMaxLength(int.MaxValue);
 
-                entity.Property(e => e.MethodId).HasColumnName("MethodID");
+                entity.Property(e => e.PayPalTransactionId).HasColumnName("PayPalTransactionID");
 
                 entity.Property(e => e.SessionId).HasColumnName("SessionID");
 
+                entity.Property(e => e.UserPaymentInformationId).HasColumnName("UserPaymentInformationID");
+
+                entity.Property(e => e.Amount)
+                    .IsRequired()
+                    .HasColumnName("Amount");
+
                 entity.Property(e => e.StaffId).HasColumnName("StaffID");
 
-                entity.Property(e => e.Type)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnName("type");
-
-                entity.HasOne(d => d.Method)
+                entity.HasOne(d => d.PaymentInformation)
                     .WithMany(p => p.PaymentStaffs)
-                    .HasForeignKey(d => d.MethodId)
+                    .HasForeignKey(d => d.UserPaymentInformationId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PaymentSt__Metho__4CA06362");
+                    .HasConstraintName("FK_PaymentStaff_UserPaymentInfomation");
 
                 entity.HasOne(d => d.Session)
                     .WithMany(p => p.PaymentStaffs)
                     .HasForeignKey(d => d.SessionId)
-                    .HasConstraintName("FK__PaymentSt__Sessi__4E88ABD4");
+                    .HasConstraintName("FK_PaymentStaff_Session");
 
                 entity.HasOne(d => d.Staff)
                     .WithMany(p => p.PaymentStaffs)
                     .HasForeignKey(d => d.StaffId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PaymentSt__Staff__4D94879B");
+                    .HasConstraintName("FK_PaymentStaff_Staff");
             });
 
             modelBuilder.Entity<PaymentUser>(entity =>
@@ -490,40 +453,33 @@ namespace Data_Access.Entities
                     .ValueGeneratedNever()
                     .HasColumnName("ID");
 
-                entity.Property(e => e.Date).HasColumnType("datetime");
+                entity.Property(e => e.PaymentDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Detail)
+                entity.Property(e => e.PaymentDetail)
                     .IsRequired()
-                    .HasMaxLength(100);
+                    .HasMaxLength(int.MaxValue);
 
-                entity.Property(e => e.MethodId).HasColumnName("MethodID");
+                entity.Property(e => e.PayPalTransactionId).HasColumnName("PayPalTransactionID");
 
                 entity.Property(e => e.SessionId).HasColumnName("SessionID");
 
-                entity.Property(e => e.Type)
+                entity.Property(e => e.Amount)
                     .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnName("type");
+                    .HasColumnName("Amount");
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.HasOne(d => d.Method)
-                    .WithMany(p => p.PaymentUsers)
-                    .HasForeignKey(d => d.MethodId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PaymentUs__Metho__47DBAE45");
 
                 entity.HasOne(d => d.Session)
                     .WithMany(p => p.PaymentUsers)
                     .HasForeignKey(d => d.SessionId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PaymentUs__Sessi__49C3F6B7");
+                    .HasConstraintName("FK_PaymentUser_Session");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.PaymentUsers)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PaymentUs__UserI__48CFD27E");
+                    .HasConstraintName("FK_PaymentUser_Users");
             });
 
             modelBuilder.Entity<Session>(entity =>

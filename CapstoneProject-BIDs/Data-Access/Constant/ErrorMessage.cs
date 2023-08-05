@@ -191,5 +191,29 @@
             public readonly static string USER_NOTIFICATION_DETAIL_EXISTED = "Thông báo cho người dùng đã tồn tại";
         }
         #endregion
+
+        #region Payment Staff error message
+        public static class PaymentStaffError
+        {
+            public readonly static string PAYMENT_STAFF_NOT_FOUND = "Thanh toán của nhân viên không tồn tại";
+            public readonly static string PAYMENT_STAFF_EXISTED = "Thanh toán của nhân viên đã tồn tại";
+        }
+        #endregion
+
+        #region Payment User error message
+        public static class PaymentUserError
+        {
+            public readonly static string PAYMENT_USER_NOT_FOUND = "Thanh toán của người dùng không tồn tại";
+            public readonly static string PAYMENT_USER_EXISTED = "Thanh toán của người dùng đã tồn tại";
+        }
+        #endregion
+
+        #region User Payment Information error message
+        public static class UserPaymentInformationError
+        {
+            public readonly static string USER_PAYMENT_INFORMATION_NOT_FOUND = "Thông tin thanh toán của người dùng không tồn tại";
+            public readonly static string USER_PAYMENT_INFORMATION_EXISTED = "Thông tin thanh toán của người dùng dùng đã tồn tại";
+        }
+        #endregion
     }
 }

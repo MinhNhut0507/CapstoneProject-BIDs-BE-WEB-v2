@@ -5,21 +5,19 @@ using System.Collections.Generic;
 
 namespace Data_Access.Entities
 {
-    public partial class PaymentMethodStaff
+    public partial class UserPaymentInformation
     {
-        public PaymentMethodStaff()
+        public UserPaymentInformation()
         {
             PaymentStaffs = new HashSet<PaymentStaff>();
         }
 
         public Guid Id { get; set; }
-        public Guid StaffId { get; set; }
-        public string Number { get; set; }
-        public string BankName { get; set; }
-        public string OwnerName { get; set; }
+        public Guid UserId { get; set; }
+        public string PayPalAccount { get; set; }
         public bool Status { get; set; }
 
-        public virtual Staff Staff { get; set; }
+        public virtual Users User { get; set; }
         public virtual ICollection<PaymentStaff> PaymentStaffs { get; set; }
     }
 }
