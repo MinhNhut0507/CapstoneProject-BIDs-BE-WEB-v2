@@ -72,9 +72,9 @@ namespace Business_Logic.Modules.SessionRuleModule
             var newSessionRule = new SessionRule();
 
             newSessionRule.Name = SessionRuleRequest.Name;
-            newSessionRule.DelayTime = SessionRuleRequest.DelayTime;
-            newSessionRule.DelayFreeTime = SessionRuleRequest.DelayFreeTime;
-            newSessionRule.FreeTime = SessionRuleRequest.FreeTime;
+            newSessionRule.DelayTime = new TimeSpan(0, SessionRuleRequest.DelayTime.hour, SessionRuleRequest.DelayTime.minute, SessionRuleRequest.DelayTime.second);
+            newSessionRule.DelayFreeTime = new TimeSpan(0, SessionRuleRequest.DelayFreeTime.hour, SessionRuleRequest.DelayFreeTime.minute, SessionRuleRequest.DelayFreeTime.second);
+            newSessionRule.FreeTime = new TimeSpan(0, SessionRuleRequest.FreeTime.hour, SessionRuleRequest.FreeTime.minute, SessionRuleRequest.FreeTime.second);
             DateTime dateTime = DateTime.UtcNow;
             newSessionRule.CreateDate = dateTime.AddHours(7);
             newSessionRule.UpdateDate = dateTime.AddHours(7);
@@ -112,9 +112,9 @@ namespace Business_Logic.Modules.SessionRuleModule
                 }
 
                 SessionRuleUpdate.Name = SessionRuleRequest.Name;
-                SessionRuleUpdate.DelayTime = SessionRuleRequest.DelayTime;
-                SessionRuleUpdate.DelayFreeTime = SessionRuleRequest.DelayFreeTime;
-                SessionRuleUpdate.FreeTime = SessionRuleRequest.FreeTime;
+                SessionRuleUpdate.DelayTime = new TimeSpan(0, SessionRuleRequest.DelayTime.hour, SessionRuleRequest.DelayTime.minute, SessionRuleRequest.DelayTime.second);
+                SessionRuleUpdate.DelayFreeTime = new TimeSpan(0, SessionRuleRequest.DelayFreeTime.hour, SessionRuleRequest.DelayFreeTime.minute, SessionRuleRequest.DelayFreeTime.second);
+                SessionRuleUpdate.FreeTime = new TimeSpan(0, SessionRuleRequest.FreeTime.hour, SessionRuleRequest.FreeTime.minute, SessionRuleRequest.FreeTime.second);
                 DateTime dateTime = DateTime.UtcNow;
                 SessionRuleUpdate.UpdateDate = dateTime.AddHours(7);
                 SessionRuleUpdate.Status = SessionRuleRequest.Status;

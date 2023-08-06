@@ -8,11 +8,11 @@ namespace Business_Logic.Modules.PaymentStaffModule.Request
         public Guid StaffId { get; set; }
         public Guid SessionId { get; set; }
         public Guid UserPaymentInformationId { get; set; }
-        public Guid PayPalTransactionId { get; set; }
+        public string PayPalTransactionId { get; set; }
         public string PaymentDetail { get; set; }
         public double Amount { get; set; }
         public DateTime PaymentDate { get; set; }
-        public bool Status { get; set; }
+        public string Status { get; set; }
     }
     public class CreatePaymentStaffRequestValidator : AbstractValidator<CreatePaymentStaffRequest>
     {
@@ -25,7 +25,7 @@ namespace Business_Logic.Modules.PaymentStaffModule.Request
             RuleFor(x => x.PaymentDetail).NotEmpty().NotNull();
             RuleFor(x => x.Amount).NotEmpty().NotNull();
             RuleFor(x => x.PaymentDate).NotEmpty().NotNull();
-            RuleFor(x => x.Status);
+            RuleFor(x => x.Status).NotEmpty().NotNull();
         }
     }
 }

@@ -27,6 +27,10 @@ using Business_Logic.Modules.NotificationModule;
 using Business_Logic.Modules.NotificationModule.Interface;
 using Business_Logic.Modules.NotificationTypeModule;
 using Business_Logic.Modules.NotificationTypeModule.Interface;
+using Business_Logic.Modules.PaymentStaffModule;
+using Business_Logic.Modules.PaymentStaffModule.Interface;
+using Business_Logic.Modules.PaymentUserModule;
+using Business_Logic.Modules.PaymentUserModule.Interface;
 using Business_Logic.Modules.SessionDetailModule;
 using Business_Logic.Modules.SessionDetailModule.Interface;
 using Business_Logic.Modules.SessionModule;
@@ -41,6 +45,8 @@ using Business_Logic.Modules.UserModule;
 using Business_Logic.Modules.UserModule.Interface;
 using Business_Logic.Modules.UserNotificationDetailModule;
 using Business_Logic.Modules.UserNotificationDetailModule.Interface;
+using Business_Logic.Modules.UserPaymentInformationModule;
+using Business_Logic.Modules.UserPaymentInformationModule.Interface;
 using Data_Access.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -188,6 +194,15 @@ namespace BIDs_API
             //User Notification Detail Module
             services.AddScoped<IUserNotificationDetailRepository, UserNotificationDetailRepository>();
             services.AddScoped<IUserNotificationDetailService, UserNotificationDetailService>();
+            //Payment User Module
+            services.AddScoped<IPaymentUserRepository, PaymentUserRepository>();
+            services.AddScoped<IPaymentUserService, PaymentUserService>();
+            //Payment Staff Module
+            services.AddScoped<IPaymentStaffRepository, PaymentStaffRepository>();
+            services.AddScoped<IPaymentStaffService, PaymentStaffService>();
+            //Payment User Information Module
+            services.AddScoped<IUserPaymentInformationRepository, UserPaymentInformationRepository>();
+            services.AddScoped<IUserPaymentInformationService, UserPaymentInformationService>();
             //Image Module
             services.AddScoped<IImageRepository, ImageRepository>();
             services.AddScoped<IImageService, ImageService>();
@@ -195,7 +210,7 @@ namespace BIDs_API
             services.AddScoped<ILoginService, LoginService>();
             //Send Email Module
             services.AddScoped<ICommon, Business_Logic.Modules.CommonModule.Common>();
-            //Login Module
+            //Paypal Module
             services.AddScoped<IPayPalPayment, PayPalPayment>();
 
             services.AddControllers().AddNewtonsoftJson(options =>

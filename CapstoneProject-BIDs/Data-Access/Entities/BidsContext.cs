@@ -413,9 +413,17 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.PaymentDetail)
                     .IsRequired()
-                    .HasMaxLength(int.MaxValue);
+                    .HasMaxLength(int.MaxValue)
+                    .HasColumnName("PaymentDetails");
 
-                entity.Property(e => e.PayPalTransactionId).HasColumnName("PayPalTransactionID");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("Status");
+
+                entity.Property(e => e.PayPalTransactionId).IsRequired()
+                    .HasMaxLength(int.MaxValue)
+                    .HasColumnName("PayPalTransactionID");
 
                 entity.Property(e => e.SessionId).HasColumnName("SessionID");
 
@@ -457,9 +465,17 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.PaymentDetail)
                     .IsRequired()
-                    .HasMaxLength(int.MaxValue);
+                    .HasMaxLength(int.MaxValue)
+                    .HasColumnName("PaymentDetails");
 
-                entity.Property(e => e.PayPalTransactionId).HasColumnName("PayPalTransactionID");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("Status");
+
+                entity.Property(e => e.PayPalTransactionId).IsRequired()
+                    .HasMaxLength(int.MaxValue)
+                    .HasColumnName("PayPalTransactionID");
 
                 entity.Property(e => e.SessionId).HasColumnName("SessionID");
 

@@ -27,11 +27,6 @@ namespace Business_Logic.Modules.PaymentStaffModule
             return result;
         }
 
-        public Task<ICollection<PaymentStaff>> GetPaymentStaffsIsValid()
-        {
-            return _PaymentStaffRepository.GetAll(options: o => o.Where(x => x.Status == true).ToList());
-        }
-
         public async Task<ICollection<PaymentStaff>> GetPaymentStaffByID(Guid id)
         {
             if (id == null)

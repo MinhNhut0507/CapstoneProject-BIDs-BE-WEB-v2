@@ -1,13 +1,14 @@
-﻿using PayPalCheckoutSdk.Orders;
-using PayPalCheckoutSdk.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using BIDs_API.PaymentPayPal.Interface;
 using Business_Logic.Modules.CommonModule.Interface;
+using Business_Logic.Modules.PaymentStaffModule.Interface;
+using Business_Logic.Modules.PaymentUserModule.Interface;
+using Business_Logic.Modules.PaymentUserModule.Request;
 using Business_Logic.Modules.SessionModule.Interface;
-using BIDs_API.PaymentPayPal.Interface;
+using Business_Logic.Modules.UserModule.Interface;
+using Business_Logic.Modules.UserPaymentInformationModule.Interface;
+using PayPalCheckoutSdk.Core;
+using PayPalCheckoutSdk.Orders;
+using System.Net;
 
 namespace BIDs_API.PaymentPayPal
 {
@@ -17,19 +18,31 @@ namespace BIDs_API.PaymentPayPal
         private readonly string ClientAppId;
         private readonly string SecretKey;
         private readonly ISessionService _sessionService;
+        private readonly IUserService _userService;
+        private readonly IPaymentUserService _paymentUserService;
+        private readonly IPaymentStaffService _paymentStaffService;
+        private readonly IUserPaymentInformationService _userPaymentInformationService;
         public PayPalPayment(ICommon common
             , IConfiguration _configuration
-            , ISessionService sessionService)
+            , ISessionService sessionService
+            , IUserService userService
+            , IPaymentUserService paymentUserService
+            , IPaymentStaffService paymentStaffService
+            , IUserPaymentInformationService userPaymentInformationService)
         {
             _common = common;
             ClientAppId = _configuration["PaypalSettings:ClientId"];
             SecretKey = _configuration["PaypalSettings:SecretKey"];
             _sessionService = sessionService;
+            _userService = userService;
+            _paymentUserService = paymentUserService;
+            _paymentStaffService = paymentStaffService;
+            _userPaymentInformationService = userPaymentInformationService;
         }
 
 
 
-        public async Task<string> PaymentPaypal(Guid SesionId, Guid payerId)
+        public async Task<string> PaymentPaypal(Guid SesionId, Guid UserID)
         {
             double exchangeRate = await _common.Exchange();
 
@@ -38,6 +51,7 @@ namespace BIDs_API.PaymentPayPal
 
             var sessionList = await _sessionService.GetSessionByID(SesionId);
             var session = sessionList.ElementAt(0);
+            var User = await _userService.GetUserByID(UserID);
 
             var itemList = new List<Item>()
             {
@@ -83,12 +97,16 @@ namespace BIDs_API.PaymentPayPal
                 AmountWithBreakdown = amountDetails,
                 Items = itemList,
                 Description = description,
-                InvoiceId = session.Id.ToString()
+                InvoiceId = UserID.ToString()
             };
 
             var orderCreateRequest = new OrderRequest()
             {
                 CheckoutPaymentIntent = "CAPTURE",
+                Payer = new Payer()
+                {
+                    Email = User.Email,
+                },
                 PurchaseUnits = new List<PurchaseUnitRequest>()
                 {
                     purchaseUnitRequest
@@ -112,6 +130,20 @@ namespace BIDs_API.PaymentPayPal
                 if (statusCode == HttpStatusCode.Created)
                 {
                     var result = response.Result<Order>();
+
+                    var createPaymentUser = new CreatePaymentUserRequest()
+                    {
+                        SessionId = SesionId,
+                        UserId = UserID,
+                        PayPalTransactionId = result.Id,
+                        Amount = session.FinalPrice,
+                        PaymentDate = DateTime.UtcNow.AddHours(7),
+                        PaymentDetail = "Thanh toán sản phẩm " + session.Item.Name + " với giá là " + session.FinalPrice + ".",
+                        Status = result.Status
+                    };
+
+                    var paymentUser = await _paymentUserService.AddNewPaymentUser(createPaymentUser);
+
                     var approvalLink = result.Links.FirstOrDefault(link => link.Rel.Equals("approve", StringComparison.OrdinalIgnoreCase));
 
                     if (approvalLink != null)

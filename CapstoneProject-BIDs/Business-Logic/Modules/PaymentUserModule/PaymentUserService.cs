@@ -27,11 +27,6 @@ namespace Business_Logic.Modules.PaymentUserModule
             return result;
         }
 
-        public Task<ICollection<PaymentUser>> GetPaymentUsersIsValid()
-        {
-            return _PaymentUserRepository.GetAll(options: o => o.Where(x => x.Status == true).ToList());
-        }
-
         public async Task<ICollection<PaymentUser>> GetPaymentUserByID(Guid id)
         {
             if (id == null)

@@ -6,9 +6,9 @@ namespace Business_Logic.Modules.SessionRuleModule.Request
     public class CreateSessionRuleRequest
     {
         public string Name { get; set; }
-        public TimeSpan FreeTime { get; set; }
-        public TimeSpan DelayTime { get; set; }
-        public TimeSpan DelayFreeTime { get; set; }
+        public TimeDTO FreeTime { get; set; }
+        public TimeDTO DelayTime { get; set; }
+        public TimeDTO DelayFreeTime { get; set; }
     }
     public class CreateSessionRuleRequestValidator : AbstractValidator<CreateSessionRuleRequest>
     {
@@ -19,5 +19,12 @@ namespace Business_Logic.Modules.SessionRuleModule.Request
             RuleFor(x => x.DelayTime);
             RuleFor(x => x.DelayFreeTime);
         }
+    }
+
+    public class TimeDTO
+    {
+        public int hour { get; set; }
+        public int minute { get; set; }
+        public int second { get; set; }
     }
 }
