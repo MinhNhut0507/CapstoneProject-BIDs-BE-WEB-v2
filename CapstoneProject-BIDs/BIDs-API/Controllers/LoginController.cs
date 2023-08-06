@@ -1,4 +1,6 @@
-﻿using BIDs_API.SignalR;
+﻿using BIDs_API.PaymentPayPal;
+using BIDs_API.PaymentPayPal.Interface;
+using BIDs_API.SignalR;
 using Business_Logic.Modules.LoginModule.Data;
 using Business_Logic.Modules.LoginModule.InterFace;
 using Business_Logic.Modules.LoginModule.Request;
@@ -24,17 +26,20 @@ namespace BIDs_API.Controllers
         private readonly IStaffService _staffService;
         private readonly IUserService _userService;
         private readonly IHubContext<UserHub> _hubContext;
+        private readonly IPayPalPayment _payPal;
         public LoginController(ILoginService LoginService
             , IConfiguration configuration
             , IStaffService staffService
             , IUserService userService
-            , IHubContext<UserHub> hubContext)
+            , IHubContext<UserHub> hubContext
+            , IPayPalPayment payPal)
         {
             _LoginService = LoginService;
             _configuration = configuration;
             _staffService = staffService;
             _userService = userService;
             _hubContext = hubContext;
+            _payPal = payPal;
         }
 
 
@@ -132,7 +137,7 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("reset-password/{email}")]
-        public async Task<IActionResult> ResetPassword([FromRoute] string email)
+        public async Task<IActionResult> ResetPassword([FromQuery] string email)
         {
             try
             {
@@ -147,13 +152,13 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("send-email/{email}")]
-        public async Task<IActionResult> sendemail([FromRoute] string email)
+        [HttpPut("test_payment")]
+        public async Task<IActionResult> sendemail([FromQuery] Guid sessionId, [FromQuery] Guid payerId)
         {
             try
             {
-                await _LoginService.sendemail(email);
-                return Ok();
+                var response = await _payPal.PaymentPaypal(sessionId, payerId);
+                return Ok(response);
             }
             catch (Exception ex)
             {

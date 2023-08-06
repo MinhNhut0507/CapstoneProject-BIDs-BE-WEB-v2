@@ -1,4 +1,6 @@
 ﻿using BIDs_API.Mapper;
+using BIDs_API.PaymentPayPal;
+using BIDs_API.PaymentPayPal.Interface;
 using BIDs_API.SignalR;
 using Business_Logic.Modules.AdminModule;
 using Business_Logic.Modules.AdminModule.Interface;
@@ -8,10 +10,13 @@ using Business_Logic.Modules.BookingItemModule;
 using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.CategoryModule;
 using Business_Logic.Modules.CategoryModule.Interface;
+using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.DescriptionModule;
 using Business_Logic.Modules.DescriptionModule.Interface;
 using Business_Logic.Modules.FeeModule;
 using Business_Logic.Modules.FeeModule.Interface;
+using Business_Logic.Modules.ImageModule;
+using Business_Logic.Modules.ImageModule.Interface;
 using Business_Logic.Modules.ItemDescriptionModule;
 using Business_Logic.Modules.ItemDescriptionModule.Interface;
 using Business_Logic.Modules.ItemModule;
@@ -22,8 +27,6 @@ using Business_Logic.Modules.NotificationModule;
 using Business_Logic.Modules.NotificationModule.Interface;
 using Business_Logic.Modules.NotificationTypeModule;
 using Business_Logic.Modules.NotificationTypeModule.Interface;
-using Business_Logic.Modules.CommonModule;
-using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.SessionDetailModule;
 using Business_Logic.Modules.SessionDetailModule.Interface;
 using Business_Logic.Modules.SessionModule;
@@ -47,8 +50,6 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
-using Business_Logic.Modules.ImageModule.Interface;
-using Business_Logic.Modules.ImageModule;
 
 namespace BIDs_API
 {
@@ -194,6 +195,8 @@ namespace BIDs_API
             services.AddScoped<ILoginService, LoginService>();
             //Send Email Module
             services.AddScoped<ICommon, Business_Logic.Modules.CommonModule.Common>();
+            //Login Module
+            services.AddScoped<IPayPalPayment, PayPalPayment>();
 
             services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
