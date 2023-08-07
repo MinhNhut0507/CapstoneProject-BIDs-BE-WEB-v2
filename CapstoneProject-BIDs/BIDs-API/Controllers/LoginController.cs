@@ -157,7 +157,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var response = await _payPal.PaymentPaypal(sessionId, payerId);
+                var response = await _payPal.PaymentPaypalComplete(sessionId, payerId);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -171,7 +171,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var response = await _payPal.CheckOrder(orderId);
+                var response = await _payPal.CheckAndUpdateOrder(orderId);
                 return Ok(response);
             }
             catch (Exception ex)
