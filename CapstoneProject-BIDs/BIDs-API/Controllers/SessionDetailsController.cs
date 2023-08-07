@@ -62,7 +62,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin,Dev")]
-        [HttpGet("{id}")]
+        [HttpGet("by_id")]
         public async Task<ActionResult<SessionDetailResponse>> GetSessionDetailByID([FromQuery] Guid? id)
         {
             try
@@ -85,7 +85,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_user/{id}")]
+        [HttpGet("by_user")]
         public async Task<ActionResult<IEnumerable<SessionDetailResponse>>> GetSessionDetailByUser([FromQuery] Guid? id)
         {
             try
@@ -108,7 +108,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_session/{id}")]
+        [HttpGet("by_session")]
         public async Task<ActionResult<IEnumerable<SessionDetailResponse>>> GetSessionDetailBySession([FromQuery] Guid? id)
         {
             try
@@ -214,7 +214,7 @@ namespace BIDs_API.Controllers
 
         // DELETE api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin,Dev")]
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteSessionDetail([FromQuery] Guid? id)
         {
             try

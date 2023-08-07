@@ -395,7 +395,7 @@ namespace Data_Access.Entities
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.PaymentMethodUsers)
+                    .WithMany(p => p.UserPaymentInformations)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserPaymentInfomation_Users");

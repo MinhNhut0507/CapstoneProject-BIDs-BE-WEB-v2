@@ -54,7 +54,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("by_id")]
         public async Task<ActionResult<ImageResponse>> GetImageByID([FromQuery] Guid id)
         {
             var Image = _mapper.Map<ImageResponse>(await _ImageService.GetImageByID(id));

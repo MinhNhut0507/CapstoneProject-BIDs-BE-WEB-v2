@@ -62,7 +62,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin,Dev")]
-        [HttpGet("{id}")]
+        [HttpGet("by_id")]
         public async Task<ActionResult<StaffNotificationDetailResponse>> GetStaffNotificationDetailByStaff([FromQuery] Guid id)
         {
             try

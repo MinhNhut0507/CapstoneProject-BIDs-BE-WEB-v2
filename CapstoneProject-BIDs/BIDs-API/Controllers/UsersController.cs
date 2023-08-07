@@ -68,7 +68,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin,Dev")]
-        [HttpGet("get-active")]
+        [HttpGet("get_active")]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersActive()
         {
             try
@@ -92,7 +92,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin,Dev")]
-        [HttpGet("get-waitting")]
+        [HttpGet("get_waitting")]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersWaitting()
         {
             try
@@ -116,7 +116,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin,Dev")]
-        [HttpGet("get-ban")]
+        [HttpGet("get_ban")]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersBan()
         {
             try
@@ -139,7 +139,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("by_id")]
         public async Task<ActionResult<UserResponse>> GetUserByID([FromQuery] Guid id)
         {
             var user = _mapper.Map<UserResponse>(await _userService.GetUserByID(id));
@@ -153,7 +153,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_name/{name}")]
+        [HttpGet("by_name")]
         public async Task<ActionResult<UserResponse>> GetUserByName([FromQuery] string name)
         {
             var user = _mapper.Map<UserResponse>(await _userService.GetUserByName(name));
@@ -168,7 +168,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer,Dev")]
-        [HttpGet("by_email/{email}")]
+        [HttpGet("by_email")]
         public async Task<ActionResult<UserResponse>> GetUserByEmail([FromQuery] string email)
         {
             var user = _mapper.Map<UserResponse>(await _userService.GetUserByEmail(email));
@@ -204,7 +204,7 @@ namespace BIDs_API.Controllers
         }
 
         [Authorize(Roles = "Bidder,Dev")]
-        [HttpPut("confirm_email/{email}")]
+        [HttpPut("confirm_email")]
         public async Task<IActionResult> ConfirmEmailUser([FromQuery] string email)
         {
             try

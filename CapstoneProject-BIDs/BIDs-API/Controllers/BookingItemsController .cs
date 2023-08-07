@@ -77,7 +77,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("by_item/{id}")]
+        [HttpGet("by_item")]
         public async Task<ActionResult<ICollection<BookingItemResponse>>> GetBookingItemByItem([FromQuery] Guid id)
         {
             try
@@ -101,7 +101,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff,Dev")]
-        [HttpGet("by_staff/{id}")]
+        [HttpGet("by_staff")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaff([FromQuery] Guid id)
         {
             try
@@ -126,7 +126,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff,Dev")]
-        [HttpGet("by_staff_watting/{email}")]
+        [HttpGet("by_staff_watting")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaffIsWatting([FromQuery] string email)
         {
             try
@@ -151,7 +151,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         //[Authorize(Roles = "Auctioneer")]
-        [HttpGet("by_user_watting/{id}")]
+        [HttpGet("by_user_watting")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsWatting([FromQuery] Guid id)
         {
             try
@@ -176,7 +176,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         //[Authorize(Roles = "Auctioneer")]
-        [HttpGet("by_user_waiting_create_session/{id}")]
+        [HttpGet("by_user_waiting_create_session")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsNotCreateSessionYet([FromQuery] Guid id)
         {
             try
@@ -201,7 +201,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         //[Authorize(Roles = "Auctioneer")]
-        [HttpGet("by_user_accepted/{id}")]
+        [HttpGet("by_user_accepted")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsAccepted([FromQuery] Guid id)
         {
             try
@@ -226,7 +226,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         //[Authorize(Roles = "Auctioneer")]
-        [HttpGet("by_user_denied/{id}")]
+        [HttpGet("by_user_denied")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsDenied([FromQuery] Guid id)
         {
             try
@@ -251,7 +251,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff,Dev")]
-        [HttpGet("by_staff_to_create_session/{email}")]
+        [HttpGet("by_staff_to_create_session")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaffToCreateSession([FromQuery] string email)
         {
             try
@@ -276,7 +276,7 @@ namespace BIDs_API.Controllers
 
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_id/{id}")]
+        [HttpGet("by_id")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByID([FromQuery] Guid id)
         {
             try
@@ -323,7 +323,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("re_auction/{id}")]
+        [HttpPut("re_auction")]
         public async Task<IActionResult> ReAuction([FromBody] UpdateItemRequest updateItemRequest, [FromQuery] Guid id)
         {
             try
@@ -377,7 +377,7 @@ namespace BIDs_API.Controllers
         }
 
         [Authorize(Roles = "Staff,Dev")]
-        [HttpPut("accept/{id}")]
+        [HttpPut("accept")]
         public async Task<IActionResult> AcceptBookingItem([FromQuery] Guid id)
         {
             try
@@ -398,7 +398,7 @@ namespace BIDs_API.Controllers
         }
 
         [Authorize(Roles = "Staff,Dev")]
-        [HttpPut("deny/{id}")]
+        [HttpPut("deny")]
         public async Task<IActionResult> DenyBookingItem([FromQuery] Guid id, [FromQuery] string reason)
         {
             try

@@ -24,7 +24,8 @@ namespace Business_Logic.Modules.UserModule
 
         public async Task<ICollection<Users>> GetAll()
         {
-            return await _UserRepository.GetAll(options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _UserRepository.GetAll(includeProperties: "UserPaymentInformations"
+                , options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
         public async Task<ICollection<Users>> GetUsersIsActive()
@@ -48,12 +49,13 @@ namespace Business_Logic.Modules.UserModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == id);
+            var user = await _UserRepository.GetAll(/*includeProperties: "UserPaymentInformations", */options: o => o.Where(x => x.Id == id).ToList());
             if (user == null)
             {
                 throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
             }
-            return user;
+            var response = user.ElementAt(0);
+            return response;
         }
 
         public async Task<Users> GetUserByName(string userName)

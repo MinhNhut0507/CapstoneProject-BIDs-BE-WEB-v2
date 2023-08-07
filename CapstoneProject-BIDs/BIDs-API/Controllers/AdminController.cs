@@ -49,7 +49,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("by_id")]
         public async Task<ActionResult<Admin>> GetAdminByID([FromQuery] Guid? id)
         {
             var Admin = await _AdminService.GetAdminByID(id);
@@ -63,7 +63,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_name/{name}")]
+        [HttpGet("by_name")]
         public async Task<ActionResult<Admin>> GetAdminByName([FromQuery] string name)
         {
             var Admin = await _AdminService.GetAdminByName(name);

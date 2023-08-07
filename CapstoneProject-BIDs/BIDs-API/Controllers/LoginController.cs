@@ -179,5 +179,19 @@ namespace BIDs_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("test_payment_staff")]
+        public async Task<IActionResult> TestPaymentStaff([FromQuery] Guid sessionId, [FromQuery] Guid userId)
+        {
+            try
+            {
+                var response = await _payPal.PaymentStaffReturnDeposit(sessionId, userId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

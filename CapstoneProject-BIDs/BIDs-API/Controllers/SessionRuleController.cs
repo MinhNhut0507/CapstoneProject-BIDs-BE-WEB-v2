@@ -60,7 +60,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("by_id")]
         public async Task<ActionResult<SessionRuleResponse>> GetSessionRuleByID([FromQuery] Guid id)
         {
             var SessionRule = _mapper.Map<SessionRuleResponse>(await _SessionRuleService.GetSessionRuleByID(id));
@@ -74,7 +74,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_name/{name}")]
+        [HttpGet("by_name")]
         public async Task<ActionResult<SessionRuleResponse>> GetSessionRuleByName([FromQuery] string name)
         {
             var SessionRule = _mapper.Map<SessionRuleResponse>(await _SessionRuleService.GetSessionRuleByName(name));
@@ -125,7 +125,7 @@ namespace BIDs_API.Controllers
 
         // DELETE api/<ValuesController>/5
         [Authorize(Roles = "Admin,Dev")]
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteSessionRule([FromQuery] Guid id)
         {
             try

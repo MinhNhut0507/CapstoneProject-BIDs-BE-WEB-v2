@@ -73,7 +73,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin,Dev")]
-        [HttpGet("{id}")]
+        [HttpGet("by_id")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByID([FromQuery] Guid? id)
         {
             try
@@ -97,7 +97,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff,Admin,Dev")]
-        [HttpGet("by_name/{name}")]
+        [HttpGet("by_name")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByName([FromQuery] string name)
         {
             try
@@ -121,7 +121,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff,Admin,Dev")]
-        [HttpGet("by_category_name/{name}")]
+        [HttpGet("by_category_name")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryName([FromQuery] string name)
         {
             try
@@ -145,7 +145,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer,Dev")]
-        [HttpGet("by_user/{id}")]
+        [HttpGet("by_user")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByUser([FromQuery] Guid? id)
         {
             try

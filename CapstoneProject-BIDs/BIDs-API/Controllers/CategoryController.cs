@@ -52,7 +52,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("by_id")]
         [Authorize(Roles = "Admin,Dev")]
         public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategoryByID([FromQuery] Guid? id)
         {
@@ -76,7 +76,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_name/{name}")]
+        [HttpGet("by_name")]
         [Authorize(Roles = "Admin,Dev")]
         public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategoryByName([FromQuery] string name)
         {
@@ -136,7 +136,7 @@ namespace BIDs_API.Controllers
         }
 
         // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Authorize(Roles = "Admin,Dev")]
         public async Task<IActionResult> DeleteCategory([FromQuery] Guid? id)
         {

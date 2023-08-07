@@ -20,6 +20,7 @@ namespace BIDs_API.PaymentPayPal
         private readonly ICommon _common;
         private readonly string ClientAppId;
         private readonly string SecretKey;
+        private readonly string EmailBIDs;
         private readonly ISessionService _sessionService;
         private readonly IUserService _userService;
         private readonly IPaymentUserService _paymentUserService;
@@ -36,6 +37,7 @@ namespace BIDs_API.PaymentPayPal
             _common = common;
             ClientAppId = _configuration["PaypalSettings:ClientId"];
             SecretKey = _configuration["PaypalSettings:SecretKey"];
+            EmailBIDs = _configuration["PaypalSettings:Email"];
             _sessionService = sessionService;
             _userService = userService;
             _paymentUserService = paymentUserService;
@@ -182,11 +184,11 @@ namespace BIDs_API.PaymentPayPal
             var User = await _userService.GetUserByID(UserID);
             var Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
             var JoiningFee = session.Item.FirstPrice * session.Fee.ParticipationFee;
-            if (JoiningFee > 200000) 
+            if (JoiningFee > 200000)
             {
                 JoiningFee = 200000;
             }
-            if(JoiningFee < 10000)
+            if (JoiningFee < 10000)
             {
                 JoiningFee = 10000;
             }
@@ -214,7 +216,7 @@ namespace BIDs_API.PaymentPayPal
                 }
             };
 
-            
+
 
             var amountDetails = new AmountWithBreakdown()
             {
@@ -323,7 +325,7 @@ namespace BIDs_API.PaymentPayPal
 
                 HttpResponseMessage response = await client.GetAsync(apiUrl);
 
-                
+
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -349,5 +351,71 @@ namespace BIDs_API.PaymentPayPal
             }
         }
 
+        public async Task<string> PaymentStaffReturnDeposit(Guid sessionId, Guid userId)
+        {
+            var sessionList = await _sessionService.GetSessionByID(sessionId);
+            var session = sessionList.ElementAt(0);
+            var User = await _userService.GetUserByID(userId);
+            //var EmailPaypalUser = User.UserPaymentInformations.ElementAt(0).PayPalAccount;
+            //var Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
+            var EmailPaypalUser = "minhnhutbid@gmail.com";
+            var Deposit = 20000000;
+
+            using (HttpClient client = new HttpClient())
+            {
+                // Xây dựng chuỗi xác thực Basic Authorization
+                string authString = $"{ClientAppId}:{SecretKey}";
+                byte[] authBytes = Encoding.ASCII.GetBytes(authString);
+                string base64Auth = Convert.ToBase64String(authBytes);
+
+                // Đặt header Authorization cho yêu cầu HTTP
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64Auth);
+                var payload = new
+                {
+                    intent = "CAPTURE",
+                    purchase_units = new[]
+                    {
+                        new
+                        {
+                            amount = new
+                            {
+                                currency_code = "USD",
+                                value = Deposit.ToString("0.00")
+                            }
+                        }
+                    },
+                    payer = new
+                    {
+                        email_address = EmailBIDs // Email của người chuyển tiền
+                    },
+                    payee = new
+                    {
+                        email_address = EmailPaypalUser // Email của người nhận tiền
+                    }
+                };
+
+                var payloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync("https://api.paypal.com/v2/checkout/orders", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var orderData = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResponse>(responseContent);
+
+                return orderData.links.FirstOrDefault(link => link.rel == "approve").href;
+            }
+        }
+
+        public class OrderResponse
+        {
+            public List<Link> links { get; set; }
+            // Các thuộc tính khác tùy theo cấu trúc JSON phản hồi từ PayPal
+        }
+
+        public class Link
+        {
+            public string href { get; set; }
+            public string rel { get; set; }
+            public string method { get; set; }
+        }
     }
 }

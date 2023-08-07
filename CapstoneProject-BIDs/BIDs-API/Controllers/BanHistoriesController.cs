@@ -53,7 +53,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("by_id")]
         public async Task<ActionResult<IEnumerable<BanHistoryResponse>>> GetBanHistoryByUserID([FromQuery] Guid? id)
         {
             try
@@ -77,7 +77,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_name/{name}")]
+        [HttpGet("by_name")]
         public async Task<ActionResult<IEnumerable<BanHistoryResponse>>> GetBanHistoryByUserName([FromQuery] string name)
         {
             try
