@@ -81,42 +81,35 @@ namespace Business_Logic.Modules.PaymentUserModule
             return newPaymentUser;
         }
 
-        //public async Task<PaymentUser> UpdatePaymentUser(UpdatePaymentUserRequest PaymentUserRequest)
-        //{
-        //    try
-        //    {
-        //        var PaymentUserUpdate = _PaymentUserRepository.GetFirstOrDefaultAsync(x => x.Id == PaymentUserRequest.Id).Result;
+        public async Task<PaymentUser> UpdatePaymentUser(UpdatePaymentUserStatusRequest PaymentUserRequest)
+        {
+            try
+            {
+                var PaymentUserUpdate = await _PaymentUserRepository.GetFirstOrDefaultAsync(x => x.PayPalTransactionId == PaymentUserRequest.TransactionId);
 
-        //        if (PaymentUserUpdate == null)
-        //        {
-        //            throw new Exception(ErrorMessage.PaymentUserError.PaymentUser_NOT_FOUND);
-        //        }
+                if (PaymentUserUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.PaymentUserError.PAYMENT_USER_NOT_FOUND);
+                }
 
-        //        ValidationResult result = new UpdatePaymentUserRequestValidator().Validate(PaymentUserRequest);
-        //        if (!result.IsValid)
-        //        {
-        //            throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
-        //        }
+                ValidationResult result = new UpdatePaymentUserStatusRequestValidator().Validate(PaymentUserRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
 
-        //        if (!PaymentUserRequest.DetailPaymentUser.Contains(".jpg")
-        //        && !PaymentUserRequest.DetailPaymentUser.Contains(".png")
-        //        && !PaymentUserRequest.DetailPaymentUser.Contains(".heic"))
-        //        {
-        //            throw new Exception(ErrorMessage.CommonError.WRONG_PaymentUser_FORMAT);
-        //        }
+                PaymentUserUpdate.Status = PaymentUserRequest.Status;
 
-        //        PaymentUserUpdate.DetailPaymentUser = PaymentUserRequest.DetailPaymentUser;
+                await _PaymentUserRepository.UpdateAsync(PaymentUserUpdate);
+                return PaymentUserUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
 
-        //        await _PaymentUserRepository.UpdateAsync(PaymentUserUpdate);
-        //        return PaymentUserUpdate;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Error at update type: " + ex.Message);
-        //        throw new Exception(ex.Message);
-        //    }
-
-        //}
+        }
 
 
     }

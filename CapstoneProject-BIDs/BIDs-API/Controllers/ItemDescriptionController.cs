@@ -53,7 +53,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("by_item/{id}")]
-        public async Task<ActionResult<ItemDescriptionDetailResponse>> GetItemDescriptionByItem([FromRoute] Guid id)
+        public async Task<ActionResult<ItemDescriptionDetailResponse>> GetItemDescriptionByItem([FromQuery] Guid id)
         {
             var ItemDescription = _mapper.Map<ItemDescriptionDetailResponse>(await _ItemDescriptionService.GetItemDescriptionByItem(id));
 
@@ -67,7 +67,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_staff/{id}")]
-        public async Task<ActionResult<ItemDescriptionDetailResponse>> GetItemDescriptionByDescription([FromRoute] Guid id)
+        public async Task<ActionResult<ItemDescriptionDetailResponse>> GetItemDescriptionByDescription([FromQuery] Guid id)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_id/{id}")]
-        public async Task<ActionResult<ItemDescriptionDetailResponse>> GetItemDescriptionByID([FromRoute] Guid id)
+        public async Task<ActionResult<ItemDescriptionDetailResponse>> GetItemDescriptionByID([FromQuery] Guid id)
         {
             var ItemDescription = _mapper.Map<ItemDescriptionDetailResponse>(await _ItemDescriptionService.GetItemDescriptionByID(id));
 

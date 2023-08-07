@@ -82,42 +82,36 @@ namespace Business_Logic.Modules.PaymentStaffModule
             return newPaymentStaff;
         }
 
-        //public async Task<PaymentStaff> UpdatePaymentStaff(UpdatePaymentStaffRequest PaymentStaffRequest)
-        //{
-        //    try
-        //    {
-        //        var PaymentStaffUpdate = _PaymentStaffRepository.GetFirstOrDefaultAsync(x => x.Id == PaymentStaffRequest.Id).Result;
+        public async Task<PaymentStaff> UpdatePaymentStaff(UpdatePaymentStaffStatusRequest PaymentStaffRequest)
+        {
+            try
+            {
+                var PaymentStaffUpdate = await _PaymentStaffRepository.GetFirstOrDefaultAsync(x => x.PayPalTransactionId == PaymentStaffRequest.TransactionId);
 
-        //        if (PaymentStaffUpdate == null)
-        //        {
-        //            throw new Exception(ErrorMessage.PaymentStaffError.PaymentStaff_NOT_FOUND);
-        //        }
+                if (PaymentStaffUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.PaymentStaffError.PAYMENT_STAFF_NOT_FOUND);
+                }
 
-        //        ValidationResult result = new UpdatePaymentStaffRequestValidator().Validate(PaymentStaffRequest);
-        //        if (!result.IsValid)
-        //        {
-        //            throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
-        //        }
+                ValidationResult result = new UpdatePaymentStaffStatusRequestValidator().Validate(PaymentStaffRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
 
-        //        if (!PaymentStaffRequest.DetailPaymentStaff.Contains(".jpg")
-        //        && !PaymentStaffRequest.DetailPaymentStaff.Contains(".png")
-        //        && !PaymentStaffRequest.DetailPaymentStaff.Contains(".heic"))
-        //        {
-        //            throw new Exception(ErrorMessage.CommonError.WRONG_PaymentStaff_FORMAT);
-        //        }
 
-        //        PaymentStaffUpdate.DetailPaymentStaff = PaymentStaffRequest.DetailPaymentStaff;
+                PaymentStaffUpdate.Status = PaymentStaffRequest.Status;
 
-        //        await _PaymentStaffRepository.UpdateAsync(PaymentStaffUpdate);
-        //        return PaymentStaffUpdate;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Error at update type: " + ex.Message);
-        //        throw new Exception(ex.Message);
-        //    }
+                await _PaymentStaffRepository.UpdateAsync(PaymentStaffUpdate);
+                return PaymentStaffUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
 
-        //}
+        }
 
 
     }

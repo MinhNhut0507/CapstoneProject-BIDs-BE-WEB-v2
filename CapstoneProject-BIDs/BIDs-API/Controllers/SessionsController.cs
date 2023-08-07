@@ -80,7 +80,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionByID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionByID([FromQuery] Guid? id)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionByName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionByName([FromQuery] string name)
         {
             try
             {
@@ -250,7 +250,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_in_stage_by_auctioneer/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByAuctioneer([FromRoute]Guid id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByAuctioneer([FromQuery]Guid id)
         {
             try
             {
@@ -288,7 +288,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_complete_by_auctioneer/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionCompleteByAuctioneer([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionCompleteByAuctioneer([FromQuery] Guid id)
         {
             try
             {
@@ -311,7 +311,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_havent_tranfer_yet_by_auctioneer/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionHaventTranferByAuctioneer([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionHaventTranferByAuctioneer([FromQuery] Guid id)
         {
             try
             {
@@ -513,7 +513,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_complete_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionCompleteByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionCompleteByUser([FromQuery] Guid id)
         {
             try
             {
@@ -564,7 +564,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_havent_pay_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionHaventPayByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionHaventPayByUser([FromQuery] Guid id)
         {
             try
             {
@@ -625,7 +625,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_fail_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionFailByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionFailByUser([FromQuery] Guid id)
         {
             try
             {
@@ -679,7 +679,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_not_start_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionNotStartByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionNotStartByUser([FromQuery] Guid id)
         {
             try
             {
@@ -717,7 +717,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_in_stage_user/{id}")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByUser([FromRoute] Guid id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByUser([FromQuery] Guid id)
         {
             try
             {
@@ -916,7 +916,7 @@ namespace BIDs_API.Controllers
         // DELETE api/<ValuesController>/5
         [Authorize(Roles = "Admin,Staff,Dev")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSession([FromRoute] Guid? id)
+        public async Task<IActionResult> DeleteSession([FromQuery] Guid? id)
         {
             try
             {

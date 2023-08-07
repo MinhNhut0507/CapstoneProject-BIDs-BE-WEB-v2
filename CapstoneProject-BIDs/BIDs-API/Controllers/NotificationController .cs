@@ -95,7 +95,7 @@ namespace BIDs_API.Controllers
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNotification([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteNotification([FromQuery] Guid id)
         {
             try
             {

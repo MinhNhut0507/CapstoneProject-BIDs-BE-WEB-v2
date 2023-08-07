@@ -50,7 +50,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Admin>> GetAdminByID([FromRoute] Guid? id)
+        public async Task<ActionResult<Admin>> GetAdminByID([FromQuery] Guid? id)
         {
             var Admin = await _AdminService.GetAdminByID(id);
 
@@ -64,7 +64,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<Admin>> GetAdminByName([FromRoute] string name)
+        public async Task<ActionResult<Admin>> GetAdminByName([FromQuery] string name)
         {
             var Admin = await _AdminService.GetAdminByName(name);
 
@@ -78,7 +78,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<Admin>> GetAdminByEmail([FromRoute] string email)
+        public async Task<ActionResult<Admin>> GetAdminByEmail([FromQuery] string email)
         {
             var Admin = await _AdminService.GetAdminByEmail(email);
 

@@ -55,7 +55,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ImageResponse>> GetImageByID([FromRoute] Guid id)
+        public async Task<ActionResult<ImageResponse>> GetImageByID([FromQuery] Guid id)
         {
             var Image = _mapper.Map<ImageResponse>(await _ImageService.GetImageByID(id));
 
@@ -104,7 +104,7 @@ namespace BIDs_API.Controllers
 
         //// DELETE api/<ValuesController>/5
         //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteImage([FromRoute] Guid id)
+        //public async Task<IActionResult> DeleteImage([FromQuery] Guid id)
         //{
         //    try
         //    {

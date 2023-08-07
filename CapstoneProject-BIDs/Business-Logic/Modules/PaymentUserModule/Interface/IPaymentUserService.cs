@@ -11,7 +11,7 @@ namespace Business_Logic.Modules.PaymentUserModule.Interface
     public interface IPaymentUserService
     {
         public Task<PaymentUser> AddNewPaymentUser(CreatePaymentUserRequest PaymentUserCreate);
-        //public Task<PaymentUser> UpdatePaymentUser(UpdatePaymentUserRequest PaymentUserUpdate);
+        public Task<PaymentUser> UpdatePaymentUser(UpdatePaymentUserStatusRequest PaymentUserUpdate);
         public Task<ICollection<PaymentUser>> GetAll();
         public Task<ICollection<PaymentUser>> GetPaymentUserByID(Guid id);
         public Task<ICollection<PaymentUser>> GetPaymentUserBySession(Guid id);

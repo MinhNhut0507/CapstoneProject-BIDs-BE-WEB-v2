@@ -56,7 +56,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/5
         [Authorize(Roles = "Bidder,Auction,Admin,Staff,Dev")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserNotificationDetailResponse>> GetUserNotificationDetailByUser([FromRoute] Guid id)
+        public async Task<ActionResult<UserNotificationDetailResponse>> GetUserNotificationDetailByUser([FromQuery] Guid id)
         {
             try
             {

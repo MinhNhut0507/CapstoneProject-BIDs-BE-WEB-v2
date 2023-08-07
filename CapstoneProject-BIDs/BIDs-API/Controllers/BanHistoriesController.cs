@@ -54,7 +54,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<BanHistoryResponse>>> GetBanHistoryByUserID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<BanHistoryResponse>>> GetBanHistoryByUserID([FromQuery] Guid? id)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<IEnumerable<BanHistoryResponse>>> GetBanHistoryByUserName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<BanHistoryResponse>>> GetBanHistoryByUserName([FromQuery] string name)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace BIDs_API.Controllers
 
         //// DELETE api/<ValuesController>/5
         //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteBanHistory([FromRoute] Guid? id)
+        //public async Task<IActionResult> DeleteBanHistory([FromQuery] Guid? id)
         //{
         //    try
         //    {

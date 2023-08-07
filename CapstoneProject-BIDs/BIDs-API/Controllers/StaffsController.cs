@@ -72,7 +72,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<StaffResponse>> GetStaffByID([FromRoute] Guid id)
+        public async Task<ActionResult<StaffResponse>> GetStaffByID([FromQuery] Guid id)
         {
             var Staff = _mapper.Map<StaffResponse>( await _StaffService.GetStaffByID(id));
 
@@ -87,7 +87,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Admin,Dev")]
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<StaffResponse>> GetStaffByName([FromRoute] string name)
+        public async Task<ActionResult<StaffResponse>> GetStaffByName([FromQuery] string name)
         {
             var Staff = _mapper.Map<StaffResponse>(await _StaffService.GetStaffByName(name));
 
@@ -101,7 +101,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<StaffResponse>> GetStaffByEmail([FromRoute] string email)
+        public async Task<ActionResult<StaffResponse>> GetStaffByEmail([FromQuery] string email)
         {
             var Staff = _mapper.Map<StaffResponse>(await _StaffService.GetStaffByEmail(email));
 
@@ -178,7 +178,7 @@ namespace BIDs_API.Controllers
         // DELETE api/<ValuesController>/5
         [Authorize(Roles = "Admin,Dev")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStaff([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteStaff([FromQuery] Guid id)
         {
             try
             {
@@ -195,7 +195,7 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("accept_user/{AcceptID}")]
-        public async Task<IActionResult> AcceptAccountCreate([FromRoute] Guid AcceptID)
+        public async Task<IActionResult> AcceptAccountCreate([FromQuery] Guid AcceptID)
         {
             try
             {
@@ -216,7 +216,7 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("deny_user/{DenyID}")]
-        public async Task<IActionResult> DenyAccountCreate([FromRoute] Guid DenyID, [FromRoute] string reason)
+        public async Task<IActionResult> DenyAccountCreate([FromQuery] Guid DenyID, [FromQuery] string reason)
         {
             try
             {
@@ -233,7 +233,7 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=212375
         [HttpPut("ban/{BanID}")]
-        public async Task<IActionResult> BanUser([FromRoute] Guid BanID)
+        public async Task<IActionResult> BanUser([FromQuery] Guid BanID)
         {
             try
             {
@@ -250,7 +250,7 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("unban/{UnbanID}")]
-        public async Task<IActionResult> UnbanUser([FromRoute] Guid UnbanID)
+        public async Task<IActionResult> UnbanUser([FromQuery] Guid UnbanID)
         {
             try
             {

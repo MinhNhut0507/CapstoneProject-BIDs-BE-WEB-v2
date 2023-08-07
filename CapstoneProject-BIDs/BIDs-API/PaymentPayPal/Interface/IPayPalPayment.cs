@@ -2,6 +2,8 @@
 {
     public interface IPayPalPayment
     {
-        public Task<string> PaymentPaypal(Guid SesionId, Guid payerId);
+        public Task<string> PaymentPaypalComplete(Guid SesionId, Guid UserID);
+        public Task<string> CheckAndUpdateOrder(string orderId);
+        public Task<string> PaymentPaypalJoining(Guid SesionId, Guid UserID);
     }
 }

@@ -74,7 +74,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByID([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByID([FromQuery] Guid? id)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByName([FromQuery] string name)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("by_category_name/{name}")]
-        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryName([FromRoute] string name)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryName([FromQuery] string name)
         {
             try
             {
@@ -146,7 +146,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpGet("by_user/{id}")]
-        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByUser([FromRoute] Guid? id)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByUser([FromQuery] Guid? id)
         {
             try
             {
@@ -170,7 +170,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpGet("by_name_and_user")]
-        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByNameAndUser([FromRoute] string name, Guid id)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByNameAndUser([FromQuery] string name, Guid id)
         {
             try
             {
@@ -194,7 +194,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpGet("by_category_name_and_user")]
-        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryNameAndUser([FromRoute] string name, Guid id)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryNameAndUser([FromQuery] string name, Guid id)
         {
             try
             {
@@ -264,7 +264,7 @@ namespace BIDs_API.Controllers
 
         //// DELETE api/<ValuesController>/5
         //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteItem([FromRoute] Guid id)
+        //public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
         //{
         //    try
         //    {

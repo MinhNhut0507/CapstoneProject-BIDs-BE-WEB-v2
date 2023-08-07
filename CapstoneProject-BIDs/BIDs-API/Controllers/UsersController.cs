@@ -140,7 +140,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserResponse>> GetUserByID([FromRoute] Guid id)
+        public async Task<ActionResult<UserResponse>> GetUserByID([FromQuery] Guid id)
         {
             var user = _mapper.Map<UserResponse>(await _userService.GetUserByID(id));
 
@@ -154,7 +154,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<UserResponse>> GetUserByName([FromRoute] string name)
+        public async Task<ActionResult<UserResponse>> GetUserByName([FromQuery] string name)
         {
             var user = _mapper.Map<UserResponse>(await _userService.GetUserByName(name));
 
@@ -169,7 +169,7 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/abc
         [Authorize(Roles = "Bidder,Auctioneer,Dev")]
         [HttpGet("by_email/{email}")]
-        public async Task<ActionResult<UserResponse>> GetUserByEmail([FromRoute] string email)
+        public async Task<ActionResult<UserResponse>> GetUserByEmail([FromQuery] string email)
         {
             var user = _mapper.Map<UserResponse>(await _userService.GetUserByEmail(email));
 
@@ -205,7 +205,7 @@ namespace BIDs_API.Controllers
 
         [Authorize(Roles = "Bidder,Dev")]
         [HttpPut("confirm_email/{email}")]
-        public async Task<IActionResult> ConfirmEmailUser([FromRoute] string email)
+        public async Task<IActionResult> ConfirmEmailUser([FromQuery] string email)
         {
             try
             {

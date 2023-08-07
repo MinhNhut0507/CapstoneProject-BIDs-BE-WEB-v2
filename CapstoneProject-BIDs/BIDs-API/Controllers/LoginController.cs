@@ -136,7 +136,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("reset-password/{email}")]
+        [HttpPut("reset_password/{email}")]
         public async Task<IActionResult> ResetPassword([FromQuery] string email)
         {
             try
@@ -152,12 +152,26 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("test_payment")]
-        public async Task<IActionResult> sendemail([FromQuery] Guid sessionId, [FromQuery] Guid payerId)
+        [HttpPut("payment_complete")]
+        public async Task<IActionResult> CreateOrderCompletePaypal([FromQuery] Guid sessionId, [FromQuery] Guid payerId)
         {
             try
             {
                 var response = await _payPal.PaymentPaypal(sessionId, payerId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("check_and_update_order_paypal")]
+        public async Task<IActionResult> CheckAndUpdateOrderPaypal([FromQuery] string orderId)
+        {
+            try
+            {
+                var response = await _payPal.CheckOrder(orderId);
                 return Ok(response);
             }
             catch (Exception ex)

@@ -61,7 +61,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<FeeResponse>> GetFeeByID([FromRoute] int id)
+        public async Task<ActionResult<FeeResponse>> GetFeeByID([FromQuery] int id)
         {
             var Fee = _mapper.Map<FeeResponse>(await _FeeService.GetFeeByID(id));
 
@@ -75,7 +75,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_name/{name}")]
-        public async Task<ActionResult<FeeResponse>> GetFeeByName([FromRoute] string name)
+        public async Task<ActionResult<FeeResponse>> GetFeeByName([FromQuery] string name)
         {
             var Fee = _mapper.Map<FeeResponse>(await _FeeService.GetFeeByName(name));
 
@@ -126,7 +126,7 @@ namespace BIDs_API.Controllers
         // DELETE api/<ValuesController>/5
         [Authorize(Roles = "Admin,Dev")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFee([FromRoute] int id)
+        public async Task<IActionResult> DeleteFee([FromQuery] int id)
         {
             try
             {
