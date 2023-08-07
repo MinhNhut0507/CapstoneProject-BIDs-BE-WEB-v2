@@ -47,14 +47,13 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
             return UserPaymentInformation;
         }
 
-        public async Task<ICollection<UserPaymentInformation>> GetUserPaymentInformationByUser(Guid id)
+        public async Task<UserPaymentInformation> GetUserPaymentInformationByUser(Guid id)
         {
             if (id == null)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var UserPaymentInformation = await _UserPaymentInformationRepository.GetAll(includeProperties: "PaymentStaffs,User",
-                options: o => o.Where(x => x.UserId == id).ToList());
+            var UserPaymentInformation = await _UserPaymentInformationRepository.GetFirstOrDefaultAsync(s => s.UserId == id);
             if (UserPaymentInformation == null)
             {
                 throw new Exception(ErrorMessage.UserPaymentInformationError.USER_PAYMENT_INFORMATION_NOT_FOUND);

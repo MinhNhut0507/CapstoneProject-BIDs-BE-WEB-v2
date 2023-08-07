@@ -49,13 +49,12 @@ namespace Business_Logic.Modules.UserModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var user = await _UserRepository.GetAll(/*includeProperties: "UserPaymentInformations", */options: o => o.Where(x => x.Id == id).ToList());
+            var user = await _UserRepository.GetFirstOrDefaultAsync(s => s.Id == id);
             if (user == null)
             {
                 throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
             }
-            var response = user.ElementAt(0);
-            return response;
+            return user;
         }
 
         public async Task<Users> GetUserByName(string userName)

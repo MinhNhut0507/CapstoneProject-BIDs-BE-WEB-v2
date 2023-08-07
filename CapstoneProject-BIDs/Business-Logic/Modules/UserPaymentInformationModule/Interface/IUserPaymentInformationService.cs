@@ -14,7 +14,7 @@ namespace Business_Logic.Modules.UserPaymentInformationModule.Interface
         public Task<UserPaymentInformation> UpdateUserPaymentInformation(UpdateUserPaymentInformationRequest UserPaymentInformationUpdate);
         public Task<ICollection<UserPaymentInformation>> GetAll();
         public Task<ICollection<UserPaymentInformation>> GetUserPaymentInformationByID(Guid id);
-        public Task<ICollection<UserPaymentInformation>> GetUserPaymentInformationByUser(Guid id);
+        public Task<UserPaymentInformation> GetUserPaymentInformationByUser(Guid id);
 
     }
 }

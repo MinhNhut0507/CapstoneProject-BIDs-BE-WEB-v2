@@ -382,7 +382,7 @@ namespace Data_Access.Entities
 
             modelBuilder.Entity<UserPaymentInformation>(entity =>
             {
-                entity.ToTable("PaymentMethodUser");
+                entity.ToTable("UserPaymentInformation");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever()

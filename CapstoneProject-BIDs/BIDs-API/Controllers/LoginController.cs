@@ -150,14 +150,26 @@ namespace BIDs_API.Controllers
             }
         }
 
-        // PUT api/<ValuesController>/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("payment_complete")]
-        public async Task<IActionResult> CreateOrderCompletePaypal([FromQuery] Guid sessionId, [FromQuery] Guid payerId)
+        [HttpPost("payment_complete")]
+        public async Task<IActionResult> CreateOrderCompletePaypal([FromQuery] Guid sessionId, [FromQuery] Guid payerId, [FromQuery] string urlSuccess, [FromQuery] string urlFail)
         {
             try
             {
-                var response = await _payPal.PaymentPaypalComplete(sessionId, payerId);
+                var response = await _payPal.PaymentPaypalComplete(sessionId, payerId, urlSuccess, urlFail);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("payment_joinning")]
+        public async Task<IActionResult> CreateOrderJoiningPaypal([FromQuery] Guid sessionId, [FromQuery] Guid payerId, [FromQuery] string urlSuccess, [FromQuery] string urlFail)
+        {
+            try
+            {
+                var response = await _payPal.PaymentPaypalJoining(sessionId, payerId, urlSuccess, urlFail);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -180,12 +192,12 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [HttpGet("test_payment_staff")]
-        public async Task<IActionResult> TestPaymentStaff([FromQuery] Guid sessionId, [FromQuery] Guid userId)
+        [HttpPost("staff_return_deposit")]
+        public async Task<IActionResult> StaffReturnDeposit([FromQuery] Guid sessionId, [FromQuery] Guid userId, [FromQuery] Guid staffId, [FromQuery] string urlSuccess, [FromQuery] string urlFail)
         {
             try
             {
-                var response = await _payPal.PaymentStaffReturnDeposit(sessionId, userId);
+                var response = await _payPal.PaymentStaffReturnDeposit(sessionId, userId, staffId, urlSuccess, urlFail);
                 return Ok(response);
             }
             catch (Exception ex)

@@ -1,6 +1,7 @@
 ﻿using BIDs_API.PaymentPayPal.Interface;
 using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.PaymentStaffModule.Interface;
+using Business_Logic.Modules.PaymentStaffModule.Request;
 using Business_Logic.Modules.PaymentUserModule.Interface;
 using Business_Logic.Modules.PaymentUserModule.Request;
 using Business_Logic.Modules.SessionModule.Interface;
@@ -9,6 +10,7 @@ using Business_Logic.Modules.UserPaymentInformationModule.Interface;
 using Newtonsoft.Json.Linq;
 using PayPalCheckoutSdk.Core;
 using PayPalCheckoutSdk.Orders;
+using Polly.Caching;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -47,7 +49,7 @@ namespace BIDs_API.PaymentPayPal
 
 
 
-        public async Task<string> PaymentPaypalComplete(Guid SesionId, Guid UserID)
+        public async Task<string> PaymentPaypalComplete(Guid SesionId, Guid UserID, string urlSuccess, string urlFail)
         {
             double exchangeRate = await _common.Exchange();
 
@@ -118,8 +120,8 @@ namespace BIDs_API.PaymentPayPal
                 },
                 ApplicationContext = new ApplicationContext()
                 {
-                    ReturnUrl = "https://www.google.com/search?q=thanh+cong",
-                    CancelUrl = "https://www.google.com/search?q=that+bai"
+                    ReturnUrl = urlSuccess,
+                    CancelUrl = urlFail
                 }
             };
 
@@ -158,21 +160,21 @@ namespace BIDs_API.PaymentPayPal
                     }
                     else
                     {
-                        return "https://www.google.com/search?q=that+bai";
+                        return urlFail;
                     }
                 }
                 else
                 {
-                    return "https://www.google.com/search?q=that+bai";
+                    return urlFail;
                 }
             }
             catch (Exception ex)
             {
-                return "https://www.google.com/search?q=that+bai";
+                return urlFail;
             }
         }
 
-        public async Task<string> PaymentPaypalJoining(Guid SesionId, Guid UserID)
+        public async Task<string> PaymentPaypalJoining(Guid SesionId, Guid UserID, string urlSuccess, string urlFail)
         {
             double exchangeRate = await _common.Exchange();
 
@@ -255,8 +257,8 @@ namespace BIDs_API.PaymentPayPal
                 },
                 ApplicationContext = new ApplicationContext()
                 {
-                    ReturnUrl = "https://www.google.com/search?q=thanh+cong",
-                    CancelUrl = "https://www.google.com/search?q=that+bai"
+                    ReturnUrl = urlSuccess,
+                    CancelUrl = urlFail
                 }
             };
 
@@ -295,17 +297,17 @@ namespace BIDs_API.PaymentPayPal
                     }
                     else
                     {
-                        return "https://www.google.com/search?q=that+bai";
+                        return urlFail;
                     }
                 }
                 else
                 {
-                    return "https://www.google.com/search?q=that+bai";
+                    return urlFail;
                 }
             }
             catch (Exception ex)
             {
-                return "https://www.google.com/search?q=that+bai";
+                return urlFail;
             }
         }
 
@@ -351,15 +353,17 @@ namespace BIDs_API.PaymentPayPal
             }
         }
 
-        public async Task<string> PaymentStaffReturnDeposit(Guid sessionId, Guid userId)
+        public async Task<string> PaymentStaffReturnDeposit(Guid sessionId, Guid userId, Guid staffId, string urlSuccess, string urlFail)
         {
+            double exchangeRate = await _common.Exchange();
             var sessionList = await _sessionService.GetSessionByID(sessionId);
             var session = sessionList.ElementAt(0);
             var User = await _userService.GetUserByID(userId);
-            //var EmailPaypalUser = User.UserPaymentInformations.ElementAt(0).PayPalAccount;
-            //var Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
-            var EmailPaypalUser = "minhnhutbid@gmail.com";
-            var Deposit = 20000000;
+            var PaypalUser = await _userPaymentInformationService.GetUserPaymentInformationByUser(userId);
+            var Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
+
+            var EmailPaypalUser = PaypalUser.PayPalAccount;
+            var Total = Math.Round( 20000000 / exchangeRate, 2);
 
             using (HttpClient client = new HttpClient())
             {
@@ -370,6 +374,8 @@ namespace BIDs_API.PaymentPayPal
 
                 // Đặt header Authorization cho yêu cầu HTTP
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64Auth);
+
+                // Tạo thanh toán hoàn trả
                 var payload = new
                 {
                     intent = "CAPTURE",
@@ -380,7 +386,7 @@ namespace BIDs_API.PaymentPayPal
                             amount = new
                             {
                                 currency_code = "USD",
-                                value = Deposit.ToString("0.00")
+                                value = Total.ToString()
                             }
                         }
                     },
@@ -397,17 +403,77 @@ namespace BIDs_API.PaymentPayPal
                 var payloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
                 var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync("https://api.paypal.com/v2/checkout/orders", content);
+                var response = await client.PostAsync("https://api-m.sandbox.paypal.com/v2/checkout/orders", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var orderData = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResponse>(responseContent);
+                string orderId = orderData.id;
 
-                return orderData.links.FirstOrDefault(link => link.rel == "approve").href;
+                // Xác nhận thanh toán hoàn trả
+                var confirmUrl = $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}/confirm-payment-source";
+
+                var payloadConfirm = new
+                {
+                    payment_source = new
+                    {
+                        paypal = new
+                        {
+                            name = new
+                            {
+                                given_name = User.Name,
+                                surname = User.Email
+                            },
+                            email_address = EmailPaypalUser,
+                            experience_context = new
+                            {
+                                payment_method_preference = "IMMEDIATE_PAYMENT_REQUIRED",
+                                brand_name = "EXAMPLE INC",
+                                locale = "en-US",
+                                landing_page = "LOGIN",
+                                shipping_preference = "SET_PROVIDED_ADDRESS",
+                                user_action = "PAY_NOW",
+                                return_url = "https://www.google.com/search?q=thanh+cong",
+                                cancel_url = "https://www.google.com/search?q=that+bai"
+                            }
+                        }
+                    }
+                };
+
+                var payloadJsonConfirm = Newtonsoft.Json.JsonConvert.SerializeObject(payloadConfirm);
+                var contentConfirm = new StringContent(payloadJsonConfirm, Encoding.UTF8, "application/json");
+
+                var responseConfirm = await client.PostAsync(confirmUrl, contentConfirm);
+                var responseContentConfirm = await responseConfirm.Content.ReadAsStringAsync();
+                var responseStatus = responseConfirm.ReasonPhrase;
+
+                // Xử lý phản hồi từ PayPal và trả về status xác nhận nguồn thanh toán
+                if (responseConfirm.IsSuccessStatusCode)
+                {
+                    var createPaymentStaff = new CreatePaymentStaffRequest()
+                    {
+                        SessionId = sessionId,
+                        StaffId = staffId,
+                        UserPaymentInformationId = PaypalUser.Id,
+                        PayPalTransactionId = orderId,
+                        Amount = 20000000,
+                        PaymentDate = DateTime.UtcNow.AddHours(7),
+                        PaymentDetail = "Hoàn trả phí đặt cọc cho sản phẩm đấu giá " + session.Item.Name + " với số tiền hoàn trả là " + 20000000 + ".",
+                        Status = responseStatus
+                    };
+
+                    var paymentStaff = await _paymentStaffService.AddNewPaymentStaff(createPaymentStaff);
+
+                    return responseStatus;
+                }
+                else
+                {
+                    return responseStatus; 
+                }
             }
         }
 
         public class OrderResponse
         {
-            public List<Link> links { get; set; }
+            public string id { get; set; }
             // Các thuộc tính khác tùy theo cấu trúc JSON phản hồi từ PayPal
         }
 
