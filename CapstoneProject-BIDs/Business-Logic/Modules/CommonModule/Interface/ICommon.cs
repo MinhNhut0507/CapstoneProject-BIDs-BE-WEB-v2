@@ -28,6 +28,13 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<UTCCode> ConfirmEmail(string email);
         public Task<bool> CheckUTCCode(string codeInput, string codeCheck);
         public Task<double> Exchange();
+        public Task<ICollection<Users>> GetUserJoinSession(Guid sessionId);
+        public Task<ICollection<Session>> GetSessionFailHadJoin();
+        public Task<ReportSessionTotal> ReportSessionComplete(DateTime startDate, DateTime endDate);
+        public Task<ReportSessionCount> ReportSessionHaventTranfer(DateTime startDate, DateTime endDate);
+        public Task<ReportSessionCount> ReportSessionNotStart(DateTime startDate, DateTime endDate);
+        public Task<ReportSessionCount> ReportSessionInStage(DateTime startDate, DateTime endDate);
+        public Task<ReportSessionCount> ReportSessionTotal(DateTime startDate, DateTime endDate);
 
     }
 }

@@ -146,15 +146,17 @@ namespace BIDs_API.Controllers
                         {
                             SessionID = list.ElementAt(i).Id
                         };
-                        await PutSessionStatusNotStart(request);
+                        var sessionUpdate = await PutSessionStatusNotStart(request);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                     }
                     if (list.ElementAt(i ).EndTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
-                            SessionID = list.ElementAt(i ).Id
+                            SessionID = list.ElementAt(i).Id
                         };
-                        await PutSessionStatusInStage(request);
+                        var sessionUpdate = await PutSessionStatusInStage(request);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -191,9 +193,10 @@ namespace BIDs_API.Controllers
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
-                            SessionID = list.ElementAt(i ).Id
+                            SessionID = list.ElementAt(i).Id
                         };
-                        await PutSessionStatusNotStart(request);
+                        var sessionUpdate = await PutSessionStatusNotStart(request);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -229,9 +232,10 @@ namespace BIDs_API.Controllers
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
-                            SessionID = list.ElementAt(i ).Id
+                            SessionID = list.ElementAt(i).Id
                         };
-                        await PutSessionStatusInStage(request);
+                        var sessionUpdate = await PutSessionStatusInStage(request);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -267,9 +271,10 @@ namespace BIDs_API.Controllers
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
-                            SessionID = list.ElementAt(i ).Id
+                            SessionID = list.ElementAt(i).Id
                         };
-                        await PutSessionStatusInStage(request);
+                        var sessionUpdate = await PutSessionStatusInStage(request);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -325,8 +330,12 @@ namespace BIDs_API.Controllers
                     var date = list.ElementAt(i).EndTime.AddDays(3);
                     if (date <= DateTime.UtcNow.AddHours(7))
                     {
-                        list.ElementAt(i).Status = (int)SessionStatusEnum.Fail;
-                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", list.ElementAt(i));
+                        var updateRequest = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -359,8 +368,12 @@ namespace BIDs_API.Controllers
                     var date = list.ElementAt(i).EndTime.AddDays(3);
                     if (date <= DateTime.UtcNow.AddHours(7))
                     {
-                        list.ElementAt(i).Status = (int)SessionStatusEnum.Fail;
-                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", list.ElementAt(i));
+                        var updateRequest = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -425,6 +438,62 @@ namespace BIDs_API.Controllers
                 {
                     var checkJoing = await _Common.CheckSessionJoining(response.ElementAt(i).SessionId);
                     if( checkJoing == false)
+                    {
+                        continue;
+                    }
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                }
+                return Ok(Response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_fail_had_join")]
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionFailHadJoin()
+        {
+            try
+            {
+                var list = await _Common.GetSessionFailHadJoin();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    var checkJoing = await _Common.CheckSessionJoining(response.ElementAt(i).SessionId);
+                    if (checkJoing == false)
                     {
                         continue;
                     }
@@ -579,9 +648,14 @@ namespace BIDs_API.Controllers
                     var date = list.ElementAt(i).EndTime.AddDays(3);
                     if (date <= DateTime.UtcNow.AddHours(7))
                     {
-                        list.ElementAt(i).Status = (int)SessionStatusEnum.Fail;
+                        var updateRequest = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
-                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", list.ElementAt(i));
+                        i--;
                     }
                 }
                 var response = list.Select
@@ -698,7 +772,8 @@ namespace BIDs_API.Controllers
                         {
                             SessionID = list.ElementAt(i ).Id
                         };
-                        await PutSessionStatusNotStart(request);
+                        var sessionUpdate = await PutSessionStatusNotStart(request);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -736,7 +811,8 @@ namespace BIDs_API.Controllers
                         {
                             SessionID = list.ElementAt(i).Id
                         };
-                        await PutSessionStatusInStage(request);
+                        var sessionUpdate = await PutSessionStatusNotStart(request);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -929,5 +1005,76 @@ namespace BIDs_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("report_session_total")]
+        public async Task<IActionResult> ReportSessionTotal([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionTotal(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_complete")]
+        public async Task<IActionResult> ReportSessionComplete([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionComplete(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_not_start")]
+        public async Task<IActionResult> ReportSessionNotStart([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionNotStart(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_in_stage")]
+        public async Task<IActionResult> ReportSessionInStage([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionInStage(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_havent_tranfer")]
+        public async Task<IActionResult> ReportSessionHaventTranfer([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionHaventTranfer(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

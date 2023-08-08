@@ -92,6 +92,30 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>
         [Authorize(Roles = "Staff,Admin,Dev")]
+        [HttpGet("get_join_session")]
+        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersJoinSession([FromQuery] Guid sessionId)
+        {
+            try
+            {
+                var list = await _common.GetUserJoinSession(sessionId);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Users, UserResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>
+        [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("get_waitting")]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersWaitting()
         {

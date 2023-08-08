@@ -136,21 +136,6 @@ namespace Business_Logic.Modules.SessionModule
             return Session;
         }
 
-        //public async Task<Session> GetSessionByType(string Category)
-        //{
-        //    if (Category == null)
-        //    {
-        //        throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
-        //    }
-        //    var type = _UserService.GetFirstOrDefaultAsync(x => x.CategoryName == Category).Result;
-        //    var Session = await _SessionRepository.GetFirstOrDefaultAsync(x => x.CategoryId == type.CategoryId);
-        //    if (Session == null)
-        //    {
-        //        throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
-        //    }
-        //    return Session;
-        //}
-
         public async Task<Session> AddNewSession(CreateSessionRequest SessionRequest)
         {
 
@@ -234,17 +219,6 @@ namespace Business_Logic.Modules.SessionModule
                 Status = (int)BookingItemEnum.Accepted
             };
             await _BookingItemService.UpdateStatusBookingItem(updateBookingItemRequest);
-
-            //CreateUserNotificationDetailRequest request = new CreateUserNotificationDetailRequest()
-            //{
-            //    Messages = "Buổi đấu giá cho sản phẩm " + item.ElementAt(0).Name + " vừa được tạo thành công và sẽ bắt đầu vào lúc "
-            //    + newSession.BeginTime + " và sẽ diễn ra trong vòng " + newSession.AuctionTime + ".",
-            //    TypeId = (int)NotificationEnum.AccountNoti,
-            //    UserId = userUpdate.Id,
-            //    NotificationId = Guid.NewGuid()
-            //};
-            //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
-
 
             return newSession;
         }

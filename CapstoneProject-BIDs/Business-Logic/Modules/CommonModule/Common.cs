@@ -31,6 +31,9 @@ using Business_Logic.Modules.BookingItemModule.Request;
 using Business_Logic.Modules.UserModule;
 using Business_Logic.Modules.CommonModule.Data;
 using System.Text.Json;
+using Microsoft.Data.SqlClient;
+using System.Data;
+using System.Runtime.InteropServices;
 
 namespace Business_Logic.Modules.CommonModule
 {
@@ -232,12 +235,11 @@ namespace Business_Logic.Modules.CommonModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            ICollection<Session> listSession = new List<Session>();
+            var listSession = new List<Session>();
             var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
-            ICollection<Session> checkSession = new List<Session>();
             foreach (var x in sessionDetail)
             {
-                checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                var checkSession = await _SessionService.GetSessionByID(x.SessionId);
                 if (listSession.Count() == 0)
                 {
                     if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.InStage)
@@ -245,12 +247,13 @@ namespace Business_Logic.Modules.CommonModule
                 }
                 else
                 {
-                    foreach (var y in listSession)
+                    for (int i = 0; i < listSession.Count; i++)
                     {
-                        if (y.Id == checkSession.ElementAt(0).Id)
+                        if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
                             continue;
                         if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.InStage)
-                            listSession.Add(checkSession.ElementAt(0));
+                            if (i == listSession.Count - 1)
+                                listSession.Add(checkSession.ElementAt(0));
                     }
                 }
             }
@@ -263,12 +266,11 @@ namespace Business_Logic.Modules.CommonModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            ICollection<Session> listSession = new List<Session>();
+            var listSession = new List<Session>();
             var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
-            ICollection<Session> checkSession = new List<Session>();
             foreach (var x in sessionDetail)
             {
-                checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                var checkSession = await _SessionService.GetSessionByID(x.SessionId);
                 if (listSession.Count() == 0)
                 {
                     if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
@@ -276,12 +278,13 @@ namespace Business_Logic.Modules.CommonModule
                 }
                 else
                 {
-                    foreach (var y in listSession)
+                    for (int i = 0; i < listSession.Count; i++)
                     {
-                        if (y.Id == checkSession.ElementAt(0).Id)
+                        if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
                             continue;
                         if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
-                            listSession.Add(checkSession.ElementAt(0));
+                            if (i == listSession.Count - 1)
+                                listSession.Add(checkSession.ElementAt(0));
                     }
                 }
             }
@@ -294,12 +297,11 @@ namespace Business_Logic.Modules.CommonModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            ICollection<Session> listSession = new List<Session>();
+            var listSession = new List<Session>();
             var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
-            ICollection<Session> checkSession = new List<Session>();
             foreach (var x in sessionDetail)
             {
-                checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                var checkSession = await _SessionService.GetSessionByID(x.SessionId);
                 if (listSession.Count() == 0)
                 {
                     if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.HaventTranferYet)
@@ -307,12 +309,13 @@ namespace Business_Logic.Modules.CommonModule
                 }
                 else
                 {
-                    foreach (var y in listSession)
+                    for(int i = 0; i < listSession.Count; i++)
                     {
-                        if (y.Id == checkSession.ElementAt(0).Id)
+                        if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
                             continue;
                         if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.HaventTranferYet)
-                            listSession.Add(checkSession.ElementAt(0));
+                            if(i == listSession.Count-1)
+                                listSession.Add(checkSession.ElementAt(0));
                     }
                 }
             }
@@ -408,7 +411,7 @@ namespace Business_Logic.Modules.CommonModule
             }
             var sessionDetailJoining = await _SessionDetailService.GetSessionDetailBySession(id);
             var sortList = sessionDetailJoining.OrderByDescending(s => s.CreateDate);
-            var Winner = await _UserService.GetUserByID(sortList.ElementAt(sortList.Count()-1).UserId);
+            var Winner = await _UserService.GetUserByID(sortList.ElementAt(sortList.Count() - 1).UserId);
             return Winner;
         }
 
@@ -483,7 +486,7 @@ namespace Business_Logic.Modules.CommonModule
 
         public async Task<bool> CheckUTCCode(string codeInput, string codeCheck)
         {
-            if(codeInput == codeCheck)
+            if (codeInput == codeCheck)
             {
                 return true;
             }
@@ -552,9 +555,276 @@ namespace Business_Logic.Modules.CommonModule
             public Dictionary<string, double> Rates { get; set; }
         }
 
-        public async Task ReportByDateForAdmin()
+        public async Task<ICollection<Session>> GetSessionFailHadJoin()
         {
+            var listSessionFail = await _SessionService.GetSessionsIsFail();
+            foreach (var session in listSessionFail)
+            {
+                var check = await CheckSessionJoining(session.Id);
+                if (!check)
+                    listSessionFail.Remove(session);
+            }
+            return listSessionFail;
+        }
 
+        public async Task<ICollection<Users>> GetUserJoinSession(Guid sessionId)
+        {
+            var listSession = await _SessionService.GetSessionByID(sessionId);
+            var session = listSession.ElementAt(0);
+            var listSessionDetail = await _SessionDetailService.GetSessionDetailBySession(sessionId);
+            var listUser = new List<Users>();
+            foreach (var detail in listSessionDetail)
+            {
+                var user = await _UserService.GetUserByID(detail.UserId);
+                if (listUser.Count == 0)
+                    listUser.Add(user);
+                for (int i = 0; i < listUser.Count; i++)
+                {
+                    if (listUser.ElementAt(i).Id == user.Id)
+                    {
+                        break;
+                    }
+                    if (i == listUser.Count - 1)
+                        listUser.Add(user);
+                }
+            }
+            var checkIncrease = await CheckSessionIncrease(sessionId);
+            var winner = new Users();
+            if (checkIncrease)
+            {
+                winner = await GetUserWinning(sessionId);
+            }
+            else
+            {
+                winner = await GetUserWinningByJoining(sessionId);
+            }
+            listUser.Remove(winner);
+            return listUser;
+        }
+
+        public async Task<ReportSessionCount> ReportSessionTotal(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                var totalCount = 0;
+                var totalPrice = 0.00;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        totalCount++;
+                        totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                    }
+                }
+                var responseReport = new ReportSessionCount()
+                {
+                    TotalCount = totalCount,
+                    TotalPrice = totalPrice
+                };
+                return responseReport;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportSessionTotal> ReportSessionComplete(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                var totalCount = 0;
+                var totalComplete = 0;
+                var totalFail = 0;
+                var totalPrice = 0.00;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        totalCount++;
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Complete)
+                        {
+                            totalComplete++;
+                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Fail)
+                            totalFail++;
+
+                    }
+                }
+                var responseReport = new ReportSessionTotal()
+                {
+                    Total = totalCount,
+                    TotalComplete = totalComplete,
+                    TotalFail = totalFail,
+                    TotalPrice = totalPrice
+                };
+                return responseReport;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportSessionCount> ReportSessionNotStart(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                var totalCount = 0;
+                var totalPrice = 0.00;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.NotStart)
+                        {
+                            totalCount++;
+                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                        }
+                    }
+                }
+                var responseReport = new ReportSessionCount()
+                {
+                    TotalCount = totalCount,
+                    TotalPrice = totalPrice
+                };
+                return responseReport;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportSessionCount> ReportSessionInStage(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                var totalCount = 0;
+                var totalPrice = 0.00;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.InStage)
+                        {
+                            totalCount++;
+                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                        }
+                    }
+                }
+                var responseReport = new ReportSessionCount()
+                {
+                    TotalCount = totalCount,
+                    TotalPrice = totalPrice
+                };
+                return responseReport;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportSessionCount> ReportSessionHaventTranfer(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                var totalCount = 0;
+                var totalPrice = 0.00;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.HaventTranferYet)
+                        {
+                            totalCount++;
+                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                        }
+                    }
+                }
+                var responseReport = new ReportSessionCount()
+                {
+                    TotalCount = totalCount,
+                    TotalPrice = totalPrice
+                };
+                return responseReport;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
