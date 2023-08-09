@@ -250,7 +250,7 @@ namespace Business_Logic.Modules.CommonModule
                     for (int i = 0; i < listSession.Count; i++)
                     {
                         if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
-                            continue;
+                            break;
                         if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.InStage)
                             if (i == listSession.Count - 1)
                                 listSession.Add(checkSession.ElementAt(0));
@@ -281,7 +281,7 @@ namespace Business_Logic.Modules.CommonModule
                     for (int i = 0; i < listSession.Count; i++)
                     {
                         if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
-                            continue;
+                            break;
                         if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
                             if (i == listSession.Count - 1)
                                 listSession.Add(checkSession.ElementAt(0));
@@ -312,7 +312,7 @@ namespace Business_Logic.Modules.CommonModule
                     for(int i = 0; i < listSession.Count; i++)
                     {
                         if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
-                            continue;
+                            break;
                         if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.HaventTranferYet)
                             if(i == listSession.Count-1)
                                 listSession.Add(checkSession.ElementAt(0));
