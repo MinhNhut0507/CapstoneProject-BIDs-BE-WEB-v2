@@ -18,6 +18,7 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<ICollection<Session>> GetSessionInStageByAuctioneer(Guid id);
         public Task<ICollection<Session>> GetSessionCompleteByAuctioneer(Guid id);
         public Task<ICollection<Session>> GetSessionHaventTranferByAuctioneer(Guid id);
+        public Task<ICollection<Session>> GetSessionNeedToPayByUser(Guid id);
         public Task<Users> GetUserWinning(Guid id);
         public Task<UserNotiResponse> UserNotification(int ExDay, int TypeId, string message, Guid UserId);
         public Task<StaffNotiResponse> StaffNotification(int ExDay, int TypeId, string message, Guid StaffId);

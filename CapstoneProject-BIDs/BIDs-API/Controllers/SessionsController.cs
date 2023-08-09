@@ -353,6 +353,44 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [HttpGet("by_user_for_payment")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionByUserForPayment([FromQuery] Guid id)
+        {
+            try
+            {
+                var list = await _Common.GetSessionNeedToPayByUser(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    var date = list.ElementAt(i).EndTime.AddDays(3);
+                    if (date <= DateTime.UtcNow.AddHours(7))
+                    {
+                        var updateRequest = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
+                        list.Remove(list.ElementAt(i));
+                        i--;
+                    }
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
         [HttpGet("by_havent_pay")]
         public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionHaventPay()
         {

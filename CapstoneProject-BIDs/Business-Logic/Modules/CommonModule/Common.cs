@@ -322,6 +322,33 @@ namespace Business_Logic.Modules.CommonModule
             return listSession;
         }
 
+        public async Task<ICollection<Session>> GetSessionNeedToPayByUser(Guid id)
+        {
+            var listSession = await GetSessionHaventTranferByAuctioneer(id);
+
+            for(int i = 0; i < listSession.Count; i++)
+            {
+                var session = await _SessionService.GetSessionByID(listSession.ElementAt(i).Id);
+                var winner = new Users();
+                var checkIncrease = await CheckSessionIncrease(session.ElementAt(0).Id);
+                if (checkIncrease)
+                {
+                    winner = await GetUserWinning(session.ElementAt(0).Id);
+                }
+                else
+                {
+                    winner = await GetUserWinningByJoining(session.ElementAt(0).Id);
+                }
+                if(winner.Id != id)
+                {
+                    listSession.Remove(session.ElementAt(0));
+                    i--;
+                }
+            }
+
+            return listSession;
+        }
+
         public async Task<Users> GetUserWinning(Guid id)
         {
             if (id == null)
