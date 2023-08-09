@@ -91,7 +91,7 @@
             public readonly static string AUCTION_TIME_MIN_ERROR = "Thời gian đấu giá tối thiểu là 3 giờ";
             public readonly static string END_TIME_AUCTION = "Cuộc đấu giá đã kết thúc";
             public readonly static string JOIN_ERROR = "Bạn đã tham gia vào cuộc đấu giá này trước đó, vui lòng kiểm tra lại email để nắm bắt thông tin của cuộc đấu giá.";
-
+            public readonly static string NOT_JOIN_ERROR = "Bạn vui lòng thanh toán phí tham gia và phí đặt cọc(Nếu có) để có thể tham gia vào phiên đấu giá này. Sau khi thanh toán xong vui lòng nhấn đăng ký hoặc tăng giá thêm 1 lần để hoàn tất.";
         }
         #endregion
 

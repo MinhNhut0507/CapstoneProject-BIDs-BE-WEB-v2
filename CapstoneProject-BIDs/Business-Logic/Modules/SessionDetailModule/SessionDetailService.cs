@@ -13,27 +13,28 @@ using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.SessionRuleModule.Interface;
 using System.Net.Mail;
 using System.Net;
+using Business_Logic.Modules.PaymentUserModule.Interface;
 
 namespace Business_Logic.Modules.SessionDetailModule
 {
     public class SessionDetailService : ISessionDetailService
     {
         private readonly ISessionDetailRepository _SessionDetailRepository;
-        private readonly ICategoryRepository _CategoryRepository;
+        private readonly IPaymentUserService _PaymentUserService;
         private readonly ISessionService _SessionService;
         private readonly ISessionRuleService _SessionRuleService;
         private readonly IItemService _ItemService;
         private readonly IUserService _UserService;
 
         public SessionDetailService(ISessionDetailRepository SessionDetailRepository
-            , ICategoryRepository CategoryRepository
+            , IPaymentUserService PaymentUserService
             , ISessionService SessionService
             , IItemService ItemService
             , ISessionRuleService SessionRuleService
             , IUserService UserService)
         {
             _SessionDetailRepository = SessionDetailRepository;
-            _CategoryRepository = CategoryRepository;
+            _PaymentUserService = PaymentUserService;
             _SessionService = SessionService;
             _ItemService = ItemService;
             _SessionRuleService = SessionRuleService;
@@ -145,6 +146,14 @@ namespace Business_Logic.Modules.SessionDetailModule
             DateTime dateTime = DateTime.UtcNow;
             if (SessionDetail.Count == 0 || SessionDetail == null) 
             {
+
+                var checkPayment = await _PaymentUserService.GetPaymentUserBySessionAndUser(SessionDetailRequest.SessionId, SessionDetailRequest.UserId);
+
+                if (checkPayment == null)
+                {
+                    throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
+                }
+
                 var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 
                 newSessionDetail.Id = Guid.NewGuid();
@@ -166,12 +175,12 @@ namespace Business_Logic.Modules.SessionDetailModule
                 throw new Exception(ErrorMessage.SessionError.END_TIME_AUCTION);
             }
 
-            if (((DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayTime)
-                || (((Session.ElementAt(0).EndTime - DateTime.Now) < SessionRule.FreeTime)
-                    && (DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayFreeTime))
-            {
-                throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
-            }
+            //if (((DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayTime)
+            //    || (((Session.ElementAt(0).EndTime - DateTime.Now) < SessionRule.FreeTime)
+            //        && (DateTime.Now - ListSessionDetailSort.ElementAt(0).CreateDate) < SessionRule.DelayFreeTime))
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.TIME_ERROR);
+            //}
 
             newSessionDetail.Id = Guid.NewGuid();
             newSessionDetail.UserId = SessionDetailRequest.UserId;
@@ -205,7 +214,14 @@ namespace Business_Logic.Modules.SessionDetailModule
 
             var checkDetail = await _SessionDetailRepository.GetFirstOrDefaultAsync(s => s.UserId == jonningRequest.UserId);
 
-            if(checkDetail != null) 
+            var checkPayment = await _PaymentUserService.GetPaymentUserBySessionAndUser(jonningRequest.SessionId, jonningRequest.UserId);
+
+            if (checkPayment == null)
+            {
+                throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
+            }
+
+            if (checkDetail != null) 
             {
                 throw new Exception(ErrorMessage.SessionError.JOIN_ERROR);
             }
