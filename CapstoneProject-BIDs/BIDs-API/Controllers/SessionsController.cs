@@ -21,6 +21,8 @@ using Business_Logic.Modules.ItemModule;
 using System.Reflection;
 using static System.Collections.Specialized.BitVector32;
 using Business_Logic.Modules.UserModule.Response;
+using BIDs_API.PaymentPayPal.Interface;
+using Business_Logic.Modules.PaymentUserModule.Interface;
 
 namespace BIDs_API.Controllers
 {
@@ -36,6 +38,8 @@ namespace BIDs_API.Controllers
         private readonly IItemService _ItemService;
         private readonly IHubContext<NotificationHub> _notiHubContext;
         private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
+        private readonly IPayPalPayment _payPal;
+        private readonly IPaymentUserService _paymentUserService;
 
         public SessionsController(ISessionService SessionService
             , IHubContext<SessionHub> hubSessionContext
@@ -44,7 +48,9 @@ namespace BIDs_API.Controllers
             , IItemService ItemService
             , IHubContext<ItemHub> hubContext
             , IHubContext<NotificationHub> notiHubContext
-            , IHubContext<UserNotificationDetailHub> userNotiHubContext)
+            , IHubContext<UserNotificationDetailHub> userNotiHubContext
+            , IPayPalPayment payPal
+            , IPaymentUserService paymentUserService)
         {
             _SessionService = SessionService;
             _hubSessionContext = hubSessionContext;
@@ -53,6 +59,8 @@ namespace BIDs_API.Controllers
             _notiHubContext = notiHubContext;
             _userNotiHubContext = userNotiHubContext;
             _ItemService = ItemService;
+            _payPal = payPal;
+            _paymentUserService = paymentUserService;
         }
 
         // GET api/<ValuesController>
@@ -1114,5 +1122,20 @@ namespace BIDs_API.Controllers
             }
         }
 
+        [HttpPut("check_and_update_order")]
+        public async Task<IActionResult> CheckAndUpdateOrder([FromQuery] Guid sessionId, Guid userId)
+        {
+            try
+            {
+                var payment = await _paymentUserService.GetPaymentUserBySessionAndUser(sessionId, userId);
+                var sortPayment = payment.OrderByDescending(s => s.Amount);
+                var response = await _payPal.CheckAndUpdateOrderComplete(sortPayment.ElementAt(0).PayPalTransactionId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

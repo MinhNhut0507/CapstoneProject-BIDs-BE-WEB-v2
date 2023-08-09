@@ -5,6 +5,7 @@ using Business_Logic.Modules.PaymentStaffModule.Request;
 using Business_Logic.Modules.PaymentUserModule.Interface;
 using Business_Logic.Modules.PaymentUserModule.Request;
 using Business_Logic.Modules.SessionModule.Interface;
+using Business_Logic.Modules.SessionModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
 using Business_Logic.Modules.UserPaymentInformationModule.Interface;
 using Newtonsoft.Json.Linq;
@@ -311,7 +312,7 @@ namespace BIDs_API.PaymentPayPal
             }
         }
 
-        public async Task<string> CheckAndUpdateOrder(string orderId)
+        public async Task<string> CheckAndUpdateOrderComplete(string orderId)
         {
             string apiUrl = $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}";
 
@@ -342,6 +343,14 @@ namespace BIDs_API.PaymentPayPal
                     };
 
                     var paymentUser = await _paymentUserService.UpdatePaymentUser(updatePaymentUser);
+
+                    var updateStatusSession = new UpdateSessionStatusRequest()
+                    {
+                        SessionID = paymentUser.SessionId
+                    };
+
+                    await _sessionService.UpdateSessionStatusComplete(updateStatusSession);
+
                     return paymentUser.Status;
                 }
                 else

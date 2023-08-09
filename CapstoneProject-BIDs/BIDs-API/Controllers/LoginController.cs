@@ -1,5 +1,4 @@
-﻿using BIDs_API.PaymentPayPal;
-using BIDs_API.PaymentPayPal.Interface;
+﻿using BIDs_API.PaymentPayPal.Interface;
 using BIDs_API.SignalR;
 using Business_Logic.Modules.LoginModule.Data;
 using Business_Logic.Modules.LoginModule.InterFace;
@@ -12,8 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace BIDs_API.Controllers
 {
@@ -183,7 +180,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var response = await _payPal.CheckAndUpdateOrder(orderId);
+                var response = await _payPal.CheckAndUpdateOrderComplete(orderId);
                 return Ok(response);
             }
             catch (Exception ex)
