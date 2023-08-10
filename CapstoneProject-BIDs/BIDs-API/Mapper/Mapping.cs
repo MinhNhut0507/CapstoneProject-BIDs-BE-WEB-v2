@@ -19,6 +19,7 @@ using Business_Logic.Modules.NotificationTypeModule.Response;
 using Business_Logic.Modules.StaffNotificationDetailModule.Response;
 using Business_Logic.Modules.UserNotificationDetailModule.Response;
 using Business_Logic.Modules.ImageModule.Response;
+using Business_Logic.Modules.SessionRuleModule.Request;
 
 namespace BIDs_API.Mapper
 {
@@ -32,6 +33,11 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Day, d => d.MapFrom(s => s.Day))
                 .ForMember(x => x.Hours, d => d.MapFrom(s => s.Hour))
                 .ForMember(x => x.Minute, d => d.MapFrom(s => s.Minute));
+
+            CreateMap<TimeSpan, TimeDTO>()
+                .ForMember(x => x.hour, d => d.MapFrom(s => s.Hours))
+                .ForMember(x => x.minute, d => d.MapFrom(s => s.Minutes))
+                .ForMember(x => x.second, d => d.MapFrom(s => s.Seconds));
 
             CreateMap<DateTime, DTODateOfBirth>()
                 .ForMember(x => x.Year, d => d.MapFrom(s => s.Year))

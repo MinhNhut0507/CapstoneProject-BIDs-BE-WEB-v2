@@ -202,5 +202,19 @@ namespace BIDs_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("staff_payment_to_winner")]
+        public async Task<IActionResult> StaffPaymentToWinner([FromQuery] Guid sessionId, [FromQuery] Guid userId, [FromQuery] Guid staffId, [FromQuery] string urlSuccess, [FromQuery] string urlFail)
+        {
+            try
+            {
+                var response = await _payPal.PaymentStaffToWinner(sessionId, userId, staffId, urlSuccess, urlFail);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

@@ -110,7 +110,7 @@ namespace BIDs_API.PaymentPayPal
                 }
             };
 
-            var description = "Thanh toán sản phẩm đấu giá " + session.Item.Name + " được đấu giá thông qua hệ thống đấu giá trực tuyến BIDs.";
+            var description = "Thanh toán sản phẩm đấu giá được đấu giá thông qua hệ thống đấu giá trực tuyến BIDs.";
 
             var purchaseUnitRequest = new PurchaseUnitRequest()
             {
@@ -188,6 +188,126 @@ namespace BIDs_API.PaymentPayPal
             }
         }
 
+        public async Task<string> PaymentStaffToWinner(Guid sessionId, Guid userId, Guid staffId, string urlSuccess, string urlFail)
+        {
+            double exchangeRate = await _common.Exchange();
+            var sessionList = await _sessionService.GetSessionByID(sessionId);
+            var session = sessionList.ElementAt(0);
+            var User = await _userService.GetUserByID(userId);
+            var PaypalUser = await _userPaymentInformationService.GetUserPaymentInformationByUser(userId);
+
+
+            var EmailPaypalUser = PaypalUser.PayPalAccount;
+            var Total = Math.Round(session.FinalPrice / exchangeRate, 2);
+
+            using (HttpClient client = new HttpClient())
+            {
+                // Xây dựng chuỗi xác thực Basic Authorization
+                string authString = $"{ClientAppId}:{SecretKey}";
+                byte[] authBytes = Encoding.ASCII.GetBytes(authString);
+                string base64Auth = Convert.ToBase64String(authBytes);
+
+                // Đặt header Authorization cho yêu cầu HTTP
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64Auth);
+
+                // Tạo thanh toán hoàn trả
+                var payload = new
+                {
+                    intent = "CAPTURE",
+                    purchase_units = new[]
+                    {
+                        new
+                        {
+                            amount = new
+                            {
+                                currency_code = "USD",
+                                value = Total.ToString()
+                            }
+                        }
+                    },
+                    payer = new
+                    {
+                        email_address = EmailBIDs // Email của người chuyển tiền
+                    },
+                    payee = new
+                    {
+                        email_address = EmailPaypalUser // Email của người nhận tiền
+                    }
+                };
+
+                var payloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync("https://api-m.sandbox.paypal.com/v2/checkout/orders", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var orderData = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResponse>(responseContent);
+                string orderId = orderData.id;
+
+                // Xác nhận thanh toán hoàn trả
+                var confirmUrl = $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}/confirm-payment-source";
+
+                var payloadConfirm = new
+                {
+                    payment_source = new
+                    {
+                        paypal = new
+                        {
+                            name = new
+                            {
+                                given_name = User.Name,
+                                surname = User.Email
+                            },
+                            email_address = EmailPaypalUser,
+                            experience_context = new
+                            {
+                                payment_method_preference = "IMMEDIATE_PAYMENT_REQUIRED",
+                                brand_name = "EXAMPLE INC",
+                                locale = "en-US",
+                                landing_page = "LOGIN",
+                                shipping_preference = "SET_PROVIDED_ADDRESS",
+                                user_action = "PAY_NOW",
+                                return_url = urlSuccess,
+                                cancel_url = urlFail
+                            }
+                        }
+                    }
+                };
+
+                var payloadJsonConfirm = Newtonsoft.Json.JsonConvert.SerializeObject(payloadConfirm);
+                var contentConfirm = new StringContent(payloadJsonConfirm, Encoding.UTF8, "application/json");
+
+                var responseConfirm = await client.PostAsync(confirmUrl, contentConfirm);
+                var responseContentConfirm = await responseConfirm.Content.ReadAsStringAsync();
+                var responseStatus = responseConfirm.ReasonPhrase;
+
+                // Xử lý phản hồi từ PayPal và trả về status xác nhận nguồn thanh toán
+                if (responseConfirm.IsSuccessStatusCode)
+                {
+                    var createPaymentStaff = new CreatePaymentStaffRequest()
+                    {
+                        SessionId = sessionId,
+                        StaffId = staffId,
+                        UserPaymentInformationId = PaypalUser.Id,
+                        PayPalTransactionId = orderId,
+                        Amount = 20000000,
+                        PaymentDate = DateTime.UtcNow.AddHours(7),
+                        PaymentDetail = "Thanh toán cho sản phẩm đấu giá " + session.Item.Name + ".",
+                        Status = responseStatus
+                    };
+
+                    var paymentStaff = await _paymentStaffService.AddNewPaymentStaff(createPaymentStaff);
+
+                    await _staffHubContext.Clients.All.SendAsync("ReceivePaymentStaffAdd", paymentStaff);
+
+                    return responseStatus;
+                }
+                else
+                {
+                    return responseStatus;
+                }
+            }
+        }
+
         public async Task<string> PaymentPaypalJoining(Guid SesionId, Guid UserID, string urlSuccess, string urlFail)
         {
             double exchangeRate = await _common.Exchange();
@@ -248,7 +368,7 @@ namespace BIDs_API.PaymentPayPal
                 }
             };
 
-            var description = "Phí tham gia và phí đạt cọc của phiên đấu giá sản phẩm " + session.Item.Name + " được đấu giá thông qua hệ thống đấu giá trực tuyến BIDs.";
+            var description = "Phí tham gia và phí đạt cọc của phiên đấu giá trong hệ thống BIDs";
 
             var purchaseUnitRequest = new PurchaseUnitRequest()
             {
@@ -456,8 +576,8 @@ namespace BIDs_API.PaymentPayPal
                                 landing_page = "LOGIN",
                                 shipping_preference = "SET_PROVIDED_ADDRESS",
                                 user_action = "PAY_NOW",
-                                return_url = "https://www.google.com/search?q=thanh+cong",
-                                cancel_url = "https://www.google.com/search?q=that+bai"
+                                return_url = urlSuccess,
+                                cancel_url = urlFail
                             }
                         }
                     }
@@ -481,7 +601,7 @@ namespace BIDs_API.PaymentPayPal
                         PayPalTransactionId = orderId,
                         Amount = 20000000,
                         PaymentDate = DateTime.UtcNow.AddHours(7),
-                        PaymentDetail = "Hoàn trả phí đặt cọc cho sản phẩm đấu giá " + session.Item.Name + " với số tiền hoàn trả là " + 20000000 + ".",
+                        PaymentDetail = "Hoàn trả phí đặt cọc cho sản phẩm đấu giá " + session.Item.Name + ".",
                         Status = responseStatus
                     };
 

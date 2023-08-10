@@ -99,7 +99,8 @@ namespace BIDs_API.Controllers
                            (
                              emp => _mapper.Map<SessionDetail, SessionDetailResponse>(emp)
                            );
-                return Ok(response);
+                var sort = response.OrderByDescending(s => s.Price);
+                return Ok(sort);
             }
             catch
             {
@@ -146,7 +147,8 @@ namespace BIDs_API.Controllers
                            (
                              emp => _mapper.Map<SessionDetail, SessionDetailResponse>(emp)
                            );
-                return Ok(response);
+                var sort = response.OrderByDescending(s => s.Price);
+                return Ok(sort);
             }
             catch
             {
