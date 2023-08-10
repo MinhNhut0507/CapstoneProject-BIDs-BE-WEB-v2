@@ -1,4 +1,5 @@
 ﻿using BIDs_API.PaymentPayPal.Interface;
+using BIDs_API.SignalR;
 using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.PaymentStaffModule.Interface;
 using Business_Logic.Modules.PaymentStaffModule.Request;
@@ -8,6 +9,7 @@ using Business_Logic.Modules.SessionModule.Interface;
 using Business_Logic.Modules.SessionModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
 using Business_Logic.Modules.UserPaymentInformationModule.Interface;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using PayPalCheckoutSdk.Core;
 using PayPalCheckoutSdk.Orders;
@@ -29,13 +31,20 @@ namespace BIDs_API.PaymentPayPal
         private readonly IPaymentUserService _paymentUserService;
         private readonly IPaymentStaffService _paymentStaffService;
         private readonly IUserPaymentInformationService _userPaymentInformationService;
+        private readonly IHubContext<PaymentUserHub> _userHubContext;
+        private readonly IHubContext<PaymentStaffHub> _staffHubContext;
+        private readonly IHubContext<SessionHub> _sessionHubContext;
+
         public PayPalPayment(ICommon common
             , IConfiguration _configuration
             , ISessionService sessionService
             , IUserService userService
             , IPaymentUserService paymentUserService
             , IPaymentStaffService paymentStaffService
-            , IUserPaymentInformationService userPaymentInformationService)
+            , IUserPaymentInformationService userPaymentInformationService
+            , IHubContext<PaymentUserHub> userHubContext
+            , IHubContext<PaymentStaffHub> staffHubContext
+            , IHubContext<SessionHub> sessionHubContext)
         {
             _common = common;
             ClientAppId = _configuration["PaypalSettings:ClientId"];
@@ -46,6 +55,9 @@ namespace BIDs_API.PaymentPayPal
             _paymentUserService = paymentUserService;
             _paymentStaffService = paymentStaffService;
             _userPaymentInformationService = userPaymentInformationService;
+            _userHubContext = userHubContext;
+            _staffHubContext = staffHubContext;
+            _sessionHubContext = sessionHubContext;
         }
 
 
@@ -151,6 +163,7 @@ namespace BIDs_API.PaymentPayPal
                     };
 
                     var paymentUser = await _paymentUserService.AddNewPaymentUser(createPaymentUser);
+                    await _userHubContext.Clients.All.SendAsync("ReceivePaymentUserAdd", paymentUser);
 
                     var approvalLink = result.Links.FirstOrDefault(link => link.Rel.Equals("approve", StringComparison.OrdinalIgnoreCase));
 
@@ -288,6 +301,7 @@ namespace BIDs_API.PaymentPayPal
                     };
 
                     var paymentUser = await _paymentUserService.AddNewPaymentUser(createPaymentUser);
+                    await _userHubContext.Clients.All.SendAsync("ReceivePaymentUserAdd", paymentUser);
 
                     var approvalLink = result.Links.FirstOrDefault(link => link.Rel.Equals("approve", StringComparison.OrdinalIgnoreCase));
 
@@ -343,13 +357,15 @@ namespace BIDs_API.PaymentPayPal
                     };
 
                     var paymentUser = await _paymentUserService.UpdatePaymentUser(updatePaymentUser);
+                    await _userHubContext.Clients.All.SendAsync("ReceivePaymentUserUpdate", paymentUser);
 
                     var updateStatusSession = new UpdateSessionStatusRequest()
                     {
                         SessionID = paymentUser.SessionId
                     };
 
-                    await _sessionService.UpdateSessionStatusComplete(updateStatusSession);
+                    var session = await _sessionService.UpdateSessionStatusComplete(updateStatusSession);
+                    await _sessionHubContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
 
                     return paymentUser.Status;
                 }
@@ -470,6 +486,8 @@ namespace BIDs_API.PaymentPayPal
                     };
 
                     var paymentStaff = await _paymentStaffService.AddNewPaymentStaff(createPaymentStaff);
+
+                    await _staffHubContext.Clients.All.SendAsync("ReceivePaymentStaffAdd", paymentStaff);
 
                     return responseStatus;
                 }
