@@ -12,6 +12,7 @@ namespace Business_Logic.Modules.SessionDetailModule.Interface
     {
         public Task<SessionDetail> IncreasePrice(CreateSessionDetailRequest SessionDetailCreate);
         public Task<SessionDetail> Joinning(CreateSessionDetailRequest jonningRequest);
+        public Task<SessionDetail> JoinningInStage(CreateSessionDetailRequest jonningRequest);
 
         public Task<SessionDetail> UpdateSessionDetail(UpdateSessionDetailRequest SessionDetailUpdate);
 

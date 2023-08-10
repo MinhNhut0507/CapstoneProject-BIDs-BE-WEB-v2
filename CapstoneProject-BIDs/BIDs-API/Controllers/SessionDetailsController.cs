@@ -214,6 +214,26 @@ namespace BIDs_API.Controllers
             }
         }
 
+        // POST api/<ValuesController>
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [HttpPost("joinning_in_stage")]
+        public async Task<ActionResult<SessionDetailResponse>> JoinningInStage([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
+        {
+            try
+            {
+                var SessionDetail = await _SessionDetailService.JoinningInStage(createSessionDetailRequest);
+                var Session = await _SessionService.GetSessionByID(SessionDetail.SessionId);
+                await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
+                await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionUpdate", Session.ElementAt(0));
+                return Ok(_mapper.Map<SessionDetailResponse>(SessionDetail));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // DELETE api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpDelete]

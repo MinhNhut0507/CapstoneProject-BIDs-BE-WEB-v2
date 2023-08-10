@@ -195,6 +195,44 @@ namespace Business_Logic.Modules.SessionDetailModule
             return newSessionDetail;
         }
 
+        public async Task<SessionDetail> JoinningInStage(CreateSessionDetailRequest jonningRequest)
+        {
+
+            ValidationResult result = new CreateSessionDetailRequestValidator().Validate(jonningRequest);
+            if (!result.IsValid)
+            {
+                throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+            }
+
+            var Session = await _SessionService.GetSessionByID(jonningRequest.SessionId);
+
+
+            var checkPayment = await _PaymentUserService.GetPaymentUserBySessionAndUser(jonningRequest.SessionId, jonningRequest.UserId);
+
+            if (checkPayment == null)
+            {
+                throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
+            }
+
+            var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
+
+            var newSessionDetail = new SessionDetail();
+
+            newSessionDetail.Id = Guid.NewGuid();
+            newSessionDetail.UserId = jonningRequest.UserId;
+            newSessionDetail.SessionId = jonningRequest.SessionId;
+            newSessionDetail.Price = Item.ElementAt(0).FirstPrice;
+            DateTime dateTime = DateTime.UtcNow;
+            newSessionDetail.CreateDate = dateTime.AddHours(7);
+            newSessionDetail.Status = true;
+
+            await _SessionDetailRepository.AddAsync(newSessionDetail);
+
+            var user = await _UserService.GetUserByID(newSessionDetail.UserId);
+
+            return newSessionDetail;
+        }
+
         public async Task<SessionDetail> Joinning(CreateSessionDetailRequest jonningRequest)
         {
 
