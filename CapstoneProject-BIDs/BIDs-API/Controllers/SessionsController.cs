@@ -1057,7 +1057,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var response = await _Common.ReportSessionTotal(startDate, endDate);
+                var response = await _Common.ReportSessionTotal();
                 return Ok(response);
             }
             catch (Exception ex)

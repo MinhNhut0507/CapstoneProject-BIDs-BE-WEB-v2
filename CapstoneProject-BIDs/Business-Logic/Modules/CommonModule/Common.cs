@@ -629,7 +629,7 @@ namespace Business_Logic.Modules.CommonModule
             return listUser;
         }
 
-        public async Task<ReportSessionCount> ReportSessionTotal(DateTime startDate, DateTime endDate)
+        public async Task<ReportSessionCount> ReportSessionTotal()
         {
             try
             {
@@ -640,12 +640,8 @@ namespace Business_Logic.Modules.CommonModule
                 {
                     connection.Open();
 
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    string query = "SELECT * FROM Session ";
                     SqlCommand command = new SqlCommand(query, connection);
-
-                    // Thay đổi giá trị của tham số ngày tháng tương ứng
-                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
-                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
 
                     SqlDataAdapter adapter = new SqlDataAdapter(command);
                     DataTable dataTable = new DataTable();

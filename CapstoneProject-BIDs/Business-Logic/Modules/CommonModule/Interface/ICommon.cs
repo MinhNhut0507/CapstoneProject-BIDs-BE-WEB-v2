@@ -35,7 +35,7 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<ReportSessionCount> ReportSessionHaventTranfer(DateTime startDate, DateTime endDate);
         public Task<ReportSessionCount> ReportSessionNotStart(DateTime startDate, DateTime endDate);
         public Task<ReportSessionCount> ReportSessionInStage(DateTime startDate, DateTime endDate);
-        public Task<ReportSessionCount> ReportSessionTotal(DateTime startDate, DateTime endDate);
+        public Task<ReportSessionCount> ReportSessionTotal();
 
     }
 }
