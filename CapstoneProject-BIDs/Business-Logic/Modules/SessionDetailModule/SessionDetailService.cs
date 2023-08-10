@@ -207,12 +207,7 @@ namespace Business_Logic.Modules.SessionDetailModule
 
             var Session = await _SessionService.GetSessionByID(jonningRequest.SessionId);
 
-            if (Session.ElementAt(0).Status != (int)SessionStatusEnum.NotStart)
-            {
-                throw new Exception(ErrorMessage.SessionError.OUT_OF_DATE_BEGIN_ERROR);
-            }
-
-            var checkDetail = await _SessionDetailRepository.GetFirstOrDefaultAsync(s => s.UserId == jonningRequest.UserId);
+            var checkDetail = await _SessionDetailRepository.GetFirstOrDefaultAsync(s => s.UserId == jonningRequest.UserId && s.SessionId == jonningRequest.SessionId);
 
             var checkPayment = await _PaymentUserService.GetPaymentUserBySessionAndUser(jonningRequest.SessionId, jonningRequest.UserId);
 

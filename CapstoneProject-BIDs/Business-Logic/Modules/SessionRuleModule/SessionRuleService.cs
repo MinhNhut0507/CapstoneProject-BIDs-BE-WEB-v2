@@ -17,7 +17,7 @@ namespace Business_Logic.Modules.SessionRuleModule
 
         public async Task<ICollection<SessionRule>> GetAll()
         {
-            return await _SessionRuleRepository.GetAll();
+            return await _SessionRuleRepository.GetAll(s => s.Where(x => x.Status == true).ToList());
         }
 
         public Task<ICollection<SessionRule>> GetSessionRulesIsValid()
