@@ -877,7 +877,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff,Dev")]
         [HttpPut]
         public async Task<IActionResult> PutSession([FromBody] UpdateSessionRequest updateSessionRequest)
         {

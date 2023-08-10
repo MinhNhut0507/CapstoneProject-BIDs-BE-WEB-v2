@@ -17,7 +17,7 @@ namespace Business_Logic.Modules.FeeModule
 
         public async Task<ICollection<Fee>> GetAll()
         {
-            return await _FeeRepository.GetAll();
+            return await _FeeRepository.GetAll(options: o => o.Where(x => x.Status == true).ToList());
         }
 
         public Task<ICollection<Fee>> GetFeesIsValid()

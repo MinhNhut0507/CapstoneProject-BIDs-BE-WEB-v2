@@ -140,8 +140,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             }
 
             var Session = await _SessionService.GetSessionByID(SessionDetailRequest.SessionId);
-            var SessionDetail = await _SessionDetailRepository.GetAll(includeProperties: "User,Session,Session.Item,Session.SessionRule"
-                , options: x => x.OrderByDescending(o => o.UserId == SessionDetailRequest.UserId && o.SessionId == SessionDetailRequest.SessionId).ToList());
+            var SessionDetail = await _SessionDetailRepository.GetAll(x => x.Where(o => o.UserId == SessionDetailRequest.UserId && o.SessionId == SessionDetailRequest.SessionId).ToList());
             var newSessionDetail = new SessionDetail();
             DateTime dateTime = DateTime.UtcNow;
             if (SessionDetail.Count == 0 || SessionDetail == null) 

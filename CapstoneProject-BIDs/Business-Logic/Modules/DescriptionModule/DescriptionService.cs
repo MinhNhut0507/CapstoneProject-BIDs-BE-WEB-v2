@@ -22,7 +22,7 @@ namespace Business_Logic.Modules.DescriptionModule
 
         public async Task<ICollection<Description>> GetAll()
         {
-            return await _DescriptionRepository.GetAll(includeProperties: "Category,ItemDescriptions");
+            return await _DescriptionRepository.GetAll(includeProperties: "Category,ItemDescriptions", options: o => o.Where(x => x.Status == true).ToList()););
         }
 
         public Task<ICollection<Description>> GetDescriptionsIsValid()

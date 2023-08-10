@@ -18,7 +18,7 @@ namespace Business_Logic.Modules.CategoryModule
         public async Task<ICollection<Category>> GetAll()
         {
             return await _CategoryRepository.GetAll(includeProperties: "Descriptions"
-                , options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+                , options: o => o.Where(x => x.Status == true).ToList());
         }
 
         public Task<ICollection<Category>> GetCategorysIsValid()
