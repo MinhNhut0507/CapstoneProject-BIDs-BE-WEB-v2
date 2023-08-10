@@ -148,7 +148,7 @@ namespace Business_Logic.Modules.SessionDetailModule
 
                 var checkPayment = await _PaymentUserService.GetPaymentUserBySessionAndUser(SessionDetailRequest.SessionId, SessionDetailRequest.UserId);
 
-                if (checkPayment == null)
+                if (checkPayment == null || checkPayment.Count() == 0)
                 {
                     throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
                 }
