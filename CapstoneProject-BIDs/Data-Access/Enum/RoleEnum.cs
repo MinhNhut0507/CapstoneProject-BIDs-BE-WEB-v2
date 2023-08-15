@@ -8,7 +8,7 @@ namespace Data_Access.Enum
 {
     public enum RoleEnum
     {
-        Bidder = 1,
-        Auctioneer = 2
+        Guest = 1,
+        User = 2
     }
 }

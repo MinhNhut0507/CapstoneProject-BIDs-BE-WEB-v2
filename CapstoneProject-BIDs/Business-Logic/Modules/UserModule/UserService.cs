@@ -162,7 +162,7 @@ namespace Business_Logic.Modules.UserModule
             newUser.Id = Guid.NewGuid();
             newUser.Name = userRequest.UserName;
             newUser.Avatar = userRequest.Avatar;
-            newUser.Role = (int)RoleEnum.Bidder;
+            newUser.Role = (int)RoleEnum.Guest;
             newUser.Email = userRequest.Email;
             newUser.Password = userRequest.Password;
             newUser.Address = userRequest.Address;
@@ -281,7 +281,7 @@ namespace Business_Logic.Modules.UserModule
                     throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
                 }
 
-                user.Role = (int)RoleEnum.Auctioneer;
+                user.Role = (int)RoleEnum.User;
                 DateTime dateTime = DateTime.UtcNow;
                 user.UpdateDate = dateTime.AddHours(7);
 

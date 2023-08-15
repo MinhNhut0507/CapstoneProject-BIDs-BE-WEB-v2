@@ -71,13 +71,13 @@ namespace Business_Logic.Modules.LoginModule
             {
                 accountLogin.Id = UserCheckLogin.Id;
                 accountLogin.Email = loginRequest.Email;
-                if(UserCheckLogin.Role == (int)RoleEnum.Auctioneer)
+                if(UserCheckLogin.Role == (int)RoleEnum.User)
                 {
-                    accountLogin.Role = "Auctioneer";
+                    accountLogin.Role = "User";
                 }
                 else
                 {
-                    accountLogin.Role = "Bidder";
+                    throw new Exception("Tài khoản của bạn đang chờ xác nhận từ nhân viên hệ thống. Vui lòng kiểm tra email để không bỏ lỡ thông tin về tài khoản của bạn từ hệ thống");
                 }
                 return accountLogin;
             }
