@@ -20,6 +20,8 @@ namespace Business_Logic.Modules.SessionModule.Interface
         public Task<Session> UpdateSessionStatusNotStart(UpdateSessionStatusRequest SessionUpdate);
         public Task<Session> UpdateSessionStatusComplete(UpdateSessionStatusRequest SessionUpdate);
         public Task<Session> UpdateSessionStatusFail(UpdateSessionStatusRequest SessionRequest);
+        public Task<Session> UpdateSessionStatusReceived(UpdateSessionStatusRequest SessionRequest);
+        public Task<Session> UpdateSessionStatusErrorItem(UpdateSessionStatusRequest SessionRequest);
 
         public Task<Session> DeleteSession(Guid? SessionDeleteID);
 
@@ -50,5 +52,6 @@ namespace Business_Logic.Modules.SessionModule.Interface
         public Task<ICollection<Session>> GetSessionsIsHaventPayByUser(Guid id);
 
         public Task<ICollection<Session>> GetSessionsIsFailByUser(Guid id);
+        public Task<Session> AddNewBeginSession(CreateBeginSessionRequest SessionRequest);
     }
 }

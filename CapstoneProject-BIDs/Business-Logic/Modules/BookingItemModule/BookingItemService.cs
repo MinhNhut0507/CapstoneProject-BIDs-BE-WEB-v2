@@ -80,6 +80,23 @@ namespace Business_Logic.Modules.BookingItemModule
             return BookingItem;
         }
 
+        public async Task<ICollection<BookingItem>> GetBookingItemByStaffIsBeginWatting(string email)
+        {
+
+            if (email == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.EMAIL_IS_NULL);
+            }
+            var staff = await _StaffRepository.GetFirstOrDefaultAsync(x => x.Email == email);
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
+                , options: o => o.Where(x => x.StaffId == staff.Id && x.Status == (int)BookingItemEnum.SessionWaitting).ToList());
+            if (BookingItem == null)
+            {
+                throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+            }
+            return BookingItem;
+        }
+
         public async Task<ICollection<BookingItem>> GetBookingItemByUserIsWaiting(Guid id)
         {
 
@@ -90,6 +107,23 @@ namespace Business_Logic.Modules.BookingItemModule
 
             var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.Waitting).ToList());
+            if (BookingItem == null)
+            {
+                throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
+            }
+            return BookingItem;
+        }
+
+        public async Task<ICollection<BookingItem>> GetBookingItemByUserIsBeginWaiting(Guid id)
+        {
+
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+
+            var BookingItem = await _BookingItemRepository.GetAll(includeProperties: "Staff,Item,Item.User,Item.Category,Item.Images,Item.Category.Descriptions,Item.ItemDescriptions"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)BookingItemEnum.SessionWaitting).ToList());
             if (BookingItem == null)
             {
                 throw new Exception(ErrorMessage.BookingItemError.BOOKING_ITEM_NOT_FOUND);
@@ -200,7 +234,7 @@ namespace Business_Logic.Modules.BookingItemModule
             DateTime dateTime = DateTime.UtcNow;
             newBookingItem.CreateDate = dateTime.AddHours(7);
             newBookingItem.UpdateDate = dateTime.AddHours(7);
-            newBookingItem.Status = (int)BookingItemEnum.Waitting;
+            newBookingItem.Status = BookingItemRequest.Status;
 
             await _BookingItemRepository.AddAsync(newBookingItem);
         }

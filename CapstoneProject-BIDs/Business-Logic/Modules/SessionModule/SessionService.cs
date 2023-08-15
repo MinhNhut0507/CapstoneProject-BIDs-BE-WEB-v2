@@ -11,6 +11,7 @@ using System;
 using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.BookingItemModule.Request;
 using Business_Logic.Modules.SessionModule.Response;
+using System.Data.SqlTypes;
 
 namespace Business_Logic.Modules.SessionModule
 {
@@ -147,19 +148,14 @@ namespace Business_Logic.Modules.SessionModule
 
             var checkSession = await _SessionRepository.GetFirstOrDefaultAsync(x => x.ItemId == SessionRequest.ItemId);
 
-            if(checkSession != null)
+            var item = await _ItemService.GetItemByID(SessionRequest.ItemId);
+
+            if (checkSession != null)
             {
                 throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
             }
 
             var BeginTime = SessionRequest.BeginTime;
-
-            var EndTime = SessionRequest.EndTime;
-
-            if (EndTime < BeginTime)
-            {
-                throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_END_ERROR);
-            }
 
             if (BeginTime < DateTime.UtcNow)
             {
@@ -171,11 +167,8 @@ namespace Business_Logic.Modules.SessionModule
             //    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
             //}
 
-            TimeSpan timeSpan = (EndTime - BeginTime);
-            TimeSpan checkTimeMax = new TimeSpan(7, 0, 0, 0);
-            TimeSpan checkTimeMin = new TimeSpan(0, 3, 0, 0);
 
-            if (timeSpan > checkTimeMax)
+            if (item.ElementAt(0).AuctionTime > 168)
             {
                 throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MAX_ERROR);
             }
@@ -185,7 +178,6 @@ namespace Business_Logic.Modules.SessionModule
             //    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MIN_ERROR);
             //}
 
-            var item = await _ItemService.GetItemByID(SessionRequest.ItemId);
             var fee = await _FeeService.GetAll();
 
             var newSession = new Session();
@@ -203,7 +195,7 @@ namespace Business_Logic.Modules.SessionModule
             }
             newSession.SessionRuleId = SessionRequest.SessionRuleId;
             newSession.BeginTime = SessionRequest.BeginTime;
-            newSession.EndTime = SessionRequest.EndTime;
+            newSession.EndTime = SessionRequest.BeginTime.AddHours(item.ElementAt(0).AuctionTime);
             newSession.FinalPrice = item.ElementAt(0).FirstPrice;
             DateTime dateTime = DateTime.UtcNow;
             newSession.CreateDate = dateTime.AddHours(7);
@@ -242,6 +234,7 @@ namespace Business_Logic.Modules.SessionModule
                 }
 
                 Session SessionCheck = _SessionRepository.GetFirstOrDefaultAsync(x => x.Name == SessionRequest.SessionName).Result;
+                var item = await _ItemService.GetItemByID(SessionUpdate.ItemId);
 
                 if (SessionCheck != null)
                 {
@@ -250,13 +243,6 @@ namespace Business_Logic.Modules.SessionModule
                 }
 
                 var BeginTime = SessionRequest.BeginTime;
-
-                var EndTime = SessionRequest.EndTime;
-
-                if (EndTime < BeginTime)
-                {
-                    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_END_ERROR);
-                }
 
                 if (BeginTime < DateTime.UtcNow)
                 {
@@ -268,11 +254,7 @@ namespace Business_Logic.Modules.SessionModule
                 //    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
                 //}
 
-                TimeSpan timeSpan = (EndTime - BeginTime);
-                TimeSpan checkTimeMax = new TimeSpan(7, 0, 0, 0);
-                TimeSpan checkTimeMin = new TimeSpan(0, 3, 0, 0);
-
-                if (timeSpan > checkTimeMax)
+                if (item.ElementAt(0).AuctionTime > 168)
                 {
                     throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MAX_ERROR);
                 }
@@ -285,22 +267,11 @@ namespace Business_Logic.Modules.SessionModule
                 SessionUpdate.Name = SessionRequest.SessionName;
                 SessionUpdate.SessionRuleId = SessionRequest.SessionRuleId;
                 SessionUpdate.BeginTime = BeginTime;
-                SessionUpdate.EndTime = EndTime;
+                SessionUpdate.EndTime = BeginTime.AddHours(item.ElementAt(0).AuctionTime);
                 DateTime dateTime = DateTime.UtcNow;
                 SessionUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
-
-                //CreateUserNotificationDetailRequest request = new CreateUserNotificationDetailRequest()
-                //{
-                //    Messages = "Buổi đấu giá cho sản phẩm " + item.ElementAt(0).Name + " vừa được tạo thành công và sẽ bắt đầu vào lúc "
-                //    + SessionUpdate.BeginTime + " và sẽ diễn ra trong vòng " + SessionUpdate.AuctionTime + ".",
-                //    TypeId = (int)NotificationEnum.AccountNoti,
-                //    UserId = userUpdate.Id,
-                //    NotificationId = Guid.NewGuid()
-                //};
-                //await _userNotificationDetailService.AddNewUserNotificationDetail(request);
-
 
                 return SessionUpdate;
             }
@@ -485,5 +456,131 @@ namespace Business_Logic.Modules.SessionModule
             }
         }
 
+        public async Task<Session> AddNewBeginSession(CreateBeginSessionRequest SessionRequest)
+        {
+
+            ValidationResult result = new CreateBeginSessionRequestValidator().Validate(SessionRequest);
+            if (!result.IsValid)
+            {
+                throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+            }
+
+            var checkSession = await _SessionRepository.GetFirstOrDefaultAsync(x => x.ItemId == SessionRequest.ItemId);
+
+            if (checkSession != null)
+            {
+                throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
+            }
+
+            var listItem = await _ItemService.GetItemByID(SessionRequest.ItemId);
+            var item = listItem.ElementAt(0);
+            if (item.AuctionTime > 168)
+            {
+                throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MAX_ERROR);
+            }
+
+            //if (timeSpan < checkTimeMin)
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MIN_ERROR);
+            //}
+
+            var fee = await _FeeService.GetAll();
+
+            var newSession = new Session();
+
+            newSession.Id = Guid.NewGuid();
+            newSession.ItemId = SessionRequest.ItemId;
+            newSession.Name = SessionRequest.SessionName;
+            foreach (var i in fee)
+            {
+                if (i.Min <= item.FirstPrice && i.Max >= item.FirstPrice)
+                {
+                    newSession.FeeId = i.Id;
+                    break;
+                }
+            }
+            DateTime dateTime = DateTime.UtcNow;
+            newSession.SessionRuleId = SessionRequest.SessionRuleId;
+            newSession.BeginTime = dateTime.AddHours(7);
+            newSession.EndTime = dateTime.AddHours(7+ item.AuctionTime);
+            newSession.FinalPrice = item.FirstPrice;
+            newSession.CreateDate = dateTime.AddHours(7);
+            newSession.UpdateDate = dateTime.AddHours(7);
+            newSession.Status = (int)SessionStatusEnum.InStage;
+
+            await _SessionRepository.AddAsync(newSession);
+
+            var bookingItem = await _BookingItemService.GetBookingItemByItem(newSession.ItemId);
+            UpdateBookingItemRequest updateBookingItemRequest = new UpdateBookingItemRequest()
+            {
+                Id = bookingItem.ElementAt(0).Id,
+                Status = (int)BookingItemEnum.Accepted
+            };
+            await _BookingItemService.UpdateStatusBookingItem(updateBookingItemRequest);
+
+            return newSession;
+        }
+
+        public async Task<Session> UpdateSessionStatusReceived(UpdateSessionStatusRequest SessionRequest)
+        {
+            try
+            {
+                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == SessionRequest.SessionID);
+
+                if (SessionUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
+                }
+
+                ValidationResult result = new UpdateSessionStatusRequestValidator().Validate(SessionRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                SessionUpdate.Status = (int)SessionStatusEnum.Received;
+                DateTime dateTime = DateTime.UtcNow;
+                SessionUpdate.UpdateDate = dateTime.AddHours(7);
+
+                await _SessionRepository.UpdateAsync(SessionUpdate);
+                return SessionUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Session> UpdateSessionStatusErrorItem(UpdateSessionStatusRequest SessionRequest)
+        {
+            try
+            {
+                var SessionUpdate = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == SessionRequest.SessionID);
+
+                if (SessionUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
+                }
+
+                ValidationResult result = new UpdateSessionStatusRequestValidator().Validate(SessionRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                SessionUpdate.Status = (int)SessionStatusEnum.ErrorItem;
+                DateTime dateTime = DateTime.UtcNow;
+                SessionUpdate.UpdateDate = dateTime.AddHours(7);
+
+                await _SessionRepository.UpdateAsync(SessionUpdate);
+                return SessionUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

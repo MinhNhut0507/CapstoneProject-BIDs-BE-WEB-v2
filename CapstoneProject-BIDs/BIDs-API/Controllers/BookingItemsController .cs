@@ -150,6 +150,31 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [Authorize(Roles = "Staff,Dev")]
+        [HttpGet("by_staff_begin_watting")]
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByStaffIsBeginWatting([FromQuery] string email)
+        {
+            try
+            {
+                var list = await _BookingItemService.GetBookingItemByStaffIsBeginWatting(email);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
         //[Authorize(Roles = "Auctioneer")]
         [HttpGet("by_user_watting")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsWatting([FromQuery] Guid id)
@@ -157,6 +182,31 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _BookingItemService.GetBookingItemByUserIsWaiting(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<BookingItem, BookingItemResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        //[Authorize(Roles = "Auctioneer")]
+        [HttpGet("by_user_begin_watting")]
+        public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsBeignWatting([FromQuery] Guid id)
+        {
+            try
+            {
+                var list = await _BookingItemService.GetBookingItemByUserIsBeginWaiting(id);
                 if (list == null)
                 {
                     return NotFound();

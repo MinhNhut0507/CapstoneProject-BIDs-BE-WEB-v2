@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Business_Logic.Modules.NotificationModule.Request;
 using Business_Logic.Modules.FeeModule.Interface;
 using System.Linq;
+using Business_Logic.Modules.UserPaymentInformationModule.Interface;
 
 namespace Business_Logic.Modules.ItemModule
 {
@@ -20,16 +21,19 @@ namespace Business_Logic.Modules.ItemModule
         private readonly ICategoryService _CategoryService;
         private readonly IBookingItemService _BookingItemService;
         private readonly IFeeService _FeeService;
+        private readonly IUserPaymentInformationService _UserPaymentInformationService;
 
         public ItemService(IItemRepository ItemRepository
             , ICategoryService CategoryService
             , IBookingItemService BookingItemService
-            , IFeeService FeeService)
+            , IFeeService FeeService
+            , IUserPaymentInformationService UserPaymentInformationService)
         {
             _ItemRepository = ItemRepository;
             _CategoryService = CategoryService;
             _BookingItemService = BookingItemService;
             _FeeService = FeeService;
+            _UserPaymentInformationService = UserPaymentInformationService;
         }
 
         public async Task<ICollection<Item>> GetAll()
@@ -159,6 +163,13 @@ namespace Business_Logic.Modules.ItemModule
                 throw new Exception(ErrorMessage.ItemError.INVALID_FIRST_PRICE);
             };
 
+            var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(ItemRequest.UserId);
+
+            if(userPaymentInformation == null)
+            {
+                throw new Exception(ErrorMessage.ItemError.WRONG_ROLE);
+            };
+
             var newItem = new Item();
 
             newItem.Id = Guid.NewGuid();
@@ -168,6 +179,7 @@ namespace Business_Logic.Modules.ItemModule
             newItem.Quantity = ItemRequest.Quantity;
             newItem.FirstPrice = ItemRequest.FirstPrice;
             newItem.StepPrice = ItemRequest.StepPrice;
+            newItem.AuctionTime = ItemRequest.AuctionTime;
             newItem.CategoryId = ItemRequest.CategoryId;
             newItem.Deposit = ItemRequest.Deposit;
             DateTime dateTime = DateTime.UtcNow;
@@ -178,6 +190,7 @@ namespace Business_Logic.Modules.ItemModule
             CreateBookingItemRequest bookingItemRequest = new CreateBookingItemRequest()
             {
                 ItemId = newItem.Id,
+                Status = ItemRequest.TypeOfSession
             };
             await _BookingItemService.AddNewBookingItem(bookingItemRequest);
 
@@ -226,6 +239,7 @@ namespace Business_Logic.Modules.ItemModule
                 ItemUpdate.DescriptionDetail = ItemRequest.Description;
                 ItemUpdate.Quantity = ItemRequest.Quantity;
                 ItemUpdate.FirstPrice = ItemRequest.FirstPrice;
+                ItemUpdate.AuctionTime = ItemRequest.AuctionTime;
                 ItemUpdate.StepPrice = ItemRequest.StepPrice;
                 ItemUpdate.Deposit = ItemRequest.Deposit;
                 DateTime dateTime = DateTime.UtcNow;

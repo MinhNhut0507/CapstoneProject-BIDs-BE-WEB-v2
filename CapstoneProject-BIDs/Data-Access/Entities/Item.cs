@@ -25,6 +25,7 @@ namespace Data_Access.Entities
         public double FirstPrice { get; set; }
         public double StepPrice { get; set; }
         public bool Deposit { get; set; }
+        public int AuctionTime { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
 

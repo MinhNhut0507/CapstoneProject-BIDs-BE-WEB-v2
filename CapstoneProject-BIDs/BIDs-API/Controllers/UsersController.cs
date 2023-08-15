@@ -227,7 +227,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Bidder,Dev")]
+        [AllowAnonymous]
         [HttpPut("confirm_email")]
         public async Task<IActionResult> ConfirmEmailUser([FromQuery] string email)
         {

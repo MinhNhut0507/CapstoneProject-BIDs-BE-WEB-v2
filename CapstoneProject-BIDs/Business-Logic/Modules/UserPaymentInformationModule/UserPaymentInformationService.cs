@@ -1,24 +1,21 @@
-﻿using Business_Logic.Modules.UserPaymentInformationModule.Interface;
+﻿using Business_Logic.Modules.UserModule.Interface;
+using Business_Logic.Modules.UserPaymentInformationModule.Interface;
 using Business_Logic.Modules.UserPaymentInformationModule.Request;
-using Business_Logic.Modules.StaffModule.Interface;
-using Business_Logic.Modules.UserModule.Interface;
 using Data_Access.Constant;
 using Data_Access.Entities;
-using Data_Access.Enum;
 using FluentValidation.Results;
-using Microsoft.EntityFrameworkCore;
 
 namespace Business_Logic.Modules.UserPaymentInformationModule
 {
     public class UserPaymentInformationService : IUserPaymentInformationService
     {
         private readonly IUserPaymentInformationRepository _UserPaymentInformationRepository;
-        private readonly IStaffRepository _StaffRepository;
+        private readonly IUserService _UserService;
         public UserPaymentInformationService(IUserPaymentInformationRepository UserPaymentInformationRepository
-            ,IStaffRepository staffRepository)
+            ,IUserService UserService)
         {
             _UserPaymentInformationRepository = UserPaymentInformationRepository;
-            _StaffRepository = staffRepository;
+            _UserService = UserService;
         }
 
         public async Task<ICollection<UserPaymentInformation>> GetAll()
@@ -78,6 +75,11 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
             newUserPaymentInformation.Status = true;
 
             await _UserPaymentInformationRepository.AddAsync(newUserPaymentInformation);
+
+            var user = await _UserService.GetUserByID(UserPaymentInformationRequest.UserId);
+
+            await _UserService.UpdateRoleAccount(user.Email);
+
             return newUserPaymentInformation;
         }
 

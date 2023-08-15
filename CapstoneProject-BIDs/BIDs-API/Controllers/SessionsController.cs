@@ -23,6 +23,7 @@ using static System.Collections.Specialized.BitVector32;
 using Business_Logic.Modules.UserModule.Response;
 using BIDs_API.PaymentPayPal.Interface;
 using Business_Logic.Modules.PaymentUserModule.Interface;
+using Business_Logic.Modules.StaffModule.Interface;
 
 namespace BIDs_API.Controllers
 {
@@ -38,8 +39,10 @@ namespace BIDs_API.Controllers
         private readonly IItemService _ItemService;
         private readonly IHubContext<NotificationHub> _notiHubContext;
         private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
+        private readonly IHubContext<StaffNotificationDetailHub> _staffNotiHubContext;
         private readonly IPayPalPayment _payPal;
         private readonly IPaymentUserService _paymentUserService;
+        private readonly IStaffService _StaffService;
 
         public SessionsController(ISessionService SessionService
             , IHubContext<SessionHub> hubSessionContext
@@ -49,8 +52,10 @@ namespace BIDs_API.Controllers
             , IHubContext<ItemHub> hubContext
             , IHubContext<NotificationHub> notiHubContext
             , IHubContext<UserNotificationDetailHub> userNotiHubContext
+            , IHubContext<StaffNotificationDetailHub> staffNotiHubContext
             , IPayPalPayment payPal
-            , IPaymentUserService paymentUserService)
+            , IPaymentUserService paymentUserService
+            , IStaffService StaffService)
         {
             _SessionService = SessionService;
             _hubSessionContext = hubSessionContext;
@@ -61,6 +66,8 @@ namespace BIDs_API.Controllers
             _ItemService = ItemService;
             _payPal = payPal;
             _paymentUserService = paymentUserService;
+            _StaffService = StaffService;
+            _staffNotiHubContext = staffNotiHubContext;
         }
 
         // GET api/<ValuesController>
@@ -147,7 +154,7 @@ namespace BIDs_API.Controllers
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    
+
                     if (list.ElementAt(i).BeginTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
@@ -157,7 +164,7 @@ namespace BIDs_API.Controllers
                         var sessionUpdate = await PutSessionStatusNotStart(request);
                         await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                     }
-                    if (list.ElementAt(i ).EndTime <= date)
+                    if (list.ElementAt(i).EndTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
@@ -196,7 +203,7 @@ namespace BIDs_API.Controllers
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    
+
                     if (list.ElementAt(i).BeginTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
@@ -235,7 +242,7 @@ namespace BIDs_API.Controllers
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    
+
                     if (list.ElementAt(i).EndTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
@@ -262,7 +269,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         [HttpGet("by_in_stage_by_auctioneer")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByAuctioneer([FromQuery]Guid id)
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByAuctioneer([FromQuery] Guid id)
         {
             try
             {
@@ -274,7 +281,7 @@ namespace BIDs_API.Controllers
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    
+
                     if (list.ElementAt(i).EndTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
@@ -433,9 +440,9 @@ namespace BIDs_API.Controllers
                 for (int i = 0; i < response.Count(); i++)
                 {
                     var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
-                    if(check == true)
+                    if (check == true)
                     {
-                        
+
                         user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
                         var test = new SessionWinnerResponse()
                         {
@@ -483,7 +490,7 @@ namespace BIDs_API.Controllers
                 for (int i = 0; i < response.Count(); i++)
                 {
                     var checkJoing = await _Common.CheckSessionJoining(response.ElementAt(i).SessionId);
-                    if( checkJoing == false)
+                    if (checkJoing == false)
                     {
                         continue;
                     }
@@ -688,7 +695,7 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
-                
+
                 for (int i = 0; i < list.Count(); i++)
                 {
                     var date = list.ElementAt(i).EndTime.AddDays(3);
@@ -811,12 +818,12 @@ namespace BIDs_API.Controllers
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    
+
                     if (list.ElementAt(i).BeginTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
                         {
-                            SessionID = list.ElementAt(i ).Id
+                            SessionID = list.ElementAt(i).Id
                         };
                         var sessionUpdate = await PutSessionStatusNotStart(request);
                         await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
@@ -850,7 +857,7 @@ namespace BIDs_API.Controllers
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    
+
                     if (list.ElementAt(i).EndTime <= date)
                     {
                         var request = new UpdateSessionStatusRequest()
@@ -931,7 +938,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var checkSession = await _Common.CheckSessionJoining(updateSessionRequest.SessionID);
-                if(checkSession == true)
+                if (checkSession == true)
                 {
                     var session = await _SessionService.UpdateSessionStatusInStage(updateSessionRequest);
                     var winner = await _Common.SendEmailWinnerAuction(session);
@@ -1012,15 +1019,94 @@ namespace BIDs_API.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPut("session_status_to_received")]
+        public async Task<IActionResult> PutSessionStatusReceived([FromBody] UpdateSessionStatusRequest updateSessionRequest)
+        {
+            try
+            {
+                var session = await _SessionService.UpdateSessionStatusReceived(updateSessionRequest);
+                await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                var item = await _ItemService.GetItemByID(session.ItemId);
+                string message = "Bạn đã xác nhận đã nhận sản phẩm " + item.ElementAt(0).Name + ". Cảm ơn bạn đã sử dụng hệ thống đấu giá trực tuyến BIDs.";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                var staff = await _StaffService.GetAll();
+                string messageStaff = "Sản phẩm " + item.ElementAt(0).Name + " đã xác nhận đã nhận sản phẩm. Xin vui lòng thanh toán cho người bán.";
+                foreach (var x in staff)
+                {
+                    var staffNoti = await _Common.StaffNotification(10, (int)NotificationTypeEnum.Item, messageStaff, x.Id);
+                    await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", staffNoti.Notification);
+                    await _staffNotiHubContext.Clients.All.SendAsync("ReceiveStaffNotificationDetailAdd", staffNoti.StaffNotificationDetail);
+                }
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPut("session_status_to_error_item")]
+        public async Task<IActionResult> PutSessionStatusErrorItem([FromRoute] string reason ,[FromBody] UpdateSessionStatusRequest updateSessionRequest)
+        {
+            try
+            {
+                var session = await _SessionService.UpdateSessionStatusErrorItem(updateSessionRequest);
+                await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                var item = await _ItemService.GetItemByID(session.ItemId);
+                string message = "Bạn đã xác nhận đã nhận được sản phẩm LỖI " + item.ElementAt(0).Name + " với lỗi là " + reason + ". Chúng tôi sẽ liên lạc với bạn trong thời gian sớm nhất để xác nhận và làm các thủ tục hoàn trả nếu đúng sự thật. Xin vui lòng kiểm tra email và số điện thoại để không bỏ lỡ liên lạc từ hệ thống";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                var staff = await _StaffService.GetAll();
+                string messageStaff = "Sản phẩm " + item.ElementAt(0).Name + " đã được thông báo là hàng lỗi. Xin vui lòng kiểm tra xác nhận và hoàn tiền nếu cần thiết.";
+                foreach (var x in staff)
+                {
+                    var staffNoti = await _Common.StaffNotification(10, (int)NotificationTypeEnum.Item, messageStaff, x.Id);
+                    await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", staffNoti.Notification);
+                    await _staffNotiHubContext.Clients.All.SendAsync("ReceiveStaffNotificationDetailAdd", staffNoti.StaffNotificationDetail);
+                }
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin,Staff,Dev")]
-        [HttpPost]
+        [HttpPost("add_session")]
         public async Task<ActionResult<SessionResponse>> PostSession([FromBody] CreateSessionRequest createSessionRequest)
         {
             try
             {
                 var Session = await _SessionService.AddNewSession(createSessionRequest);
+                await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionAdd", Session);
+                var item = await _ItemService.GetItemByID(Session.ItemId);
+                string message = "Phiên đấu giá vật phẩm " + item.ElementAt(0).Name + " của bạn đã được tạo thành công. Bạn có thể xem thông tin chi tiết ở phiên đấu giá của tôi.";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                return Ok(_mapper.Map<SessionResponse>(Session));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin,Staff,Dev")]
+        [HttpPost("add_beign_now_session")]
+        public async Task<ActionResult<SessionResponse>> PostBeginSession([FromBody] CreateBeginSessionRequest createSessionRequest)
+        {
+            try
+            {
+                var Session = await _SessionService.AddNewBeginSession(createSessionRequest);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionAdd", Session);
                 var item = await _ItemService.GetItemByID(Session.ItemId);
                 string message = "Phiên đấu giá vật phẩm " + item.ElementAt(0).Name + " của bạn đã được tạo thành công. Bạn có thể xem thông tin chi tiết ở phiên đấu giá của tôi.";

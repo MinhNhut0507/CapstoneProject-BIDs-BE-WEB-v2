@@ -11,7 +11,6 @@ namespace Business_Logic.Modules.SessionModule.Request
         public Guid SessionRuleId { get; set; }
         public string SessionName { get; set; }
         public DateTime BeginTime { get; set; }
-        public DateTime EndTime { get; set; }
     }
     public class UpdateSessionRequestValidator : AbstractValidator<UpdateSessionRequest>
     {
@@ -21,7 +20,6 @@ namespace Business_Logic.Modules.SessionModule.Request
             RuleFor(x => x.SessionRuleId).NotEmpty().NotNull();
             RuleFor(x => x.SessionName).NotEmpty().NotNull();
             RuleFor(x => x.BeginTime).NotEmpty().NotNull();
-            RuleFor(x => x.EndTime).NotEmpty().NotNull();
         }
     }
 }

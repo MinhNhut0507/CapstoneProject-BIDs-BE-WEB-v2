@@ -28,6 +28,7 @@ namespace Business_Logic.Modules.SessionModule.Response
         public ICollection<ItemDescriptionResponse> Descriptions { get; set; }
         public Guid ItemId { get; set; }
         public string ItemName { get; set; }
+        public int AuctionTime { get; set; }
         public string CategoryName { get; set; }
         public double ParticipationFee { get; set; }
         public bool Deposit { get; set; }

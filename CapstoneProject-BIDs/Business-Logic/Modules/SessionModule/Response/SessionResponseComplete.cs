@@ -27,6 +27,7 @@ namespace Business_Logic.Modules.SessionModule.Response
         public double ParticipationFee { get; set; }
         public bool Deposit { get; set; }
         public double DepositFee { get; set; }
+        public int AuctionTime { get; set; }
         public string ItemName { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }

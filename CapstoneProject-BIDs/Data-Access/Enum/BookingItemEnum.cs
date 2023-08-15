@@ -12,6 +12,7 @@ namespace Data_Access.Enum
         Accepted = 2,
         NotCreateSessionYet = 3,
         Denied = 4,
+        SessionWaitting = 5,
         InActive = -1
     }
 }

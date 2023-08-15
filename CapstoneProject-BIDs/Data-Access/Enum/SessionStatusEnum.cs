@@ -13,6 +13,8 @@ namespace Data_Access.Enum
         HaventTranferYet = 3,
         Complete = 4,
         Fail = 5,
+        Received = 6,
+        ErrorItem = 7,
         Delete = -1
     }
 }

@@ -289,6 +289,8 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
+                entity.Property(e => e.AuctionTime).HasColumnName("AuctionTime");
+
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Items)
                     .HasForeignKey(d => d.CategoryId)

@@ -27,6 +27,7 @@ namespace Business_Logic.Modules.ItemModule.Response
         public ICollection<ImageResponseOrther> Images { get; set; }
         public double FirstPrice { get; set; }
         public double StepPrice { get; set; }
+        public int AuctionTime { get; set; }
         public bool Deposit { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }

@@ -5,23 +5,21 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Business_Logic.Modules.SessionModule.Request
 {
-    public class CreateSessionRequest
+    public class CreateBeginSessionRequest
     {
         public string SessionName { get; set; }
         public Guid ItemId { get; set; }
         public Guid SessionRuleId { get; set; }
-        public DateTime BeginTime { get; set; }
 
     }
 
-        public class CreateSessionRequestValidator : AbstractValidator<CreateSessionRequest>
+    public class CreateBeginSessionRequestValidator : AbstractValidator<CreateBeginSessionRequest>
     {
-        public CreateSessionRequestValidator()
+        public CreateBeginSessionRequestValidator()
         {
             RuleFor(x => x.SessionName).NotEmpty().NotNull();
             RuleFor(x => x.ItemId).NotEmpty().NotNull();
             RuleFor(x => x.SessionRuleId).NotEmpty().NotNull();
-            RuleFor(x => x.BeginTime).NotEmpty().NotNull();
         }
     }
 }
