@@ -201,7 +201,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/abc
         //[Authorize(Roles = "Auctioneer")]
-        [HttpGet("by_user_begin_watting")]
+        [HttpGet("by_user_begin_now_is_watting")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsBeignWatting([FromQuery] Guid id)
         {
             try

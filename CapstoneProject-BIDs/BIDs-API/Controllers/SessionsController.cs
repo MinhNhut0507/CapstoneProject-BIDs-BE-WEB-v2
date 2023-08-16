@@ -634,6 +634,108 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [HttpGet("by_received")]
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionReceived()
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsReceived();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                }
+                return Ok(Response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_error_item")]
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionErrorItem()
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsErrorItem();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                }
+                return Ok(Response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
         [HttpGet("by_complete_user")]
         public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionCompleteByUser([FromQuery] Guid id)
         {
@@ -1101,7 +1203,7 @@ namespace BIDs_API.Controllers
         }
 
         [Authorize(Roles = "Admin,Staff,Dev")]
-        [HttpPost("add_beign_now_session")]
+        [HttpPost("add_begin_now_session")]
         public async Task<ActionResult<SessionResponse>> PostBeginSession([FromBody] CreateBeginSessionRequest createSessionRequest)
         {
             try

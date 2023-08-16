@@ -63,6 +63,18 @@ namespace Business_Logic.Modules.SessionModule
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.Complete).ToList());
         }
 
+        public async Task<ICollection<Session>> GetSessionsIsReceived()
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.Received).ToList());
+        }
+
+        public async Task<ICollection<Session>> GetSessionsIsErrorItem()
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.Complete).ToList());
+        }
+
         public async Task<ICollection<Session>> GetSessionsIsHaventPay()
         {
             var list =  await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"

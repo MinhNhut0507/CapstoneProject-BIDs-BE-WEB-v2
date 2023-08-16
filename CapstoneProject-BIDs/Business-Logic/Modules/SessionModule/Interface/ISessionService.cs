@@ -43,6 +43,10 @@ namespace Business_Logic.Modules.SessionModule.Interface
 
         public Task<ICollection<Session>> GetSessionsIsFail();
 
+        public Task<ICollection<Session>> GetSessionsIsReceived();
+
+        public Task<ICollection<Session>> GetSessionsIsErrorItem();
+
         public Task<ICollection<Session>> GetSessionsIsNotStartByUser(Guid id);
 
         public Task<ICollection<Session>> GetSessionsIsInStageByUser(Guid id);
