@@ -153,6 +153,11 @@ namespace Business_Logic.Modules.SessionDetailModule
                     throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
                 }
 
+                if (checkPayment.ElementAt(0).Status != "APPROVED")
+                {
+                    throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
+                }
+
                 var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 
                 newSessionDetail.Id = Guid.NewGuid();
@@ -214,6 +219,11 @@ namespace Business_Logic.Modules.SessionDetailModule
                 throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
             }
 
+            if (checkPayment.ElementAt(0).Status != "APPROVED")
+            {
+                throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
+            }
+
             var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 
             var newSessionDetail = new SessionDetail();
@@ -249,6 +259,11 @@ namespace Business_Logic.Modules.SessionDetailModule
             var checkPayment = await _PaymentUserService.GetPaymentUserBySessionAndUser(jonningRequest.SessionId, jonningRequest.UserId);
 
             if (checkPayment == null || checkPayment.Count() == 0)
+            {
+                throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
+            }
+
+            if (checkPayment.ElementAt(0).Status != "APPROVED")
             {
                 throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
             }
