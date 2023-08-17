@@ -260,10 +260,13 @@ namespace BIDs_API
                 endpoints.MapHub<BookingItemHub>("/bookingitemhub");
                 endpoints.MapHub<ItemDescriptionHub>("/itemdescriptionhub");
                 endpoints.MapHub<SessionRuleHub>("/sessionrulehub");
-                endpoints.MapHub<FeeHub>("/notificationhub");
-                endpoints.MapHub<FeeHub>("/staffnotificationdetailhub");
-                endpoints.MapHub<FeeHub>("/notificationtypehub");
-                endpoints.MapHub<FeeHub>("/usernotificationdetailhub");
+                endpoints.MapHub<NotificationHub>("/notificationhub");
+                endpoints.MapHub<StaffNotificationDetailHub>("/staffnotificationdetailhub");
+                endpoints.MapHub<NotificationTypeHub>("/notificationtypehub");
+                endpoints.MapHub<UserNotificationDetailHub>("/usernotificationdetailhub");
+                endpoints.MapHub<PaymentStaffHub>("/paymentstaffhub");
+                endpoints.MapHub<PaymentUserHub>("/paymentuserhub");
+                endpoints.MapHub<UserPaymentInformationHub>("/userpaymentinformationhub");
             });
         }
 

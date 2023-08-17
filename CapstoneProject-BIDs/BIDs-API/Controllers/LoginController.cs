@@ -1,5 +1,6 @@
 ﻿using BIDs_API.PaymentPayPal.Interface;
 using BIDs_API.SignalR;
+using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.LoginModule.Data;
 using Business_Logic.Modules.LoginModule.InterFace;
 using Business_Logic.Modules.LoginModule.Request;
@@ -24,12 +25,14 @@ namespace BIDs_API.Controllers
         private readonly IUserService _userService;
         private readonly IHubContext<UserHub> _hubContext;
         private readonly IPayPalPayment _payPal;
+        private readonly ICommon _common;
         public LoginController(ILoginService LoginService
             , IConfiguration configuration
             , IStaffService staffService
             , IUserService userService
             , IHubContext<UserHub> hubContext
-            , IPayPalPayment payPal)
+            , IPayPalPayment payPal
+            , ICommon common)
         {
             _LoginService = LoginService;
             _configuration = configuration;
@@ -37,6 +40,7 @@ namespace BIDs_API.Controllers
             _userService = userService;
             _hubContext = hubContext;
             _payPal = payPal;
+            _common = common;
         }
 
 
@@ -209,6 +213,20 @@ namespace BIDs_API.Controllers
             try
             {
                 var response = await _payPal.PaymentStaffToWinner(sessionId, userId, staffId, urlSuccess, urlFail);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_payment_user")]
+        public async Task<IActionResult> ReportPaymentUser([FromQuery] Guid userId, [FromQuery] DateTime start, [FromQuery] DateTime end)
+        {
+            try
+            {
+                var response = await _common.ReportPaymentUser(userId, start, end);
                 return Ok(response);
             }
             catch (Exception ex)

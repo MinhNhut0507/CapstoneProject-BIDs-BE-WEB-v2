@@ -17,6 +17,7 @@ using Business_Logic.Modules.StaffNotificationDetailModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
 using Business_Logic.Modules.UserNotificationDetailModule.Interface;
 using Business_Logic.Modules.UserNotificationDetailModule.Request;
+using Business_Logic.Modules.UserPaymentInformationModule.Interface;
 using Data_Access.Constant;
 using Data_Access.Entities;
 using Data_Access.Enum;
@@ -41,6 +42,7 @@ namespace Business_Logic.Modules.CommonModule
         private readonly INotificationTypeService _NotificationTypeService;
         private readonly IStaffNotificationDetailService _StaffNotificationDetailService;
         private readonly IUserNotificationDetailService _UserNotificationDetailService;
+        private readonly IUserPaymentInformationService _UserPaymentInformationService;
         private string UTCCode = "";
         public Common(IUserService UserService
             , IItemService ItemService
@@ -51,7 +53,8 @@ namespace Business_Logic.Modules.CommonModule
             , INotificationService NotificationService
             , INotificationTypeService NotificationTypeService
             , IStaffNotificationDetailService StaffNotificationDetailService
-            , IUserNotificationDetailService UserNotificationDetailService)
+            , IUserNotificationDetailService UserNotificationDetailService
+            , IUserPaymentInformationService UserPaymentInformationService)
         {
             _UserService = UserService;
             _ItemService = ItemService;
@@ -63,6 +66,7 @@ namespace Business_Logic.Modules.CommonModule
             _NotificationTypeService = NotificationTypeService;
             _StaffNotificationDetailService = StaffNotificationDetailService;
             _UserNotificationDetailService = UserNotificationDetailService;
+            _UserPaymentInformationService = UserPaymentInformationService;
         }
 
         public async Task SendEmailBeginAuction(Session session)
@@ -626,6 +630,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
                 var totalCount = 0;
                 var totalPrice = 0.00;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -663,6 +668,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
                 var totalCount = 0;
                 var totalComplete = 0;
                 var totalFail = 0;
@@ -715,6 +721,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
                 var totalCount = 0;
                 var totalPrice = 0.00;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -759,6 +766,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
                 var totalCount = 0;
                 var totalPrice = 0.00;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -803,6 +811,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
                 var totalCount = 0;
                 var totalPrice = 0.00;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -834,6 +843,92 @@ namespace Business_Logic.Modules.CommonModule
                     TotalPrice = totalPrice
                 };
                 return responseReport;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportPaymentUser> ReportPaymentUser(Guid UserId, DateTime Start, DateTime End)
+        {
+            try
+            {
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
+                var totalSend = 0.00;
+                var totalReceive = 0.00;
+                var PaymentReport = new List<PaymentReport>();
+                var reportPaymentUser = new ReportPaymentUser()
+                {
+                    TotalReceive = totalReceive,
+                    TotalSend = totalSend,
+                    PaymentReport = PaymentReport
+                };
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM PaymentUser Where UserID = @UserId AND PaymentDate >= @StartDate AND PaymentDate <= @EndDate AND Status = @Status";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserId;
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = Start;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = End;
+                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        reportPaymentUser.TotalSend += Convert.ToDouble(row["Amount"]);
+                        var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
+                        var Payment = new PaymentReport()
+                        {
+                            IsReceive = false,
+                            PaymentID = row["PayPalTransactionId"].ToString(),
+                            PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
+                            PaymentTotal = Convert.ToDouble(row["Amount"]),
+                            SessionName = session.ElementAt(0).Name
+                        };
+                        reportPaymentUser.PaymentReport.Add(Payment);
+                    }
+                }
+
+                var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(UserId);
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM PaymentStaff Where UserPaymentInformationID = @Id AND PaymentDate >= @StartDate AND PaymentDate <= @EndDate AND Status = @Status";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    //    Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = userPaymentInformation.Id;
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = Start;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = End;
+                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        reportPaymentUser.TotalReceive += Convert.ToDouble(row["Amount"]);
+                        var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
+                        var Payment = new PaymentReport()
+                        {
+                            IsReceive = true,
+                            PaymentID = row["PayPalTransactionId"].ToString(),
+                            PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
+                            PaymentTotal = Convert.ToDouble(row["Amount"]),
+                            SessionName = session.ElementAt(0).Name
+                        };
+                        reportPaymentUser.PaymentReport.Add(Payment);
+                    }
+                }
+                return reportPaymentUser;
             }
             catch (Exception ex)
             {

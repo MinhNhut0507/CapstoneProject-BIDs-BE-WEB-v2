@@ -20,6 +20,7 @@ using Business_Logic.Modules.StaffNotificationDetailModule.Response;
 using Business_Logic.Modules.UserNotificationDetailModule.Response;
 using Business_Logic.Modules.ImageModule.Response;
 using Business_Logic.Modules.SessionRuleModule.Request;
+using Business_Logic.Modules.UserPaymentInformationModule.Response;
 
 namespace BIDs_API.Mapper
 {
@@ -255,6 +256,12 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.ItemId, d => d.MapFrom(s => s.Item.Id))
                 .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
                 .ForMember(x => x.Detail, d => d.MapFrom(s => s.DetailImage));
+
+            CreateMap<UserPaymentInformation, UserPaymentInformationResponse>()
+                .ForMember(x => x.Id, d => d.MapFrom(s => s.Id))
+                .ForMember(x => x.Status, d => d.MapFrom(s => s.Status))
+                .ForMember(x => x.UserId, d => d.MapFrom(s => s.UserId))
+                .ForMember(x => x.PayPalAccount, d => d.MapFrom(s => s.PayPalAccount));
         }
 
         public class RoleEnumConverter : IValueConverter<int, string>
