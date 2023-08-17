@@ -243,7 +243,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "User,Dev")]
+        [Authorize(Roles = "Dev")]
         [HttpPut("update_role_user")]
         public async Task<IActionResult> PutRoleUser([FromBody] UTCCode code)
         {
