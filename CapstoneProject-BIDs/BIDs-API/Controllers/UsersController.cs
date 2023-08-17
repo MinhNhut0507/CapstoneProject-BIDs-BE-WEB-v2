@@ -261,8 +261,8 @@ namespace BIDs_API.Controllers
                 var check = await _common.CheckUTCCode(code.code, codeCheck);
                 if(check == true)
                 {
-                    var user = await _userService.UpdateRoleAccount(code.email);
-                    await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
+                    //var user = await _userService.UpdateRoleAccount(code.email);
+                    //await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
                     //string message = "Tài khoản " + user.Name + " có email là " + user.Email + " vừa cập nhập được nâng cấp thành người bán. Từ giờ bạn có thêm chức năng đăng bán sản phẩm đấu giá.";
                     //var userNoti = await _common.UserNotification(10, (int)NotificationTypeEnum.Account, message, user.Id);
                     //await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
