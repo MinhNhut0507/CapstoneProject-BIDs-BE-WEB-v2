@@ -153,10 +153,10 @@ namespace Business_Logic.Modules.SessionDetailModule
                     throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
                 }
 
-                if (checkPayment.ElementAt(0).Status != "APPROVED")
-                {
-                    throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
-                }
+                //if (checkPayment.ElementAt(0).Status != "APPROVED")
+                //{
+                //    throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
+                //}
 
                 var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 
@@ -219,10 +219,10 @@ namespace Business_Logic.Modules.SessionDetailModule
                 throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
             }
 
-            if (checkPayment.ElementAt(0).Status != "APPROVED")
-            {
-                throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
-            }
+            //if (checkPayment.ElementAt(0).Status != "APPROVED")
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
+            //}
 
             var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 
@@ -263,10 +263,10 @@ namespace Business_Logic.Modules.SessionDetailModule
                 throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
             }
 
-            if (checkPayment.ElementAt(0).Status != "APPROVED")
-            {
-                throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
-            }
+            //if (checkPayment.ElementAt(0).Status != "APPROVED")
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.NOT_JOIN_ERROR);
+            //}
 
             if (checkDetail != null) 
             {

@@ -17,7 +17,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -191,7 +191,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpGet("by_email")]
         public async Task<ActionResult<UserResponse>> GetUserByEmail([FromQuery] string email)
         {
@@ -207,7 +207,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpPut]
         public async Task<IActionResult> PutUser([FromBody] UpdateUserRequest updateUserRequest)
         {
@@ -243,7 +243,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Bidder,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpPut("update_role_user")]
         public async Task<IActionResult> PutRoleUser([FromBody] UTCCode code)
         {
@@ -276,7 +276,7 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpPut("update_password")]
         public async Task<IActionResult> PutPasswordUser([FromBody] UpdatePasswordRequest updatePasswordRequest)
         {

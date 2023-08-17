@@ -144,7 +144,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpGet("by_user")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByUser([FromQuery] Guid? id)
         {
@@ -168,7 +168,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpGet("by_name_and_user")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByNameAndUser([FromQuery] string name, Guid id)
         {
@@ -192,7 +192,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpGet("by_category_name_and_user")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryNameAndUser([FromQuery] string name, Guid id)
         {
@@ -217,7 +217,7 @@ namespace BIDs_API.Controllers
 
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpPut]
         public async Task<IActionResult> PutItem([FromBody] UpdateItemRequest updateItemRequest)
         {
@@ -239,7 +239,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpPost]
         public async Task<ActionResult<ItemResponse>> PostItem([FromBody] CreateItemRequest createItemRequest)
         {

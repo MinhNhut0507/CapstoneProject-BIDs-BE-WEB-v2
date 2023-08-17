@@ -16,7 +16,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin,Staff,Auctioneer")]
+    [Authorize(Roles = "Admin,Staff,User")]
     public class BookingItemsController : ControllerBase
     {
         private readonly IBookingItemService _BookingItemService;
@@ -175,7 +175,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        //[Authorize(Roles = "Auctioneer")]
+        [Authorize(Roles = "User")]
         [HttpGet("by_user_watting")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsWatting([FromQuery] Guid id)
         {
@@ -200,7 +200,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        //[Authorize(Roles = "Auctioneer")]
+        [Authorize(Roles = "User")]
         [HttpGet("by_user_begin_now_is_watting")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsBeignWatting([FromQuery] Guid id)
         {
@@ -225,7 +225,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        //[Authorize(Roles = "Auctioneer")]
+        [Authorize(Roles = "User")]
         [HttpGet("by_user_waiting_create_session")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsNotCreateSessionYet([FromQuery] Guid id)
         {
@@ -250,7 +250,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        //[Authorize(Roles = "Auctioneer")]
+        [Authorize(Roles = "User")]
         [HttpGet("by_user_accepted")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsAccepted([FromQuery] Guid id)
         {
@@ -275,7 +275,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        //[Authorize(Roles = "Auctioneer")]
+        [Authorize(Roles = "User")]
         [HttpGet("by_user_denied")]
         public async Task<ActionResult<IEnumerable<BookingItemResponse>>> GetBookingItemByUserIsDenied([FromQuery] Guid id)
         {

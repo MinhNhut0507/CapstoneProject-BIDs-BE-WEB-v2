@@ -176,7 +176,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpPost("increase_price")]
         public async Task<ActionResult<SessionDetailResponse>> IncreasePrice([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
         {
@@ -196,7 +196,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpPost("joinning")]
         public async Task<ActionResult<SessionDetailResponse>> Joinning([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
         {
@@ -216,7 +216,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Bidder,Auctioneer,Dev")]
+        [Authorize(Roles = "User,Dev")]
         [HttpPost("joinning_in_stage")]
         public async Task<ActionResult<SessionDetailResponse>> JoinningInStage([FromBody] CreateSessionDetailRequest createSessionDetailRequest)
         {
