@@ -205,11 +205,11 @@ namespace Business_Logic.Modules.SessionModule
                     break;
                 }
             }
+            DateTime dateTime = DateTime.UtcNow;
             newSession.SessionRuleId = SessionRequest.SessionRuleId;
             newSession.BeginTime = SessionRequest.BeginTime;
-            newSession.EndTime = SessionRequest.BeginTime.AddHours(item.ElementAt(0).AuctionTime);
+            newSession.EndTime = dateTime.AddMinutes((7 * 60) + item.ElementAt(0).AuctionTime);
             newSession.FinalPrice = item.ElementAt(0).FirstPrice;
-            DateTime dateTime = DateTime.UtcNow;
             newSession.CreateDate = dateTime.AddHours(7);
             newSession.UpdateDate = dateTime.AddHours(7);
             newSession.Status = (int)SessionStatusEnum.NotStart;
@@ -275,12 +275,12 @@ namespace Business_Logic.Modules.SessionModule
                 //{
                 //    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MIN_ERROR);
                 //}
+                DateTime dateTime = DateTime.UtcNow;
 
                 SessionUpdate.Name = SessionRequest.SessionName;
                 SessionUpdate.SessionRuleId = SessionRequest.SessionRuleId;
                 SessionUpdate.BeginTime = BeginTime;
-                SessionUpdate.EndTime = BeginTime.AddHours(item.ElementAt(0).AuctionTime);
-                DateTime dateTime = DateTime.UtcNow;
+                SessionUpdate.EndTime = BeginTime.AddMinutes(item.ElementAt(0).AuctionTime);
                 SessionUpdate.UpdateDate = dateTime.AddHours(7);
 
                 await _SessionRepository.UpdateAsync(SessionUpdate);
@@ -514,7 +514,7 @@ namespace Business_Logic.Modules.SessionModule
             DateTime dateTime = DateTime.UtcNow;
             newSession.SessionRuleId = SessionRequest.SessionRuleId;
             newSession.BeginTime = dateTime.AddHours(7);
-            newSession.EndTime = dateTime.AddHours(7+ item.AuctionTime);
+            newSession.EndTime = dateTime.AddMinutes((7*60)+ item.AuctionTime);
             newSession.FinalPrice = item.FirstPrice;
             newSession.CreateDate = dateTime.AddHours(7);
             newSession.UpdateDate = dateTime.AddHours(7);

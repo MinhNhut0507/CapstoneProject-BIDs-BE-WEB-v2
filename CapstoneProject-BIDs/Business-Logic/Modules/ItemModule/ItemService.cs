@@ -163,14 +163,16 @@ namespace Business_Logic.Modules.ItemModule
                 throw new Exception(ErrorMessage.ItemError.INVALID_FIRST_PRICE);
             };
 
-            var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(ItemRequest.UserId);
+            //var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(ItemRequest.UserId);
 
-            if(userPaymentInformation == null)
-            {
-                throw new Exception(ErrorMessage.ItemError.WRONG_ROLE);
-            };
+            //if(userPaymentInformation == null)
+            //{
+            //    throw new Exception(ErrorMessage.ItemError.WRONG_ROLE);
+            //};
 
             var newItem = new Item();
+
+            var AuctionTime = (ItemRequest.AuctionHour*60) + ItemRequest.AuctionMinute;
 
             newItem.Id = Guid.NewGuid();
             newItem.Name = ItemRequest.ItemName;
@@ -179,7 +181,7 @@ namespace Business_Logic.Modules.ItemModule
             newItem.Quantity = ItemRequest.Quantity;
             newItem.FirstPrice = ItemRequest.FirstPrice;
             newItem.StepPrice = ItemRequest.StepPrice;
-            newItem.AuctionTime = ItemRequest.AuctionTime;
+            newItem.AuctionTime = AuctionTime;
             newItem.CategoryId = ItemRequest.CategoryId;
             newItem.Deposit = ItemRequest.Deposit;
             DateTime dateTime = DateTime.UtcNow;
@@ -234,12 +236,14 @@ namespace Business_Logic.Modules.ItemModule
                     throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
                 }
 
+                var AuctionTime = (ItemRequest.AuctionHour * 60) + ItemRequest.AuctionMinute;
+
                 ItemUpdate.Id = ItemRequest.ItemId;
                 ItemUpdate.Name = ItemRequest.ItemName;
                 ItemUpdate.DescriptionDetail = ItemRequest.Description;
                 ItemUpdate.Quantity = ItemRequest.Quantity;
                 ItemUpdate.FirstPrice = ItemRequest.FirstPrice;
-                ItemUpdate.AuctionTime = ItemRequest.AuctionTime;
+                ItemUpdate.AuctionTime = AuctionTime;
                 ItemUpdate.StepPrice = ItemRequest.StepPrice;
                 ItemUpdate.Deposit = ItemRequest.Deposit;
                 DateTime dateTime = DateTime.UtcNow;
