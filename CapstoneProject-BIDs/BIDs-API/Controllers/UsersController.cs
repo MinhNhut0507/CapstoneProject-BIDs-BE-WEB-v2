@@ -243,31 +243,35 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Dev")]
+        [AllowAnonymous]
         [HttpPut("update_role_user")]
-        public async Task<IActionResult> PutRoleUser([FromBody] UTCCode code)
+        public async Task<ActionResult<bool>> PutRoleUser([FromBody] UTCCode code)
         {
             try
             {
+                if (_cache.Count == 0)
+                {
+                    return false;
+                };
                 var codeCheck = _cache.Get(code.email).ToString();
                 if(codeCheck == null)
                 {
-                    return BadRequest();
+                    return false;
                 };
                 var check = await _common.CheckUTCCode(code.code, codeCheck);
                 if(check == true)
                 {
                     var user = await _userService.UpdateRoleAccount(code.email);
                     await _hubContext.Clients.All.SendAsync("ReceiveUserUpdate", user);
-                    string message = "Tài khoản " + user.Name + " có email là " + user.Email + " vừa cập nhập được nâng cấp thành người bán. Từ giờ bạn có thêm chức năng đăng bán sản phẩm đấu giá.";
-                    var userNoti = await _common.UserNotification(10, (int)NotificationTypeEnum.Account, message, user.Id);
-                    await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
-                    await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
-                    return Ok();
+                    //string message = "Tài khoản " + user.Name + " có email là " + user.Email + " vừa cập nhập được nâng cấp thành người bán. Từ giờ bạn có thêm chức năng đăng bán sản phẩm đấu giá.";
+                    //var userNoti = await _common.UserNotification(10, (int)NotificationTypeEnum.Account, message, user.Id);
+                    //await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                    //await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                    return true;
                 }
                 else
                 {
-                    return BadRequest();
+                    return false;
                 }
             }
             catch (Exception ex)
