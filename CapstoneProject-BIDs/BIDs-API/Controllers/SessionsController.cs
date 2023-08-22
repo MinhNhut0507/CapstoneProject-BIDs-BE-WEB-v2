@@ -147,9 +147,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsNotStartAndInStage();
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
                 }
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
@@ -196,9 +197,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsNotStart();
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
                 }
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
@@ -235,9 +237,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsInStage();
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
                 }
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
@@ -274,9 +277,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _Common.GetSessionInStageByAuctioneer(id);
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
                 }
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
@@ -313,7 +317,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _Common.GetSessionCompleteByAuctioneer(id);
-                if (list == null)
+                if (list.Count() == 0)
                 {
                     return NotFound();
                 }
@@ -336,9 +340,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _Common.GetSessionHaventTranferByAuctioneer(id);
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
                 }
                 for (int i = 0; i < list.Count(); i++)
                 {
@@ -374,9 +379,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _Common.GetSessionNeedToPayByUser(id);
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
                 }
                 for (int i = 0; i < list.Count(); i++)
                 {
@@ -412,9 +418,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsHaventPay();
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
                 }
                 for (int i = 0; i < list.Count(); i++)
                 {
@@ -477,9 +484,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsFail();
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
                 }
                 var response = list.Select
                            (
@@ -533,9 +541,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _Common.GetSessionFailHadJoin();
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
                 }
                 var response = list.Select
                            (
@@ -591,7 +600,8 @@ namespace BIDs_API.Controllers
                 var list = await _SessionService.GetSessionsIsComplete();
                 if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
                 }
                 var response = list.Select
                            (
@@ -640,9 +650,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsReceived();
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
                 }
                 var response = list.Select
                            (
@@ -691,9 +702,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsErrorItem();
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
                 }
                 var response = list.Select
                            (
@@ -742,9 +754,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsCompleteByUser(id);
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
                 }
                 var response = list.Select
                            (
@@ -793,9 +806,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsHaventPayByUser(id);
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
                 }
 
                 for (int i = 0; i < list.Count(); i++)
@@ -859,9 +873,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsFailByUser(id);
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
                 }
                 var response = list.Select
                            (
@@ -913,9 +928,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsNotStartByUser(id);
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
                 }
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
@@ -952,9 +968,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsInStageByUser(id);
-                if (list == null)
+                if (list.Count() == 0)
                 {
-                    return NotFound();
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
                 }
                 var date = DateTime.UtcNow.AddHours(7);
                 for (int i = 0; i < list.Count(); i++)
