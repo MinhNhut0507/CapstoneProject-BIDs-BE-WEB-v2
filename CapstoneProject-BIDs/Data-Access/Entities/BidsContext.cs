@@ -427,6 +427,10 @@ namespace Data_Access.Entities
                     .HasMaxLength(int.MaxValue)
                     .HasColumnName("PayPalTransactionID");
 
+                entity.Property(e => e.PayPalRecieveAccount)
+                    .HasMaxLength(100)
+                    .HasColumnName("PayPalRecieveAccount");
+
                 entity.Property(e => e.SessionId).HasColumnName("SessionID");
 
                 entity.Property(e => e.UserPaymentInformationId).HasColumnName("UserPaymentInformationID");
@@ -469,6 +473,10 @@ namespace Data_Access.Entities
                     .IsRequired()
                     .HasMaxLength(int.MaxValue)
                     .HasColumnName("PaymentDetails");
+
+                entity.Property(e => e.PayPalAccount)
+                    .HasMaxLength(100)
+                    .HasColumnName("PayPalAccount");
 
                 entity.Property(e => e.Status)
                     .IsRequired()

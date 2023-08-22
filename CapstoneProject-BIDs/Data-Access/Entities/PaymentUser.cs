@@ -13,6 +13,7 @@ namespace Data_Access.Entities
         public string PayPalTransactionId { get; set; }
         public string PaymentDetail { get; set; }
         public double Amount { get; set; }
+        public string PayPalAccount { get; set; }
         public DateTime PaymentDate { get; set; }
         public string Status { get; set; }
 

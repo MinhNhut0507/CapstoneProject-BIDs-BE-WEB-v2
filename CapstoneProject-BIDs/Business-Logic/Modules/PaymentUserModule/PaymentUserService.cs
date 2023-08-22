@@ -72,6 +72,22 @@ namespace Business_Logic.Modules.PaymentUserModule
             return PaymentUser;
         }
 
+        public async Task<ICollection<PaymentUser>> GetPaymentUserByUser(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var PaymentUser = await _PaymentUserRepository.GetAll(includeProperties: "Session,Session.SessionDetails,User",
+                options: o => o.Where(x => x.UserId == id).ToList());
+            if (PaymentUser == null)
+            {
+                throw new Exception(ErrorMessage.PaymentUserError.PAYMENT_USER_NOT_FOUND);
+            }
+            var response = PaymentUser.OrderByDescending(x => x.PaymentDate).ToList();
+            return response;
+        }
+
         public async Task<PaymentUser> AddNewPaymentUser(CreatePaymentUserRequest PaymentUserRequest)
         {
 
@@ -114,6 +130,7 @@ namespace Business_Logic.Modules.PaymentUserModule
                 }
 
                 PaymentUserUpdate.Status = PaymentUserRequest.Status;
+                PaymentUserUpdate.PayPalAccount = PaymentUserRequest.PayPalAccount;
 
                 await _PaymentUserRepository.UpdateAsync(PaymentUserUpdate);
                 return PaymentUserUpdate;

@@ -15,6 +15,7 @@ namespace Business_Logic.Modules.PaymentUserModule.Interface
         public Task<ICollection<PaymentUser>> GetAll();
         public Task<ICollection<PaymentUser>> GetPaymentUserByID(Guid id);
         public Task<ICollection<PaymentUser>> GetPaymentUserBySession(Guid id);
+        public Task<ICollection<PaymentUser>> GetPaymentUserByUser(Guid id);
         public Task<ICollection<PaymentUser>> GetPaymentUserBySessionAndUser(Guid sessionId, Guid userId);
     }
 }

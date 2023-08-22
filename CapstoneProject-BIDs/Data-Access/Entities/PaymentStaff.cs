@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
@@ -14,6 +15,7 @@ namespace Data_Access.Entities
         public string PayPalTransactionId { get; set; }
         public string PaymentDetail { get; set; }
         public double Amount { get; set; }
+        public string PayPalRecieveAccount { get; set; }
         public DateTime PaymentDate { get; set; }
         public string Status { get; set; }
 

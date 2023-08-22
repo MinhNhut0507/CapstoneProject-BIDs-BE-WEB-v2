@@ -180,11 +180,11 @@ namespace BIDs_API.Controllers
         }
 
         [HttpGet("check_and_update_order_paypal")]
-        public async Task<IActionResult> CheckAndUpdateOrderPaypal([FromQuery] string orderId)
+        public async Task<IActionResult> CheckAndUpdateOrderPaypal([FromQuery] Guid userId)
         {
             try
             {
-                var response = await _payPal.CheckAndUpdateOrderComplete(orderId);
+                var response = await _payPal.CheckAndUpdateOrderComplete(userId);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -194,11 +194,11 @@ namespace BIDs_API.Controllers
         }
 
         [HttpPost("staff_return_deposit")]
-        public async Task<IActionResult> StaffReturnDeposit([FromQuery] Guid sessionId, [FromQuery] Guid userId, [FromQuery] Guid staffId, [FromQuery] string urlSuccess, [FromQuery] string urlFail)
+        public async Task<IActionResult> StaffReturnDeposit([FromQuery] Guid sessionId, [FromQuery] Guid staffId, [FromQuery] string urlSuccess, [FromQuery] string urlFail)
         {
             try
             {
-                var response = await _payPal.PaymentStaffReturnDeposit(sessionId, userId, staffId, urlSuccess, urlFail);
+                var response = await _payPal.PaymentStaffReturnDeposit(sessionId, staffId, urlSuccess, urlFail);
                 return Ok(response);
             }
             catch (Exception ex)

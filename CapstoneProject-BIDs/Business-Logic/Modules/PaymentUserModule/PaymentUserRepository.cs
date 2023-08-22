@@ -42,7 +42,6 @@ namespace Business_Logic.Modules.PaymentUserModule
             }
 
             query = query.Include(s => s.Session)
-                .Include(s => s.Session.SessionDetails)
                 .Include(s => s.User);
 
             return options != null ? options(query).ToList() : await query.ToListAsync();

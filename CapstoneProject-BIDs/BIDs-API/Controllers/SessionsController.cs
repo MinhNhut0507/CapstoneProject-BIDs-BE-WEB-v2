@@ -589,7 +589,7 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionsIsComplete();
-                if (list == null)
+                if (list.Count() == 0)
                 {
                     return NotFound();
                 }
@@ -1316,8 +1316,8 @@ namespace BIDs_API.Controllers
             try
             {
                 var payment = await _paymentUserService.GetPaymentUserBySessionAndUser(sessionId, userId);
-                var sortPayment = payment.OrderByDescending(s => s.Amount);
-                var response = await _payPal.CheckAndUpdateOrderComplete(sortPayment.ElementAt(0).PayPalTransactionId);
+                var sortPayment = payment.OrderByDescending(s => s.PaymentDate);
+                var response = await _payPal.CheckAndUpdateOrderComplete(sortPayment.ElementAt(0).UserId);
                 return Ok(response);
             }
             catch (Exception ex)

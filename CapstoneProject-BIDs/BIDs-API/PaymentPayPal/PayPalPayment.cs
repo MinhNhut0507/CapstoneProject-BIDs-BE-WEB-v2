@@ -73,6 +73,9 @@ namespace BIDs_API.PaymentPayPal
             var session = sessionList.ElementAt(0);
             var User = await _userService.GetUserByID(UserID);
 
+            var Deposit = sessionList.ElementAt(0).Fee.DepositFee * sessionList.ElementAt(0).Item.FirstPrice;
+            var Total = Math.Round((session.FinalPrice - Deposit) / exchangeRate, 2);
+
             var itemList = new List<Item>()
             {
                 new Item()
@@ -81,7 +84,7 @@ namespace BIDs_API.PaymentPayPal
                     UnitAmount = new Money()
                     {
                         CurrencyCode = "USD",
-                        Value = Math.Round(session.FinalPrice / exchangeRate, 2).ToString()
+                        Value = Total.ToString()
                     },
                     Description = session.Item.DescriptionDetail,
                     Quantity = session.Item.Quantity.ToString(),
@@ -94,18 +97,17 @@ namespace BIDs_API.PaymentPayPal
                 }
             };
 
-            var total = Math.Round(session.FinalPrice / exchangeRate, 2);
 
             var amountDetails = new AmountWithBreakdown()
             {
                 CurrencyCode = "USD",
-                Value = total.ToString(),
+                Value = Total.ToString(),
                 AmountBreakdown = new AmountBreakdown()
                 {
                     ItemTotal = new Money()
                     {
                         CurrencyCode = "USD",
-                        Value = total.ToString()
+                        Value = Total.ToString()
                     }
                 }
             };
@@ -193,12 +195,12 @@ namespace BIDs_API.PaymentPayPal
             double exchangeRate = await _common.Exchange();
             var sessionList = await _sessionService.GetSessionByID(sessionId);
             var session = sessionList.ElementAt(0);
+            var participantFee = session.Fee.ParticipationFee * session.Item.FirstPrice;
             var User = await _userService.GetUserByID(userId);
             var PaypalUser = await _userPaymentInformationService.GetUserPaymentInformationByUser(userId);
-
-
             var EmailPaypalUser = PaypalUser.PayPalAccount;
-            var Total = Math.Round(session.FinalPrice / exchangeRate, 2);
+
+            var Total = Math.Round((session.FinalPrice - participantFee) / exchangeRate, 2);
 
             using (HttpClient client = new HttpClient())
             {
@@ -289,7 +291,7 @@ namespace BIDs_API.PaymentPayPal
                         StaffId = staffId,
                         UserPaymentInformationId = PaypalUser.Id,
                         PayPalTransactionId = orderId,
-                        Amount = 20000000,
+                        Amount = (session.FinalPrice - participantFee),
                         PaymentDate = DateTime.UtcNow.AddHours(7),
                         PaymentDetail = "Thanh toán cho sản phẩm đấu giá " + session.Item.Name + ".",
                         Status = responseStatus
@@ -446,9 +448,12 @@ namespace BIDs_API.PaymentPayPal
             }
         }
 
-        public async Task<string> CheckAndUpdateOrderComplete(string orderId)
+        public async Task<string> CheckAndUpdateOrderComplete(Guid userId)
         {
-            string apiUrl = $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}";
+            var listUserPayment = await _paymentUserService.GetPaymentUserByUser(userId);
+            var userPayment = listUserPayment.ElementAt(0);
+
+            string apiUrl = $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{userPayment.PayPalTransactionId}";
 
             using (HttpClient client = new HttpClient())
             {
@@ -470,10 +475,13 @@ namespace BIDs_API.PaymentPayPal
                     JObject jsonObject = JObject.Parse(responseBody);
 
                     string status = jsonObject["status"].ToString();
+                    JToken payerToken = jsonObject["payer"];
+                    string payerEmail = payerToken["email_address"].ToString();
                     var updatePaymentUser = new UpdatePaymentUserStatusRequest()
                     {
-                        TransactionId = orderId,
-                        Status = status
+                        TransactionId = userPayment.PayPalTransactionId,
+                        Status = status,
+                        PayPalAccount = payerEmail
                     };
 
                     var paymentUser = await _paymentUserService.UpdatePaymentUser(updatePaymentUser);
@@ -498,34 +506,38 @@ namespace BIDs_API.PaymentPayPal
             }
         }
 
-        public async Task<string> PaymentStaffReturnDeposit(Guid sessionId, Guid userId, Guid staffId, string urlSuccess, string urlFail)
+        public async Task<string> PaymentStaffReturnDeposit(Guid sessionId, Guid staffId, string urlSuccess, string urlFail)
         {
             double exchangeRate = await _common.Exchange();
             var sessionList = await _sessionService.GetSessionByID(sessionId);
+            var winner = await _common.GetUserWinning(sessionId);
             var session = sessionList.ElementAt(0);
-            var User = await _userService.GetUserByID(userId);
-            var PaypalUser = await _userPaymentInformationService.GetUserPaymentInformationByUser(userId);
             var Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
 
-            var EmailPaypalUser = PaypalUser.PayPalAccount;
-            var Total = Math.Round( 20000000 / exchangeRate, 2);
+            var listPaymentUser = await _paymentUserService.GetPaymentUserBySession(sessionId);
+            var Total = Math.Round( Deposit / exchangeRate, 2);
 
-            using (HttpClient client = new HttpClient())
+            foreach ( var paymentUser in listPaymentUser ) 
             {
-                // Xây dựng chuỗi xác thực Basic Authorization
-                string authString = $"{ClientAppId}:{SecretKey}";
-                byte[] authBytes = Encoding.ASCII.GetBytes(authString);
-                string base64Auth = Convert.ToBase64String(authBytes);
-
-                // Đặt header Authorization cho yêu cầu HTTP
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64Auth);
-
-                // Tạo thanh toán hoàn trả
-                var payload = new
+                if (paymentUser.UserId == winner.Id)
+                    continue;
+                var user = await _userService.GetUserByID(paymentUser.UserId);
+                using (HttpClient client = new HttpClient())
                 {
-                    intent = "CAPTURE",
-                    purchase_units = new[]
+                    // Xây dựng chuỗi xác thực Basic Authorization
+                    string authString = $"{ClientAppId}:{SecretKey}";
+                    byte[] authBytes = Encoding.ASCII.GetBytes(authString);
+                    string base64Auth = Convert.ToBase64String(authBytes);
+
+                    // Đặt header Authorization cho yêu cầu HTTP
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64Auth);
+
+                    // Tạo thanh toán hoàn trả
+                    var payload = new
                     {
+                        intent = "CAPTURE",
+                        purchase_units = new[]
+                        {
                         new
                         {
                             amount = new
@@ -535,87 +547,89 @@ namespace BIDs_API.PaymentPayPal
                             }
                         }
                     },
-                    payer = new
-                    {
-                        email_address = EmailBIDs // Email của người chuyển tiền
-                    },
-                    payee = new
-                    {
-                        email_address = EmailPaypalUser // Email của người nhận tiền
-                    }
-                };
-
-                var payloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
-                var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
-
-                var response = await client.PostAsync("https://api-m.sandbox.paypal.com/v2/checkout/orders", content);
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var orderData = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResponse>(responseContent);
-                string orderId = orderData.id;
-
-                // Xác nhận thanh toán hoàn trả
-                var confirmUrl = $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}/confirm-payment-source";
-
-                var payloadConfirm = new
-                {
-                    payment_source = new
-                    {
-                        paypal = new
+                        payer = new
                         {
-                            name = new
-                            {
-                                given_name = User.Name,
-                                surname = User.Email
-                            },
-                            email_address = EmailPaypalUser,
-                            experience_context = new
-                            {
-                                payment_method_preference = "IMMEDIATE_PAYMENT_REQUIRED",
-                                brand_name = "EXAMPLE INC",
-                                locale = "en-US",
-                                landing_page = "LOGIN",
-                                shipping_preference = "SET_PROVIDED_ADDRESS",
-                                user_action = "PAY_NOW",
-                                return_url = urlSuccess,
-                                cancel_url = urlFail
-                            }
+                            email_address = EmailBIDs // Email của người chuyển tiền
+                        },
+                        payee = new
+                        {
+                            email_address = paymentUser.PayPalAccount // Email của người nhận tiền
                         }
-                    }
-                };
-
-                var payloadJsonConfirm = Newtonsoft.Json.JsonConvert.SerializeObject(payloadConfirm);
-                var contentConfirm = new StringContent(payloadJsonConfirm, Encoding.UTF8, "application/json");
-
-                var responseConfirm = await client.PostAsync(confirmUrl, contentConfirm);
-                var responseContentConfirm = await responseConfirm.Content.ReadAsStringAsync();
-                var responseStatus = responseConfirm.ReasonPhrase;
-
-                // Xử lý phản hồi từ PayPal và trả về status xác nhận nguồn thanh toán
-                if (responseConfirm.IsSuccessStatusCode)
-                {
-                    var createPaymentStaff = new CreatePaymentStaffRequest()
-                    {
-                        SessionId = sessionId,
-                        StaffId = staffId,
-                        UserPaymentInformationId = PaypalUser.Id,
-                        PayPalTransactionId = orderId,
-                        Amount = 20000000,
-                        PaymentDate = DateTime.UtcNow.AddHours(7),
-                        PaymentDetail = "Hoàn trả phí đặt cọc cho sản phẩm đấu giá " + session.Item.Name + ".",
-                        Status = responseStatus
                     };
 
-                    var paymentStaff = await _paymentStaffService.AddNewPaymentStaff(createPaymentStaff);
+                    var payloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                    var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
 
-                    await _staffHubContext.Clients.All.SendAsync("ReceivePaymentStaffAdd", paymentStaff);
+                    var response = await client.PostAsync("https://api-m.sandbox.paypal.com/v2/checkout/orders", content);
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var orderData = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResponse>(responseContent);
+                    string orderId = orderData.id;
 
-                    return responseStatus;
-                }
-                else
-                {
-                    return responseStatus; 
+                    // Xác nhận thanh toán hoàn trả
+                    var confirmUrl = $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}/confirm-payment-source";
+
+                    var payloadConfirm = new
+                    {
+                        payment_source = new
+                        {
+                            paypal = new
+                            {
+                                name = new
+                                {
+                                    given_name = user.Name,
+                                    surname = user.Email
+                                },
+                                email_address = paymentUser.PayPalAccount,
+                                experience_context = new
+                                {
+                                    payment_method_preference = "IMMEDIATE_PAYMENT_REQUIRED",
+                                    brand_name = "EXAMPLE INC",
+                                    locale = "en-US",
+                                    landing_page = "LOGIN",
+                                    shipping_preference = "SET_PROVIDED_ADDRESS",
+                                    user_action = "PAY_NOW",
+                                    return_url = urlSuccess,
+                                    cancel_url = urlFail
+                                }
+                            }
+                        }
+                    };
+
+                    var payloadJsonConfirm = Newtonsoft.Json.JsonConvert.SerializeObject(payloadConfirm);
+                    var contentConfirm = new StringContent(payloadJsonConfirm, Encoding.UTF8, "application/json");
+
+                    var responseConfirm = await client.PostAsync(confirmUrl, contentConfirm);
+                    var responseContentConfirm = await responseConfirm.Content.ReadAsStringAsync();
+                    var responseStatus = responseConfirm.ReasonPhrase;
+
+                    // Xử lý phản hồi từ PayPal và trả về status xác nhận nguồn thanh toán
+                    if (responseConfirm.IsSuccessStatusCode)
+                    {
+                        var createPaymentStaff = new CreateReturnDepositRequest()
+                        {
+                            SessionId = sessionId,
+                            StaffId = staffId,
+                            PayPalRecieveAccount = paymentUser.PayPalAccount,
+                            PayPalTransactionId = orderId,
+                            Amount = Deposit,
+                            PaymentDate = DateTime.UtcNow.AddHours(7),
+                            PaymentDetail = "Hoàn trả phí đặt cọc cho sản phẩm đấu giá " + session.Item.Name + ".",
+                            Status = responseStatus
+                        };
+
+                        var paymentStaff = await _paymentStaffService.AddNewReturnDeposit(createPaymentStaff);
+
+                        await _staffHubContext.Clients.All.SendAsync("ReceivePaymentStaffAdd", paymentStaff);
+
+                        return responseStatus;
+                    }
+                    else
+                    {
+                        return responseStatus;
+                    }
                 }
             }
+            return "FAIL";
         }
 
         public class OrderResponse

@@ -7,6 +7,7 @@ namespace Business_Logic.Modules.PaymentUserModule.Request
     {
         public string TransactionId { get; set; }
         public string Status { get; set; }
+        public string PayPalAccount { get; set; }
     }
     public class UpdatePaymentUserStatusRequestValidator : AbstractValidator<UpdatePaymentUserStatusRequest>
     {
@@ -14,6 +15,7 @@ namespace Business_Logic.Modules.PaymentUserModule.Request
         {
             RuleFor(x => x.TransactionId).NotEmpty().NotNull();
             RuleFor(x => x.Status).NotEmpty().NotNull();
+            RuleFor(x => x.PayPalAccount).NotEmpty().NotNull();
         }
     }
 }
