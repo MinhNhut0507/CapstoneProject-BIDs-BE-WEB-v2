@@ -21,6 +21,7 @@ using Business_Logic.Modules.UserNotificationDetailModule.Response;
 using Business_Logic.Modules.ImageModule.Response;
 using Business_Logic.Modules.SessionRuleModule.Request;
 using Business_Logic.Modules.UserPaymentInformationModule.Response;
+using Business_Logic.Modules.LoginModule.Data;
 
 namespace BIDs_API.Mapper
 {
@@ -190,6 +191,7 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.Images, d => d.MapFrom(s => s.Item.Images.ToList()))
                 .ForMember(x => x.DescriptionDetail, d => d.MapFrom(s => s.Item.DescriptionDetail))
                 .ForMember(x => x.Deposit, d => d.MapFrom(s => s.Item.Deposit))
+                .ForMember(x => x.AuctionTime, d => d.MapFrom(s => s.Item.AuctionTime))
                 .ForMember(x => x.Quantity, d => d.MapFrom(s => s.Item.Quantity))
                 .ForMember(x => x.FirstPrice, d => d.MapFrom(s => s.Item.FirstPrice))
                 .ForMember(x => x.StepPrice, d => d.MapFrom(s => s.Item.StepPrice))
@@ -286,6 +288,27 @@ namespace BIDs_API.Mapper
             {
                 return ((UserStatusEnum)sourceMember).ToString();
             }
+        }
+
+        public class TranferAuctionTime
+        {
+            public AuctionTime Tranfer(int AuctionTime)
+            {
+                var AuctionHour = (AuctionTime / 60);
+                var AuctionMinute = (AuctionTime % 60)*6;
+                var response = new AuctionTime()
+                {
+                    AuctionHour = AuctionHour,
+                    AuctionMinute = AuctionMinute
+                };
+                return response;
+            }
+        }
+
+        public class AuctionTime
+        {
+            public int AuctionHour { get; set; }
+            public int AuctionMinute { get; set; }
         }
     }
 }

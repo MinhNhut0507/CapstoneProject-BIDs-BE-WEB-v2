@@ -28,6 +28,7 @@ namespace Business_Logic.Modules.BookingItemModule.Response
         public string CategoryName { get; set; }
         public string DescriptionDetail { get; set; }
         public int Quantity { get; set; }
+        public int AuctionTime { get; set; }
         public ICollection<ItemDescriptionResponse> Descriptions { get; set; }
         public ICollection<ImageResponseOrther> Images { get; set; }
         public double FirstPrice { get; set; }

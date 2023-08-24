@@ -180,7 +180,7 @@ namespace Business_Logic.Modules.SessionModule
             //}
 
 
-            if (item.ElementAt(0).AuctionTime > 168)
+            if (item.ElementAt(0).AuctionTime > (7*24*60))
             {
                 throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MAX_ERROR);
             }
@@ -266,7 +266,7 @@ namespace Business_Logic.Modules.SessionModule
                 //    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
                 //}
 
-                if (item.ElementAt(0).AuctionTime > 168)
+                if (item.ElementAt(0).AuctionTime > (7*24*60))
                 {
                     throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MAX_ERROR);
                 }
@@ -486,7 +486,7 @@ namespace Business_Logic.Modules.SessionModule
 
             var listItem = await _ItemService.GetItemByID(SessionRequest.ItemId);
             var item = listItem.ElementAt(0);
-            if (item.AuctionTime > 168)
+            if (item.AuctionTime > (7*24*60))
             {
                 throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MAX_ERROR);
             }
