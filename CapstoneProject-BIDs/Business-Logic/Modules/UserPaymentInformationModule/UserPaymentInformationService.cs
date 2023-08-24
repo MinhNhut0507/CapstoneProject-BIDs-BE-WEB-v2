@@ -58,6 +58,20 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
             return UserPaymentInformation;
         }
 
+        public async Task<bool> CheckUserPaymentInformationByUser(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var UserPaymentInformation = await _UserPaymentInformationRepository.GetFirstOrDefaultAsync(s => s.UserId == id);
+            if (UserPaymentInformation == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public async Task<UserPaymentInformation> AddNewUserPaymentInformation(CreateUserPaymentInformationRequest UserPaymentInformationRequest)
         {
 

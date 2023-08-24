@@ -287,6 +287,68 @@ namespace Business_Logic.Modules.CommonModule
             return listSession;
         }
 
+        public async Task<ICollection<Session>> GetSessionReceivedByAuctioneer(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var listSession = new List<Session>();
+            var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
+            foreach (var x in sessionDetail)
+            {
+                var checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                if (listSession.Count() == 0)
+                {
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                        listSession.Add(checkSession.ElementAt(0));
+                }
+                else
+                {
+                    for (int i = 0; i < listSession.Count; i++)
+                    {
+                        if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
+                            break;
+                        if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Received)
+                            if (i == listSession.Count - 1)
+                                listSession.Add(checkSession.ElementAt(0));
+                    }
+                }
+            }
+            return listSession;
+        }
+
+        public async Task<ICollection<Session>> GetSessionErrorItemByAuctioneer(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var listSession = new List<Session>();
+            var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
+            foreach (var x in sessionDetail)
+            {
+                var checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                if (listSession.Count() == 0)
+                {
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                        listSession.Add(checkSession.ElementAt(0));
+                }
+                else
+                {
+                    for (int i = 0; i < listSession.Count; i++)
+                    {
+                        if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
+                            break;
+                        if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.ErrorItem)
+                            if (i == listSession.Count - 1)
+                                listSession.Add(checkSession.ElementAt(0));
+                    }
+                }
+            }
+            return listSession;
+        }
+
         public async Task<ICollection<Session>> GetSessionHaventTranferByAuctioneer(Guid id)
         {
             if (id == null)
@@ -324,20 +386,24 @@ namespace Business_Logic.Modules.CommonModule
 
             for(int i = 0; i < listSession.Count; i++)
             {
-                var session = await _SessionService.GetSessionByID(listSession.ElementAt(i).Id);
                 var winner = new Users();
-                var checkIncrease = await CheckSessionIncrease(session.ElementAt(0).Id);
+                var checkIncrease = await CheckSessionIncrease(listSession.ElementAt(i).Id);
                 if (checkIncrease)
                 {
-                    winner = await GetUserWinning(session.ElementAt(0).Id);
+                    winner = await GetUserWinning(listSession.ElementAt(i).Id);
                 }
                 else
                 {
-                    winner = await GetUserWinningByJoining(session.ElementAt(0).Id);
+                    winner = await GetUserWinningByJoining(listSession.ElementAt(i).Id);
                 }
                 if(winner.Id != id)
                 {
-                    listSession.Remove(session.ElementAt(0));
+                    listSession.Remove(listSession.ElementAt(i));
+                    i--;
+                }
+                if(listSession.ElementAt(i).Status != (int)SessionStatusEnum.HaventTranferYet)
+                {
+                    listSession.Remove(listSession.ElementAt(i));
                     i--;
                 }
             }
@@ -663,7 +729,7 @@ namespace Business_Logic.Modules.CommonModule
             }
         }
 
-        public async Task<ReportSessionTotal> ReportSessionComplete(DateTime startDate, DateTime endDate)
+        public async Task<ReportSessionTotal> ReportSessionAfterPayment(DateTime startDate, DateTime endDate)
         {
             try
             {
@@ -677,12 +743,14 @@ namespace Business_Logic.Modules.CommonModule
                 {
                     connection.Open();
 
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @StatusComplete OR Status = @StatusFail";
                     SqlCommand command = new SqlCommand(query, connection);
 
                     // Thay đổi giá trị của tham số ngày tháng tương ứng
                     command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
                     command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+                    command.Parameters.Add("@StatusComplete", SqlDbType.Int).Value = 4;
+                    command.Parameters.Add("@StatusFail", SqlDbType.Int).Value = 5;
 
                     SqlDataAdapter adapter = new SqlDataAdapter(command);
                     DataTable dataTable = new DataTable();
@@ -728,12 +796,13 @@ namespace Business_Logic.Modules.CommonModule
                 {
                     connection.Open();
 
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @Status";
                     SqlCommand command = new SqlCommand(query, connection);
 
                     // Thay đổi giá trị của tham số ngày tháng tương ứng
                     command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
                     command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+                    command.Parameters.Add("@Status", SqlDbType.Int).Value = 1;
 
                     SqlDataAdapter adapter = new SqlDataAdapter(command);
                     DataTable dataTable = new DataTable();
@@ -773,12 +842,13 @@ namespace Business_Logic.Modules.CommonModule
                 {
                     connection.Open();
 
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @Status";
                     SqlCommand command = new SqlCommand(query, connection);
 
                     // Thay đổi giá trị của tham số ngày tháng tương ứng
                     command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
                     command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+                    command.Parameters.Add("@Status", SqlDbType.Int).Value = 2;
 
                     SqlDataAdapter adapter = new SqlDataAdapter(command);
                     DataTable dataTable = new DataTable();
@@ -818,12 +888,13 @@ namespace Business_Logic.Modules.CommonModule
                 {
                     connection.Open();
 
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @Status";
                     SqlCommand command = new SqlCommand(query, connection);
 
                     // Thay đổi giá trị của tham số ngày tháng tương ứng
                     command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
                     command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+                    command.Parameters.Add("@Status", SqlDbType.Int).Value = 3;
 
                     SqlDataAdapter adapter = new SqlDataAdapter(command);
                     DataTable dataTable = new DataTable();
@@ -840,6 +911,61 @@ namespace Business_Logic.Modules.CommonModule
                 var responseReport = new ReportSessionCount()
                 {
                     TotalCount = totalCount,
+                    TotalPrice = totalPrice
+                };
+                return responseReport;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportSessionTotal> ReportSessionAfterReceivedItem(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
+                var totalCount = 0;
+                var totalComplete = 0;
+                var totalFail = 0;
+                var totalPrice = 0.00;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @StatusReceived OR Status = @StatusErrorItem";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+                    command.Parameters.Add("@StatusReceived", SqlDbType.Int).Value = 6;
+                    command.Parameters.Add("@StatusErrorItem", SqlDbType.Int).Value = 7;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        totalCount++;
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Received)
+                        {
+                            totalComplete++;
+                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.ErrorItem)
+                            totalFail++;
+
+                    }
+                }
+                var responseReport = new ReportSessionTotal()
+                {
+                    Total = totalCount,
+                    TotalComplete = totalComplete,
+                    TotalFail = totalFail,
                     TotalPrice = totalPrice
                 };
                 return responseReport;
@@ -897,35 +1023,39 @@ namespace Business_Logic.Modules.CommonModule
                     }
                 }
 
-                var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(UserId);
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                var checkPaymentUserInformation = await _UserPaymentInformationService.CheckUserPaymentInformationByUser(UserId);
+                if(checkPaymentUserInformation)
                 {
-                    connection.Open();
-
-                    string query = "SELECT * FROM PaymentStaff Where UserPaymentInformationID = @Id AND PaymentDate >= @StartDate AND PaymentDate <= @EndDate AND Status = @Status";
-                    SqlCommand command = new SqlCommand(query, connection);
-                    //    Thay đổi giá trị của tham số ngày tháng tương ứng
-                    command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = userPaymentInformation.Id;
-                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = Start;
-                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = End;
-                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
-
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-                    foreach (DataRow row in dataTable.Rows)
+                    var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(UserId);
+                    using (SqlConnection connection = new SqlConnection(connectionString))
                     {
-                        reportPaymentUser.TotalReceive += Convert.ToDouble(row["Amount"]);
-                        var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
-                        var Payment = new PaymentReport()
+                        connection.Open();
+
+                        string query = "SELECT * FROM PaymentStaff Where UserPaymentInformationID = @Id AND PaymentDate >= @StartDate AND PaymentDate <= @EndDate AND Status = @Status";
+                        SqlCommand command = new SqlCommand(query, connection);
+                        //    Thay đổi giá trị của tham số ngày tháng tương ứng
+                        command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = userPaymentInformation.Id;
+                        command.Parameters.Add("@StartDate", SqlDbType.Date).Value = Start;
+                        command.Parameters.Add("@EndDate", SqlDbType.Date).Value = End;
+                        command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+
+                        SqlDataAdapter adapter = new SqlDataAdapter(command);
+                        DataTable dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+                        foreach (DataRow row in dataTable.Rows)
                         {
-                            IsReceive = true,
-                            PaymentID = row["PayPalTransactionId"].ToString(),
-                            PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
-                            PaymentTotal = Convert.ToDouble(row["Amount"]),
-                            SessionName = session.ElementAt(0).Name
-                        };
-                        reportPaymentUser.PaymentReport.Add(Payment);
+                            reportPaymentUser.TotalReceive += Convert.ToDouble(row["Amount"]);
+                            var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
+                            var Payment = new PaymentReport()
+                            {
+                                IsReceive = true,
+                                PaymentID = row["PayPalTransactionId"].ToString(),
+                                PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
+                                PaymentTotal = Convert.ToDouble(row["Amount"]),
+                                SessionName = session.ElementAt(0).Name
+                            };
+                            reportPaymentUser.PaymentReport.Add(Payment);
+                        }
                     }
                 }
                 return reportPaymentUser;

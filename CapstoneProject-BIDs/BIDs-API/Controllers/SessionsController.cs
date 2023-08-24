@@ -1271,12 +1271,12 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [HttpGet("report_session_complete")]
-        public async Task<IActionResult> ReportSessionComplete([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        [HttpGet("report_session_after_payment")]
+        public async Task<IActionResult> ReportSessionAfterPayment([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             try
             {
-                var response = await _Common.ReportSessionComplete(startDate, endDate);
+                var response = await _Common.ReportSessionAfterPayment(startDate, endDate);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -1319,6 +1319,20 @@ namespace BIDs_API.Controllers
             try
             {
                 var response = await _Common.ReportSessionHaventTranfer(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_after_received_item")]
+        public async Task<IActionResult> ReportSessionAfterReceivedItem([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionAfterReceivedItem(startDate, endDate);
                 return Ok(response);
             }
             catch (Exception ex)

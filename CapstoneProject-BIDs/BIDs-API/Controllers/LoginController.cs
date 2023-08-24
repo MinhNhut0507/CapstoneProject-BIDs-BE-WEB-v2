@@ -4,6 +4,8 @@ using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.LoginModule.Data;
 using Business_Logic.Modules.LoginModule.InterFace;
 using Business_Logic.Modules.LoginModule.Request;
+using Business_Logic.Modules.SessionModule.Interface;
+using Business_Logic.Modules.SessionModule.Request;
 using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.UserModule.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -22,22 +24,22 @@ namespace BIDs_API.Controllers
         private readonly ILoginService _LoginService;
         private readonly IConfiguration _configuration;
         private readonly IStaffService _staffService;
-        private readonly IUserService _userService;
-        private readonly IHubContext<UserHub> _hubContext;
+        private readonly ISessionService _sessionService;
+        private readonly IHubContext<SessionHub> _hubContext;
         private readonly IPayPalPayment _payPal;
         private readonly ICommon _common;
         public LoginController(ILoginService LoginService
             , IConfiguration configuration
             , IStaffService staffService
-            , IUserService userService
-            , IHubContext<UserHub> hubContext
+            , ISessionService sessionService
+            , IHubContext<SessionHub> hubContext
             , IPayPalPayment payPal
             , ICommon common)
         {
             _LoginService = LoginService;
             _configuration = configuration;
             _staffService = staffService;
-            _userService = userService;
+            _sessionService = sessionService;
             _hubContext = hubContext;
             _payPal = payPal;
             _common = common;
@@ -157,6 +159,14 @@ namespace BIDs_API.Controllers
             try
             {
                 var response = await _payPal.PaymentPaypalComplete(sessionId, payerId, urlSuccess, urlFail);
+                if(response == urlSuccess)
+                {
+                    var request = new UpdateSessionStatusRequest()
+                    {
+                        SessionID = sessionId
+                    };
+                    await _sessionService.UpdateSessionStatusComplete(request);
+                }
                 return Ok(response);
             }
             catch (Exception ex)

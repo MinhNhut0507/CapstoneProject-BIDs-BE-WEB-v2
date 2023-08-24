@@ -18,6 +18,8 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<ICollection<Session>> GetSessionInStageByAuctioneer(Guid id);
         public Task<ICollection<Session>> GetSessionCompleteByAuctioneer(Guid id);
         public Task<ICollection<Session>> GetSessionHaventTranferByAuctioneer(Guid id);
+        public Task<ICollection<Session>> GetSessionErrorItemByAuctioneer(Guid id);
+        public Task<ICollection<Session>> GetSessionReceivedByAuctioneer(Guid id);
         public Task<ICollection<Session>> GetSessionNeedToPayByUser(Guid id);
         public Task<Users> GetUserWinning(Guid id);
         public Task<UserNotiResponse> UserNotification(int ExDay, int TypeId, string message, Guid UserId);
@@ -31,10 +33,11 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<double> Exchange();
         public Task<ICollection<Users>> GetUserJoinSession(Guid sessionId);
         public Task<ICollection<Session>> GetSessionFailHadJoin();
-        public Task<ReportSessionTotal> ReportSessionComplete(DateTime startDate, DateTime endDate);
+        public Task<ReportSessionTotal> ReportSessionAfterPayment(DateTime startDate, DateTime endDate);
         public Task<ReportSessionCount> ReportSessionHaventTranfer(DateTime startDate, DateTime endDate);
         public Task<ReportSessionCount> ReportSessionNotStart(DateTime startDate, DateTime endDate);
         public Task<ReportSessionCount> ReportSessionInStage(DateTime startDate, DateTime endDate);
+        public Task<ReportSessionTotal> ReportSessionAfterReceivedItem(DateTime startDate, DateTime endDate);
         public Task<ReportSessionCount> ReportSessionTotal();
         public Task<ReportPaymentUser> ReportPaymentUser(Guid UserId, DateTime Start, DateTime End);
 
