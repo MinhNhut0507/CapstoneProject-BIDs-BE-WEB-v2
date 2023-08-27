@@ -166,6 +166,7 @@ namespace BIDs_API.Controllers
                         SessionID = sessionId
                     };
                     await _sessionService.UpdateSessionStatusComplete(request);
+                    await _payPal.PaymentStaffReturnDeposit(sessionId);
                 }
                 return Ok(response);
             }

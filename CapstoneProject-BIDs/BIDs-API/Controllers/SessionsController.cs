@@ -434,6 +434,7 @@ namespace BIDs_API.Controllers
                         };
                         var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
                         await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
+                        await _payPal.PaymentStaffReturnDeposit(sessionUpdate.Id);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -823,6 +824,7 @@ namespace BIDs_API.Controllers
                         };
                         var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
                         await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
+                        await _payPal.PaymentStaffReturnDeposit(sessionUpdate.Id);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
