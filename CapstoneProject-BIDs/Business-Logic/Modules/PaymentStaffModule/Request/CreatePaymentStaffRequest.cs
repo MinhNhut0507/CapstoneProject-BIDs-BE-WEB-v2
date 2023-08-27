@@ -23,7 +23,7 @@ namespace Business_Logic.Modules.PaymentStaffModule.Request
             RuleFor(x => x.UserPaymentInformationId).NotEmpty().NotNull();
             RuleFor(x => x.PayPalTransactionId).NotEmpty().NotNull();
             RuleFor(x => x.PaymentDetail).NotEmpty().NotNull();
-            RuleFor(x => x.Amount).NotEmpty().NotNull();
+            RuleFor(x => x.Amount);
             RuleFor(x => x.PaymentDate).NotEmpty().NotNull();
             RuleFor(x => x.Status).NotEmpty().NotNull();
         }

@@ -1130,6 +1130,7 @@ namespace BIDs_API.Controllers
                 var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
                 await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
                 await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                await _payPal.PaymentStaffReturnDeposit(session.Id);
                 return Ok();
             }
             catch (Exception ex)
@@ -1149,16 +1150,9 @@ namespace BIDs_API.Controllers
                 var item = await _ItemService.GetItemByID(session.ItemId);
                 string message = "Bạn đã xác nhận đã nhận sản phẩm " + item.ElementAt(0).Name + ". Cảm ơn bạn đã sử dụng hệ thống đấu giá trực tuyến BIDs.";
                 var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
-                var staff = await _StaffService.GetAll();
-                string messageStaff = "Sản phẩm " + item.ElementAt(0).Name + " đã xác nhận đã nhận sản phẩm. Xin vui lòng thanh toán cho người bán.";
-                foreach (var x in staff)
-                {
-                    var staffNoti = await _Common.StaffNotification(10, (int)NotificationTypeEnum.Item, messageStaff, x.Id);
-                    await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", staffNoti.Notification);
-                    await _staffNotiHubContext.Clients.All.SendAsync("ReceiveStaffNotificationDetailAdd", staffNoti.StaffNotificationDetail);
-                }
                 await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
                 await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                await _payPal.PaymentStaffToUserSuccessSession(session.Id);
                 return Ok();
             }
             catch (Exception ex)

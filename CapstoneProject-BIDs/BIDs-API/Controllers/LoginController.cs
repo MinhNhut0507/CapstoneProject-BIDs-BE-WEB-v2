@@ -203,26 +203,12 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [HttpPost("staff_return_deposit")]
-        public async Task<IActionResult> StaffReturnDeposit([FromQuery] Guid sessionId, [FromQuery] Guid staffId, [FromQuery] string urlSuccess, [FromQuery] string urlFail)
+        [HttpGet("test_return_deposit")]
+        public async Task<IActionResult> TestReturnDeposit([FromQuery] Guid sessionId)
         {
             try
             {
-                var response = await _payPal.PaymentStaffReturnDeposit(sessionId, staffId, urlSuccess, urlFail);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost("staff_payment_to_winner")]
-        public async Task<IActionResult> StaffPaymentToWinner([FromQuery] Guid sessionId, [FromQuery] Guid userId, [FromQuery] Guid staffId, [FromQuery] string urlSuccess, [FromQuery] string urlFail)
-        {
-            try
-            {
-                var response = await _payPal.PaymentStaffToWinner(sessionId, userId, staffId, urlSuccess, urlFail);
+                var response = await _payPal.PaymentStaffReturnDeposit(sessionId);
                 return Ok(response);
             }
             catch (Exception ex)

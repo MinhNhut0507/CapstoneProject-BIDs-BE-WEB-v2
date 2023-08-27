@@ -1,5 +1,6 @@
 ﻿using BIDs_API.PaymentPayPal.Interface;
 using BIDs_API.SignalR;
+using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.PaymentStaffModule.Interface;
 using Business_Logic.Modules.PaymentStaffModule.Request;
@@ -30,6 +31,7 @@ namespace BIDs_API.PaymentPayPal
         private readonly IUserService _userService;
         private readonly IPaymentUserService _paymentUserService;
         private readonly IPaymentStaffService _paymentStaffService;
+        private readonly IBookingItemService _bookingItemService;
         private readonly IUserPaymentInformationService _userPaymentInformationService;
         private readonly IHubContext<PaymentUserHub> _userHubContext;
         private readonly IHubContext<PaymentStaffHub> _staffHubContext;
@@ -41,6 +43,7 @@ namespace BIDs_API.PaymentPayPal
             , IUserService userService
             , IPaymentUserService paymentUserService
             , IPaymentStaffService paymentStaffService
+            , IBookingItemService bookingItemService
             , IUserPaymentInformationService userPaymentInformationService
             , IHubContext<PaymentUserHub> userHubContext
             , IHubContext<PaymentStaffHub> staffHubContext
@@ -58,6 +61,7 @@ namespace BIDs_API.PaymentPayPal
             _userHubContext = userHubContext;
             _staffHubContext = staffHubContext;
             _sessionHubContext = sessionHubContext;
+            _bookingItemService = bookingItemService;
         }
 
 
@@ -310,6 +314,128 @@ namespace BIDs_API.PaymentPayPal
             }
         }
 
+        public async Task<string> PaymentStaffToUserSuccessSession(Guid sessionId)
+        {
+            double exchangeRate = await _common.Exchange();
+            var sessionList = await _sessionService.GetSessionByID(sessionId);
+            var session = sessionList.ElementAt(0);
+            var participantFee = session.Fee.ParticipationFee * session.Item.FirstPrice;
+            var bookingItem = await _bookingItemService.GetBookingItemByItem(session.ItemId);
+            var staffId = bookingItem.ElementAt(0).StaffId;
+            var user = bookingItem.ElementAt(0).Item.User;
+            var PaypalUser = await _userPaymentInformationService.GetUserPaymentInformationByUser(user.Id);
+            var EmailPaypalUser = PaypalUser.PayPalAccount;
+
+            var Total = Math.Round((session.FinalPrice - participantFee) / exchangeRate, 2);
+
+            using (HttpClient client = new HttpClient())
+            {
+                // Xây dựng chuỗi xác thực Basic Authorization
+                string authString = $"{ClientAppId}:{SecretKey}";
+                byte[] authBytes = Encoding.ASCII.GetBytes(authString);
+                string base64Auth = Convert.ToBase64String(authBytes);
+
+                // Đặt header Authorization cho yêu cầu HTTP
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64Auth);
+
+                // Tạo thanh toán hoàn trả
+                var payload = new
+                {
+                    intent = "CAPTURE",
+                    purchase_units = new[]
+                    {
+                        new
+                        {
+                            amount = new
+                            {
+                                currency_code = "USD",
+                                value = Total.ToString()
+                            }
+                        }
+                    },
+                    payer = new
+                    {
+                        email_address = EmailBIDs // Email của người chuyển tiền
+                    },
+                    payee = new
+                    {
+                        email_address = EmailPaypalUser // Email của người nhận tiền
+                    }
+                };
+
+                var payloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync("https://api-m.sandbox.paypal.com/v2/checkout/orders", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var orderData = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResponse>(responseContent);
+                string orderId = orderData.id;
+
+                // Xác nhận thanh toán hoàn trả
+                var confirmUrl = $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}/confirm-payment-source";
+
+                var payloadConfirm = new
+                {
+                    payment_source = new
+                    {
+                        paypal = new
+                        {
+                            name = new
+                            {
+                                given_name = user.Name,
+                                surname = user.Email
+                            },
+                            email_address = EmailPaypalUser,
+                            experience_context = new
+                            {
+                                payment_method_preference = "IMMEDIATE_PAYMENT_REQUIRED",
+                                brand_name = "EXAMPLE INC",
+                                locale = "en-US",
+                                landing_page = "LOGIN",
+                                shipping_preference = "SET_PROVIDED_ADDRESS",
+                                user_action = "PAY_NOW",
+                                //return_url = urlSuccess,
+                                //cancel_url = urlFail
+                            }
+                        }
+                    }
+                };
+
+                var payloadJsonConfirm = Newtonsoft.Json.JsonConvert.SerializeObject(payloadConfirm);
+                var contentConfirm = new StringContent(payloadJsonConfirm, Encoding.UTF8, "application/json");
+
+                var responseConfirm = await client.PostAsync(confirmUrl, contentConfirm);
+                var responseContentConfirm = await responseConfirm.Content.ReadAsStringAsync();
+                var responseStatus = responseConfirm.ReasonPhrase;
+
+                // Xử lý phản hồi từ PayPal và trả về status xác nhận nguồn thanh toán
+                if (responseConfirm.IsSuccessStatusCode)
+                {
+                    var createPaymentStaff = new CreatePaymentStaffRequest()
+                    {
+                        SessionId = sessionId,
+                        StaffId = staffId,
+                        UserPaymentInformationId = PaypalUser.Id,
+                        PayPalTransactionId = orderId,
+                        Amount = (session.FinalPrice - participantFee),
+                        PaymentDate = DateTime.UtcNow.AddHours(7),
+                        PaymentDetail = "Thanh toán cho sản phẩm đấu giá " + session.Item.Name + ".",
+                        Status = responseStatus
+                    };
+
+                    var paymentStaff = await _paymentStaffService.AddNewPaymentStaff(createPaymentStaff);
+
+                    await _staffHubContext.Clients.All.SendAsync("ReceivePaymentStaffAdd", paymentStaff);
+
+                    return responseStatus;
+                }
+                else
+                {
+                    return responseStatus;
+                }
+            }
+        }
+
         public async Task<string> PaymentPaypalJoining(Guid SesionId, Guid UserID, string urlSuccess, string urlFail)
         {
             double exchangeRate = await _common.Exchange();
@@ -506,12 +632,14 @@ namespace BIDs_API.PaymentPayPal
             }
         }
 
-        public async Task<string> PaymentStaffReturnDeposit(Guid sessionId, Guid staffId, string urlSuccess, string urlFail)
+        public async Task<string> PaymentStaffReturnDeposit(Guid sessionId/*, Guid staffId, string urlSuccess, string urlFail*/)
         {
             double exchangeRate = await _common.Exchange();
             var sessionList = await _sessionService.GetSessionByID(sessionId);
             var winner = await _common.GetUserWinning(sessionId);
             var session = sessionList.ElementAt(0);
+            var bookingItem = await _bookingItemService.GetBookingItemByItem(session.ItemId);
+            var staffId = bookingItem.ElementAt(0).StaffId;
             var Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
 
             var listPaymentUser = await _paymentUserService.GetPaymentUserBySession(sessionId);
@@ -588,8 +716,8 @@ namespace BIDs_API.PaymentPayPal
                                     landing_page = "LOGIN",
                                     shipping_preference = "SET_PROVIDED_ADDRESS",
                                     user_action = "PAY_NOW",
-                                    return_url = urlSuccess,
-                                    cancel_url = urlFail
+                                    //return_url = urlSuccess,
+                                    //cancel_url = urlFail
                                 }
                             }
                         }
