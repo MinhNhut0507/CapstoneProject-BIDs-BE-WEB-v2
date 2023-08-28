@@ -190,20 +190,6 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [HttpGet("check_and_update_order_paypal")]
-        public async Task<IActionResult> CheckAndUpdateOrderPaypal([FromQuery] Guid userId)
-        {
-            try
-            {
-                var response = await _payPal.CheckAndUpdateOrderComplete(userId);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpGet("test_return_deposit")]
         public async Task<IActionResult> TestReturnDeposit([FromQuery] Guid sessionId)
         {

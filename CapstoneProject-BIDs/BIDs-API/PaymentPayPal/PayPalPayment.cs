@@ -574,10 +574,11 @@ namespace BIDs_API.PaymentPayPal
             }
         }
 
-        public async Task<string> CheckAndUpdateOrderComplete(Guid userId)
+        public async Task<ResponseCheckOrder> CheckAndUpdateOrderComplete(Guid userId)
         {
             var listUserPayment = await _paymentUserService.GetPaymentUserByUser(userId);
-            var userPayment = listUserPayment.ElementAt(0);
+            var sort = listUserPayment.OrderByDescending(x => x.PaymentDate);
+            var userPayment = sort.ElementAt(0);
 
             string apiUrl = $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{userPayment.PayPalTransactionId}";
 
@@ -620,14 +621,22 @@ namespace BIDs_API.PaymentPayPal
 
                     var session = await _sessionService.UpdateSessionStatusComplete(updateStatusSession);
                     await _sessionHubContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
-
-                    return paymentUser.Status;
+                    var responseCheckOrder = new ResponseCheckOrder()
+                    {
+                        SessionID = paymentUser.SessionId,
+                        Status = paymentUser.Status
+                    };
+                    return responseCheckOrder;
                 }
                 else
                 {
                     Console.WriteLine($"Lỗi khi truy vấn đơn đặt hàng: {response.StatusCode}");
                     string errorBody = await response.Content.ReadAsStringAsync();
-                    return errorBody;
+                    var responseCheckOrder = new ResponseCheckOrder()
+                    {
+                        Status = errorBody
+                    };
+                    return responseCheckOrder;
                 }
             }
         }
@@ -641,6 +650,11 @@ namespace BIDs_API.PaymentPayPal
             var bookingItem = await _bookingItemService.GetBookingItemByItem(session.ItemId);
             var staffId = bookingItem.ElementAt(0).StaffId;
             var Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
+
+            if(Deposit == 0)
+            {
+                return "Không có phí đặt cọc";
+            }
 
             var listPaymentUser = await _paymentUserService.GetPaymentUserBySession(sessionId);
             var Total = Math.Round( Deposit / exchangeRate, 2);
@@ -771,6 +785,12 @@ namespace BIDs_API.PaymentPayPal
             public string href { get; set; }
             public string rel { get; set; }
             public string method { get; set; }
+        }
+
+        public class ResponseCheckOrder
+        {
+            public Guid SessionID { get; set; }
+            public string Status { get; set; }
         }
     }
 }

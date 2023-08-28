@@ -31,6 +31,8 @@ namespace Business_Logic.Modules.SessionModule.Interface
 
         public Task<ICollection<Session>> GetSessionByName(string Name);
 
+        public Task<ICollection<Session>> GetSessionsByUser(Guid id);
+
         public Task<ICollection<Session>> GetSessionsIsNotStart();
 
         public Task<ICollection<Session>> GetSessionsIsInStage();

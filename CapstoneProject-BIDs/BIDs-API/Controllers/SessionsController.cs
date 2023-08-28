@@ -354,8 +354,7 @@ namespace BIDs_API.Controllers
                         {
                             SessionID = list.ElementAt(i).Id
                         };
-                        var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
-                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
+                        var sessionUpdate = await PutSessionStatusToFail(updateRequest);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -432,9 +431,7 @@ namespace BIDs_API.Controllers
                         {
                             SessionID = list.ElementAt(i).Id
                         };
-                        var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
-                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
-                        await _payPal.PaymentStaffReturnDeposit(sessionUpdate.Id);
+                        var sessionUpdate = await PutSessionStatusToFail(updateRequest);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -822,9 +819,7 @@ namespace BIDs_API.Controllers
                         {
                             SessionID = list.ElementAt(i).Id
                         };
-                        var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
-                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
-                        await _payPal.PaymentStaffReturnDeposit(sessionUpdate.Id);
+                        var sessionUpdate = await PutSessionStatusToFail(updateRequest);
                         list.Remove(list.ElementAt(i));
                         i--;
                     }
@@ -985,7 +980,7 @@ namespace BIDs_API.Controllers
                         {
                             SessionID = list.ElementAt(i).Id
                         };
-                        var sessionUpdate = await PutSessionStatusNotStart(request);
+                        var sessionUpdate = await PutSessionStatusInStage(request);
                         await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
@@ -1097,7 +1092,7 @@ namespace BIDs_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [AllowAnonymous]
         [HttpPut("session_status_to_fail")]
-        public async Task<IActionResult> PutSessionStatusHaventTranfer([FromBody] UpdateSessionStatusRequest updateSessionRequest)
+        public async Task<IActionResult> PutSessionStatusToFail([FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
             try
             {
@@ -1109,6 +1104,7 @@ namespace BIDs_API.Controllers
                 var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
                 await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
                 await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                await _payPal.PaymentStaffReturnDeposit(session.Id);
                 return Ok();
             }
             catch (Exception ex)
@@ -1338,14 +1334,34 @@ namespace BIDs_API.Controllers
         }
 
         [HttpPut("check_and_update_order")]
-        public async Task<IActionResult> CheckAndUpdateOrder([FromQuery] Guid sessionId, Guid userId)
+        public async Task<IActionResult> CheckAndUpdateOrder([FromQuery] Guid userId)
         {
             try
             {
-                var payment = await _paymentUserService.GetPaymentUserBySessionAndUser(sessionId, userId);
-                var sortPayment = payment.OrderByDescending(s => s.PaymentDate);
-                var response = await _payPal.CheckAndUpdateOrderComplete(sortPayment.ElementAt(0).UserId);
-                return Ok(response);
+                var response = await _payPal.CheckAndUpdateOrderComplete(userId);
+                var session = await _SessionService.GetSessionByID(response.SessionID);
+                var listPayment = await _paymentUserService.GetPaymentUserBySessionAndUser(response.SessionID,userId);
+                if(response.Status != "OK")
+                {
+                    return Ok(response.Status);
+                }
+                if(session.ElementAt(0).Status != (int)SessionStatusEnum.HaventTranferYet)
+                {
+                    return Ok(response.SessionID);
+                }
+                else
+                {
+                    var sortPayment = listPayment.OrderByDescending(x => x.Amount);
+                    if(session.ElementAt(0).FinalPrice == sortPayment.ElementAt(0).Amount)
+                    {
+                        var updateSessionStatus = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = response.SessionID
+                        };
+                        await PutSessionStatusComplete(updateSessionStatus);
+                    }
+                }
+                return Ok(response.SessionID);
             }
             catch (Exception ex)
             {
