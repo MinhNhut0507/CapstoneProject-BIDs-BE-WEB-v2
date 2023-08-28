@@ -14,6 +14,7 @@ namespace Business_Logic.Modules.CommonModule.Interface
     {
         public Task SendEmailBeginAuction(Session session);
         public Task<Users> SendEmailWinnerAuction(Session session);
+        public Task<Users> SendEmailCompleteAuction(Session session);
         public Task SendEmailFailAuction(Session session);
         public Task<ICollection<Session>> GetSessionInStageByAuctioneer(Guid id);
         public Task<ICollection<Session>> GetSessionCompleteByAuctioneer(Guid id);
@@ -21,6 +22,9 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<ICollection<Session>> GetSessionErrorItemByAuctioneer(Guid id);
         public Task<ICollection<Session>> GetSessionReceivedByAuctioneer(Guid id);
         public Task<ICollection<Session>> GetSessionNeedToPayByUser(Guid id);
+        public Task<ICollection<Session>> GetSessionCompleteByWinner(Guid id);
+        public Task<ICollection<Session>> GetSessionReceivedByWinner(Guid id);
+        public Task<ICollection<Session>> GetSessionErrorItemByWinner(Guid id);
         public Task<Users> GetUserWinning(Guid id);
         public Task<UserNotiResponse> UserNotification(int ExDay, int TypeId, string message, Guid UserId);
         public Task<StaffNotiResponse> StaffNotification(int ExDay, int TypeId, string message, Guid StaffId);

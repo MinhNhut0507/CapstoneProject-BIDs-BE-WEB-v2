@@ -165,6 +165,63 @@ namespace Business_Logic.Modules.CommonModule
             return Winner;
         }
 
+        public async Task<Users> SendEmailCompleteAuction(Session session)
+        {
+            var item = await _ItemService.GetItemByID(session.ItemId);
+            var check = await CheckSessionIncrease(session.Id);
+            var SessionWinner = new SessionDetail();
+            var Winner = new Users();
+            if (check == true)
+            {
+                SessionWinner = await _SessionDetailService.Getwinner(session.Id);
+                Winner = await _UserService.GetUserByID(SessionWinner.UserId);
+            }
+            else
+            {
+                Winner = await GetUserWinningByJoining(session.Id);
+            }
+
+            var owner = await _UserService.GetUserByID(item.ElementAt(0).UserId);
+
+            string _gmail = "bidauctionfloor@gmail.com";
+            string _password = "gnauvhbfubtgxjow";
+
+            string sendto = Winner.Email;
+            string subject = "BIDs - Đấu Giá";
+
+            string content = "Tài khoản "
+                + Winner.Email
+                + " đã thanh toán thành công cho sản phẩm "
+                + item.ElementAt(0).Name
+                + " với mức giá "
+                + session.FinalPrice
+                + ".<br>Thông tin của người sở hữu sản phẩm là : <br>"
+                + "+ Email: " + owner.Email + "<br>+ Số điện thoại : " + owner.Phone + "<br>+ Địa chỉ: " + owner.Address
+                + ".<br>Thông tin của người đấu giá thành công là : <br>"
+                + "+ Email: " + Winner.Email + "<br>+ Số điện thoại : " + Winner.Phone + "<br>+ Địa chỉ: " + Winner.Address
+                + "<br>LƯU Ý: Hai bên vui lòng liên hệ với nhau qua thông tin đã cung cấp để có thể giao dịch sản phẩm một cách thuận tiện nhất."
+                + "<br>LƯU Ý CHO NGƯỜI ĐẤU GIÁ THÀNH CÔNG: Sau khi đã nhận được hàng, vui lòng vào trang lịch sử đấu giá thành công và chọn vào 'Đã nhận hàng' hoặc 'Nhận hàng lỗi'";
+
+            MailMessage mail = new MailMessage();
+            SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+
+            mail.From = new MailAddress(_gmail);
+            mail.To.Add(Winner.Email);
+            mail.Subject = subject;
+            mail.IsBodyHtml = true;
+            mail.Body = content;
+
+            mail.Priority = MailPriority.High;
+
+            SmtpServer.Port = 587;
+            SmtpServer.UseDefaultCredentials = false;
+            SmtpServer.Credentials = new NetworkCredential(_gmail, _password);
+            SmtpServer.EnableSsl = true;
+
+            SmtpServer.Send(mail);
+            return Winner;
+        }
+
         public async Task SendEmailFailAuction(Session session)
         {
             var item = await _ItemService.GetItemByID(session.ItemId);
@@ -279,6 +336,108 @@ namespace Business_Logic.Modules.CommonModule
                         if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
                             break;
                         if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                            if (i == listSession.Count - 1)
+                                listSession.Add(checkSession.ElementAt(0));
+                    }
+                }
+            }
+            return listSession;
+        }
+
+        public async Task<ICollection<Session>> GetSessionCompleteByWinner(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var listSession = new List<Session>();
+            var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
+            foreach (var x in sessionDetail)
+            {
+                var winner = await GetUserWinning(x.SessionId);
+                if (winner.Id != x.UserId)
+                    continue;
+                var checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                if (listSession.Count() == 0)
+                {
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                        listSession.Add(checkSession.ElementAt(0));
+                }
+                else
+                {
+                    for (int i = 0; i < listSession.Count; i++)
+                    {
+                        if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
+                            break;
+                        if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                            if (i == listSession.Count - 1)
+                                listSession.Add(checkSession.ElementAt(0));
+                    }
+                }
+            }
+            return listSession;
+        }
+
+        public async Task<ICollection<Session>> GetSessionReceivedByWinner(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var listSession = new List<Session>();
+            var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
+            foreach (var x in sessionDetail)
+            {
+                var winner = await GetUserWinning(x.SessionId);
+                if (winner.Id != x.UserId)
+                    continue;
+                var checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                if (listSession.Count() == 0)
+                {
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                        listSession.Add(checkSession.ElementAt(0));
+                }
+                else
+                {
+                    for (int i = 0; i < listSession.Count; i++)
+                    {
+                        if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
+                            break;
+                        if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Received)
+                            if (i == listSession.Count - 1)
+                                listSession.Add(checkSession.ElementAt(0));
+                    }
+                }
+            }
+            return listSession;
+        }
+
+        public async Task<ICollection<Session>> GetSessionErrorItemByWinner(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var listSession = new List<Session>();
+            var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
+            foreach (var x in sessionDetail)
+            {
+                var winner = await GetUserWinning(x.SessionId);
+                if (winner.Id != x.UserId)
+                    continue;
+                var checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                if (listSession.Count() == 0)
+                {
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                        listSession.Add(checkSession.ElementAt(0));
+                }
+                else
+                {
+                    for (int i = 0; i < listSession.Count; i++)
+                    {
+                        if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
+                            break;
+                        if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.ErrorItem)
                             if (i == listSession.Count - 1)
                                 listSession.Add(checkSession.ElementAt(0));
                     }
@@ -696,7 +855,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
                 var totalPrice = 0.00;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -734,7 +893,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
                 var totalComplete = 0;
                 var totalFail = 0;
@@ -789,7 +948,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
                 var totalPrice = 0.00;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -835,7 +994,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
                 var totalPrice = 0.00;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -881,7 +1040,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
                 var totalPrice = 0.00;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -927,7 +1086,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
                 var totalComplete = 0;
                 var totalFail = 0;
@@ -982,7 +1141,7 @@ namespace Business_Logic.Modules.CommonModule
             try
             {
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r\n";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalSend = 0.00;
                 var totalReceive = 0.00;
                 var PaymentReport = new List<PaymentReport>();
