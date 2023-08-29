@@ -1407,7 +1407,7 @@ namespace BIDs_API.Controllers
         }
 
         [HttpGet("report_session_total")]
-        public async Task<IActionResult> ReportSessionTotal([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        public async Task<IActionResult> ReportSessionTotal()
         {
             try
             {

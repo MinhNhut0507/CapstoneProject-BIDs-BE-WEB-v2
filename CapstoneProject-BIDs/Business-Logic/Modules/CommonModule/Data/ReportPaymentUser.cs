@@ -25,6 +25,8 @@ namespace Business_Logic.Modules.CommonModule.Data
         public double PaymentTotal { get; set; }
         public string PaymentID { get; set; }
         public string SessionName { get; set; }
+        public string PaymentContent { get; set; }
+        public string PayPalAccount { get; set; }
         public bool IsReceive { get; set; }
     }
 }

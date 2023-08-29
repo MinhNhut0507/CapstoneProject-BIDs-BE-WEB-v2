@@ -1176,6 +1176,8 @@ namespace Business_Logic.Modules.CommonModule
                             PaymentID = row["PayPalTransactionId"].ToString(),
                             PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
                             PaymentTotal = Convert.ToDouble(row["Amount"]),
+                            PaymentContent = Convert.ToString(row["PaymentDetails"]),
+                            PayPalAccount = Convert.ToString(row["PayPalAccount"]),
                             SessionName = session.ElementAt(0).Name
                         };
                         reportPaymentUser.PaymentReport.Add(Payment);
@@ -1211,6 +1213,8 @@ namespace Business_Logic.Modules.CommonModule
                                 PaymentID = row["PayPalTransactionId"].ToString(),
                                 PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
                                 PaymentTotal = Convert.ToDouble(row["Amount"]),
+                                PaymentContent = Convert.ToString(row["PaymentDetails"]),
+                                PayPalAccount = Convert.ToString(row["PayPalRecieveAccount"]),
                                 SessionName = session.ElementAt(0).Name
                             };
                             reportPaymentUser.PaymentReport.Add(Payment);

@@ -162,9 +162,9 @@ namespace BIDs_API.PaymentPayPal
                         SessionId = SesionId,
                         UserId = UserID,
                         PayPalTransactionId = result.Id,
-                        Amount = session.FinalPrice,
+                        Amount = session.FinalPrice - Deposit,
                         PaymentDate = DateTime.UtcNow.AddHours(7),
-                        PaymentDetail = "Thanh toán sản phẩm " + session.Item.Name + " với giá là " + session.FinalPrice + ".",
+                        PaymentDetail = "Thanh toán sản phẩm " + session.Item.Name + " với giá là " + (session.FinalPrice - Deposit) + ".",
                         Status = result.Status
                     };
 
@@ -297,7 +297,7 @@ namespace BIDs_API.PaymentPayPal
                         PayPalTransactionId = orderId,
                         Amount = (session.FinalPrice - participantFee),
                         PaymentDate = DateTime.UtcNow.AddHours(7),
-                        PaymentDetail = "Thanh toán cho sản phẩm đấu giá " + session.Item.Name + ".",
+                        PaymentDetail = "Hoàn trả phí cho sản phẩm " + session.Item.Name + ".",
                         Status = responseStatus
                     };
 
@@ -542,9 +542,9 @@ namespace BIDs_API.PaymentPayPal
                         SessionId = SesionId,
                         UserId = UserID,
                         PayPalTransactionId = result.Id,
-                        Amount = session.FinalPrice,
+                        Amount = (Deposit + JoiningFee),
                         PaymentDate = DateTime.UtcNow.AddHours(7),
-                        PaymentDetail = "Thanh toán phí tham gia và phí đặt cọc của sản phẩm " + session.Item.Name + " với giá là " + total + ".",
+                        PaymentDetail = "Thanh toán phí tham gia và phí đặt cọc của sản phẩm " + session.Item.Name + " với giá là " + (Deposit + JoiningFee) + ".",
                         Status = result.Status
                     };
 
