@@ -1516,6 +1516,7 @@ namespace BIDs_API.Controllers
                             SessionID = response.SessionID
                         };
                         await PutSessionStatusComplete(updateSessionStatus);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionAdd", updateSessionStatus);
                     }
                 }
                 return Ok(response.SessionID);

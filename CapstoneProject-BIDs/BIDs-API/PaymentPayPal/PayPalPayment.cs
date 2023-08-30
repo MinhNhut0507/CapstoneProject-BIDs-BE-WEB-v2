@@ -614,13 +614,6 @@ namespace BIDs_API.PaymentPayPal
                     var paymentUser = await _paymentUserService.UpdatePaymentUser(updatePaymentUser);
                     await _userHubContext.Clients.All.SendAsync("ReceivePaymentUserUpdate", paymentUser);
 
-                    var updateStatusSession = new UpdateSessionStatusRequest()
-                    {
-                        SessionID = paymentUser.SessionId
-                    };
-
-                    var session = await _sessionService.UpdateSessionStatusComplete(updateStatusSession);
-                    await _sessionHubContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                     var responseCheckOrder = new ResponseCheckOrder()
                     {
                         SessionID = paymentUser.SessionId,
