@@ -1261,6 +1261,57 @@ namespace BIDs_API.Controllers
                 await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
                 await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
                 await _payPal.PaymentStaffReturnDeposit(session.Id);
+                var checkJoining = await _Common.CheckSessionJoining(session.Id);
+                var winner = new Users();
+                if(checkJoining == true)
+                {
+                    var checkIncrease = await _Common.CheckSessionIncrease(session.Id);
+                    if(checkIncrease == true)
+                    {
+                        winner = await _Common.GetUserWinning(session.Id);
+                    }
+                    else
+                    {
+                        winner = await _Common.GetUserWinningByJoining(session.Id);
+                    }
+                    var banReason = "";
+                    await _StaffService.BanUser(winner.Id, banReason);
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("reject_payment")]
+        public async Task<IActionResult> RejectPayment([FromBody] UpdateSessionStatusRequest updateSessionRequest)
+        {
+            try
+            {
+                var session = await _SessionService.UpdateSessionStatusFail(updateSessionRequest);
+                await _Common.SendEmailFailAuction(session);
+                await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
+                var item = await _ItemService.GetItemByID(session.ItemId);
+                string message = "Phiên đấu giá vật phẩm " + item.ElementAt(0).Name + " của bạn đã thất bại do người đấu giá thành công từ chối thanh toán sản phẩm. Bạn sẽ được nhận 30% phí đặt cọc nếu sản phẩm có yêu cầu đặt cọc. Bạn có thể đăng ký lại phiên đấu giá trong mục phiên đấu của tôi -> phiên đấu giá thất bại.";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                await _payPal.PaymentStaffToUserRejectPayment(session.Id);
+                await _payPal.PaymentStaffReturnDeposit(session.Id);
+                var checkIncrease = await _Common.CheckSessionIncrease(session.Id);
+                var winner = new Users();
+                if (checkIncrease == true)
+                {
+                    winner = await _Common.GetUserWinning(session.Id);
+                }
+                else
+                {
+                    winner = await _Common.GetUserWinningByJoining(session.Id);
+                }
+                var banReason = "";
+                await _StaffService.BanUser(winner.Id, banReason);
                 return Ok();
             }
             catch (Exception ex)

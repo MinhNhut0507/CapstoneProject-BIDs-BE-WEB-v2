@@ -233,11 +233,11 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=212375
         [HttpPut("ban")]
-        public async Task<IActionResult> BanUser([FromQuery] Guid BanID)
+        public async Task<IActionResult> BanUser([FromQuery] Guid BanID, [FromQuery] string Reason)
         {
             try
             {
-                var user = await _StaffService.BanUser(BanID);
+                var user = await _StaffService.BanUser(BanID, Reason);
                 await _hubUserContext.Clients.All.SendAsync("ReceiveUserBan", user);
                 return Ok();
             }

@@ -1,4 +1,6 @@
-﻿using Business_Logic.Modules.LoginModule.Request;
+﻿using Business_Logic.Modules.BanHistoryModule.Interface;
+using Business_Logic.Modules.BanHistoryModule.Request;
+using Business_Logic.Modules.LoginModule.Request;
 using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.StaffModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
@@ -15,10 +17,14 @@ namespace Business_Logic.Modules.StaffModule
     {
         private readonly IStaffRepository _StaffRepository;
         private readonly IUserRepository _UserRepository;
-        public StaffService(IStaffRepository StaffRepository, IUserRepository UserRepository)
+        private readonly IBanHistoryService _BanHistoryService;
+        public StaffService(IStaffRepository StaffRepository
+            , IUserRepository UserRepository
+            , IBanHistoryService BanHistoryService)
         {
             _StaffRepository = StaffRepository;
             _UserRepository = UserRepository;
+            _BanHistoryService = BanHistoryService;
         }
 
         public async Task<ICollection<Staff>> GetAll()
@@ -366,7 +372,7 @@ namespace Business_Logic.Modules.StaffModule
             }
         }
 
-        public async Task<Users> BanUser(Guid? UserBanID)
+        public async Task<Users> BanUser(Guid? UserBanID, string Reason)
         {
             try
             {
@@ -391,6 +397,12 @@ namespace Business_Logic.Modules.StaffModule
 
                 UserBan.Status = (int)UserStatusEnum.Ban;
                 await _UserRepository.UpdateAsync(UserBan);
+                var BanRequest = new CreateBanHistoryRequest()
+                {
+                    Reason = Reason,
+                    UserId = UserBan.Id
+                };
+                await _BanHistoryService.AddNewBanHistory(BanRequest);
 
                 MailMessage mail = new MailMessage();
                 SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");

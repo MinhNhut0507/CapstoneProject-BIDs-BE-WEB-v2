@@ -30,7 +30,7 @@ namespace Business_Logic.Modules.StaffModule.Interface
 
         public Task<Users> DenyCreate(Guid? CreateAccountID, string reason);
 
-        public Task<Users> BanUser(Guid? BanUserID);
+        public Task<Users> BanUser(Guid? BanUserID, string Reason);
 
         public Task<Users> UnbanUser(Guid? UnbanUserID);
 

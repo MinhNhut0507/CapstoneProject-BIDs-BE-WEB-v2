@@ -10,5 +10,6 @@ namespace BIDs_API.PaymentPayPal.Interface
         public Task<string> PaymentStaffReturnDeposit(Guid sessionId);
         public Task<string> PaymentStaffToWinner(Guid sessionId, Guid userId, Guid staffId, string urlSuccess, string urlFail);
         public Task<string> PaymentStaffToUserSuccessSession(Guid sessionId);
+        public Task<string> PaymentStaffToUserRejectPayment(Guid sessionId);
     }
 }
