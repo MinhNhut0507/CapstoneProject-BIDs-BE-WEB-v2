@@ -217,5 +217,33 @@ namespace BIDs_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("report_payment_user_total")]
+        public async Task<IActionResult> ReportPaymentUserTotal([FromQuery] Guid userId)
+        {
+            try
+            {
+                var response = await _common.ReportPaymentUserToTal(userId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_payment_total")]
+        public async Task<IActionResult> ReportPaymentTotal()
+        {
+            try
+            {
+                var response = await _common.ReportPaymentToTal();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

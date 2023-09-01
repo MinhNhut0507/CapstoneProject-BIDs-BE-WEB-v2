@@ -526,12 +526,12 @@ namespace Business_Logic.Modules.CommonModule
                 }
                 else
                 {
-                    for(int i = 0; i < listSession.Count; i++)
+                    for (int i = 0; i < listSession.Count; i++)
                     {
                         if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
                             break;
                         if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.HaventTranferYet)
-                            if(i == listSession.Count-1)
+                            if (i == listSession.Count - 1)
                                 listSession.Add(checkSession.ElementAt(0));
                     }
                 }
@@ -543,7 +543,7 @@ namespace Business_Logic.Modules.CommonModule
         {
             var listSession = await GetSessionHaventTranferByAuctioneer(id);
 
-            for(int i = 0; i < listSession.Count; i++)
+            for (int i = 0; i < listSession.Count; i++)
             {
                 var winner = new Users();
                 var checkIncrease = await CheckSessionIncrease(listSession.ElementAt(i).Id);
@@ -555,12 +555,12 @@ namespace Business_Logic.Modules.CommonModule
                 {
                     winner = await GetUserWinningByJoining(listSession.ElementAt(i).Id);
                 }
-                if(winner.Id != id)
+                if (winner.Id != id)
                 {
                     listSession.Remove(listSession.ElementAt(i));
                     i--;
                 }
-                if(listSession.ElementAt(i).Status != (int)SessionStatusEnum.HaventTranferYet)
+                if (listSession.ElementAt(i).Status != (int)SessionStatusEnum.HaventTranferYet)
                 {
                     listSession.Remove(listSession.ElementAt(i));
                     i--;
@@ -1185,7 +1185,7 @@ namespace Business_Logic.Modules.CommonModule
                 }
 
                 var checkPaymentUserInformation = await _UserPaymentInformationService.CheckUserPaymentInformationByUser(UserId);
-                if(checkPaymentUserInformation)
+                if (checkPaymentUserInformation)
                 {
                     var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(UserId);
                     using (SqlConnection connection = new SqlConnection(connectionString))
@@ -1219,6 +1219,179 @@ namespace Business_Logic.Modules.CommonModule
                             };
                             reportPaymentUser.PaymentReport.Add(Payment);
                         }
+                    }
+                }
+                return reportPaymentUser;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportPaymentUser> ReportPaymentUserToTal(Guid UserId)
+        {
+            try
+            {
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
+                var totalSend = 0.00;
+                var totalReceive = 0.00;
+                var PaymentReport = new List<PaymentReport>();
+                var reportPaymentUser = new ReportPaymentUser()
+                {
+                    TotalReceive = totalReceive,
+                    TotalSend = totalSend,
+                    PaymentReport = PaymentReport
+                };
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM PaymentUser Where UserID = @UserId AND Status = @Status";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserId;
+                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        reportPaymentUser.TotalSend += Convert.ToDouble(row["Amount"]);
+                        var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
+                        var Payment = new PaymentReport()
+                        {
+                            IsReceive = false,
+                            PaymentID = row["PayPalTransactionId"].ToString(),
+                            PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
+                            PaymentTotal = Convert.ToDouble(row["Amount"]),
+                            PaymentContent = Convert.ToString(row["PaymentDetails"]),
+                            PayPalAccount = Convert.ToString(row["PayPalAccount"]),
+                            SessionName = session.ElementAt(0).Name
+                        };
+                        reportPaymentUser.PaymentReport.Add(Payment);
+                    }
+                }
+
+                var checkPaymentUserInformation = await _UserPaymentInformationService.CheckUserPaymentInformationByUser(UserId);
+                if (checkPaymentUserInformation)
+                {
+                    var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(UserId);
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+
+                        string query = "SELECT * FROM PaymentStaff Where UserPaymentInformationID = @Id AND Status = @Status";
+                        SqlCommand command = new SqlCommand(query, connection);
+                        //    Thay đổi giá trị của tham số ngày tháng tương ứng
+                        command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = userPaymentInformation.Id;
+                        command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+
+                        SqlDataAdapter adapter = new SqlDataAdapter(command);
+                        DataTable dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+                        foreach (DataRow row in dataTable.Rows)
+                        {
+                            reportPaymentUser.TotalReceive += Convert.ToDouble(row["Amount"]);
+                            var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
+                            var Payment = new PaymentReport()
+                            {
+                                IsReceive = true,
+                                PaymentID = row["PayPalTransactionId"].ToString(),
+                                PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
+                                PaymentTotal = Convert.ToDouble(row["Amount"]),
+                                PaymentContent = Convert.ToString(row["PaymentDetails"]),
+                                PayPalAccount = Convert.ToString(row["PayPalRecieveAccount"]),
+                                SessionName = session.ElementAt(0).Name
+                            };
+                            reportPaymentUser.PaymentReport.Add(Payment);
+                        }
+                    }
+                }
+                return reportPaymentUser;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportPaymentUser> ReportPaymentToTal()
+        {
+            try
+            {
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
+                var totalSend = 0.00;
+                var totalReceive = 0.00;
+                var PaymentReport = new List<PaymentReport>();
+                var reportPaymentUser = new ReportPaymentUser()
+                {
+                    TotalReceive = totalReceive,
+                    TotalSend = totalSend,
+                    PaymentReport = PaymentReport
+                };
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM PaymentUser Where Status = @Status";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        reportPaymentUser.TotalSend += Convert.ToDouble(row["Amount"]);
+                        var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
+                        var Payment = new PaymentReport()
+                        {
+                            IsReceive = false,
+                            PaymentID = row["PayPalTransactionId"].ToString(),
+                            PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
+                            PaymentTotal = Convert.ToDouble(row["Amount"]),
+                            PaymentContent = Convert.ToString(row["PaymentDetails"]),
+                            PayPalAccount = Convert.ToString(row["PayPalAccount"]),
+                            SessionName = session.ElementAt(0).Name
+                        };
+                        reportPaymentUser.PaymentReport.Add(Payment);
+                    }
+                }
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM PaymentStaff Where Status = @Status";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    //    Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        reportPaymentUser.TotalReceive += Convert.ToDouble(row["Amount"]);
+                        var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
+                        var Payment = new PaymentReport()
+                        {
+                            IsReceive = true,
+                            PaymentID = row["PayPalTransactionId"].ToString(),
+                            PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
+                            PaymentTotal = Convert.ToDouble(row["Amount"]),
+                            PaymentContent = Convert.ToString(row["PaymentDetails"]),
+                            PayPalAccount = Convert.ToString(row["PayPalRecieveAccount"]),
+                            SessionName = session.ElementAt(0).Name
+                        };
+                        reportPaymentUser.PaymentReport.Add(Payment);
                     }
                 }
                 return reportPaymentUser;

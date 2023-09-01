@@ -1564,10 +1564,10 @@ namespace BIDs_API.Controllers
                     {
                         var updateSessionStatus = new UpdateSessionStatusRequest()
                         {
-                            SessionID = response.SessionID
+                            SessionID = session.ElementAt(0).Id
                         };
                         await PutSessionStatusComplete(updateSessionStatus);
-                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionAdd", updateSessionStatus);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session.ElementAt(0));
                     }
                 }
                 return Ok(response.SessionID);
