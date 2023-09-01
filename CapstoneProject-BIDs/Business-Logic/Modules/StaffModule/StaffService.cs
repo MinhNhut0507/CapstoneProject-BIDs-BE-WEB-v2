@@ -397,12 +397,6 @@ namespace Business_Logic.Modules.StaffModule
 
                 UserBan.Status = (int)UserStatusEnum.Ban;
                 await _UserRepository.UpdateAsync(UserBan);
-                var BanRequest = new CreateBanHistoryRequest()
-                {
-                    Reason = Reason,
-                    UserId = UserBan.Id
-                };
-                await _BanHistoryService.AddNewBanHistory(BanRequest);
 
                 MailMessage mail = new MailMessage();
                 SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");

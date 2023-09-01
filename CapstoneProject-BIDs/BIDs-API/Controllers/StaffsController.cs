@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using BIDs_API.SignalR;
+using Business_Logic.Modules.BanHistoryModule;
+using Business_Logic.Modules.BanHistoryModule.Interface;
+using Business_Logic.Modules.BanHistoryModule.Request;
 using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.LoginModule.Request;
 using Business_Logic.Modules.StaffModule.Interface;
@@ -20,7 +23,9 @@ namespace BIDs_API.Controllers
     {
         private readonly IStaffService _StaffService;
         private readonly IMapper _mapper;
+        private readonly IBanHistoryService _BanHistoryService;
         private readonly IHubContext<UserHub> _hubUserContext;
+        private readonly IHubContext<BanHistoryHub> _hubBanContext;
         private readonly IHubContext<StaffHub> _hubStaffContext;
         private readonly IHubContext<NotificationHub> _notiHubContext;
         private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
@@ -28,7 +33,9 @@ namespace BIDs_API.Controllers
         public readonly ICommon _common;
         public StaffsController(IStaffService StaffService
             , IMapper mapper
+            , IBanHistoryService BanHistoryService
             , IHubContext<UserHub> hubUserContext
+            , IHubContext<BanHistoryHub> hubBanContext
             , IHubContext<StaffHub> hubStaffContext
             , IHubContext<NotificationHub> notiHubContext
             , IHubContext<UserNotificationDetailHub> userNotiHubContext
@@ -37,7 +44,9 @@ namespace BIDs_API.Controllers
         {
             _StaffService = StaffService;
             _mapper = mapper;
+            _BanHistoryService = BanHistoryService;
             _hubUserContext = hubUserContext;
+            _hubBanContext = hubBanContext;
             _hubStaffContext = hubStaffContext;
             _notiHubContext = notiHubContext;
             _common = common;
@@ -239,6 +248,13 @@ namespace BIDs_API.Controllers
             {
                 var user = await _StaffService.BanUser(BanID, Reason);
                 await _hubUserContext.Clients.All.SendAsync("ReceiveUserBan", user);
+                var BanRequest = new CreateBanHistoryRequest()
+                {
+                    Reason = Reason,
+                    UserId = user.Id
+                };
+                var newBan = await _BanHistoryService.AddNewBanHistory(BanRequest);
+                await _hubBanContext.Clients.All.SendAsync("ReceiveBanHistoryAdd", newBan);
                 return Ok();
             }
             catch (Exception ex)

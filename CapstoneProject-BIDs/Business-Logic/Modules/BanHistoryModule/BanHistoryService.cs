@@ -12,12 +12,10 @@ namespace Business_Logic.Modules.BanHistoryModule
     {
         private readonly IBanHistoryRepository _BanHistoryRepository;
         private readonly IUserService _UserService;
-        private readonly IStaffService _StaffService;
-        public BanHistoryService(IBanHistoryRepository BanHistoryRepository, IUserService UserService, IStaffService StaffService)
+        public BanHistoryService(IBanHistoryRepository BanHistoryRepository, IUserService UserService)
         {
             _BanHistoryRepository = BanHistoryRepository;
             _UserService = UserService;
-            _StaffService = StaffService;
         }
 
         public async Task<ICollection<BanHistory>> GetAll()
@@ -96,9 +94,7 @@ namespace Business_Logic.Modules.BanHistoryModule
             newBanHistory.CreateDate = dateTime.AddHours(7);
             newBanHistory.UpdateDate = dateTime.AddHours(7);
             newBanHistory.Status = true;
-
             await _BanHistoryRepository.AddAsync(newBanHistory);
-            await _StaffService.BanUser(newBanHistory.Id);
             return newBanHistory;
         }
 
