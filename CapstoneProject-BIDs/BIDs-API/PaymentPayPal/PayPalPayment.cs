@@ -293,7 +293,7 @@ namespace BIDs_API.PaymentPayPal
                     {
                         SessionId = sessionId,
                         StaffId = staffId,
-                        UserPaymentInformationId = PaypalUser.Id,
+                        UserId = PaypalUser.UserId,
                         PayPalTransactionId = orderId,
                         Amount = (session.FinalPrice - participantFee),
                         PaymentDate = DateTime.UtcNow.AddHours(7),
@@ -415,7 +415,7 @@ namespace BIDs_API.PaymentPayPal
                     {
                         SessionId = sessionId,
                         StaffId = staffId,
-                        UserPaymentInformationId = PaypalUser.Id,
+                        UserId = PaypalUser.UserId,
                         PayPalTransactionId = orderId,
                         Amount = (session.FinalPrice - surcharge),
                         PaymentDate = DateTime.UtcNow.AddHours(7),
@@ -537,7 +537,7 @@ namespace BIDs_API.PaymentPayPal
                     {
                         SessionId = sessionId,
                         StaffId = staffId,
-                        UserPaymentInformationId = PaypalUser.Id,
+                        UserId = PaypalUser.UserId,
                         PayPalTransactionId = orderId,
                         Amount = returnFee*(0.3),
                         PaymentDate = DateTime.UtcNow.AddHours(7),
@@ -725,12 +725,12 @@ namespace BIDs_API.PaymentPayPal
 
                     string status = jsonObject["status"].ToString();
                     JToken payerToken = jsonObject["payer"];
-                    string payerEmail = payerToken["email_address"].ToString();
+                    //string payerEmail = payerToken["email_address"].ToString();
                     var updatePaymentUser = new UpdatePaymentUserStatusRequest()
                     {
                         TransactionId = userPayment.PayPalTransactionId,
                         Status = status,
-                        PayPalAccount = payerEmail
+                        //PayPalAccount = payerEmail
                     };
 
                     var paymentUser = await _paymentUserService.UpdatePaymentUser(updatePaymentUser);
@@ -788,10 +788,24 @@ namespace BIDs_API.PaymentPayPal
             var listPaymentUser = await _paymentUserService.GetPaymentUserBySession(sessionId);
             var Total = Math.Round( Deposit / exchangeRate, 2);
 
+            var listUserCheckDup = new List<Data_Access.Entities.PaymentUser>();
+
             foreach ( var paymentUser in listPaymentUser ) 
             {
+                bool check = true;
                 if (paymentUser.UserId == winner.Id)
                     continue;
+                if(listUserCheckDup.Count != 0)
+                {
+                    foreach (var checkDup in listUserCheckDup)
+                    {
+                        if (checkDup.UserId == paymentUser.UserId)
+                            check = false;
+                    }
+                }
+                if (check == false)
+                    continue;
+                listUserCheckDup.Add(paymentUser);
                 var user = await _userService.GetUserByID(paymentUser.UserId);
                 using (HttpClient client = new HttpClient())
                 {
@@ -885,7 +899,8 @@ namespace BIDs_API.PaymentPayPal
                             Amount = Deposit,
                             PaymentDate = DateTime.UtcNow.AddHours(7),
                             PaymentDetail = "Hoàn trả phí đặt cọc cho sản phẩm đấu giá " + session.Item.Name + ".",
-                            Status = responseStatus
+                            Status = responseStatus,
+                            UserId = paymentUser.UserId
                         };
 
                         var paymentStaff = await _paymentStaffService.AddNewReturnDeposit(createPaymentStaff);

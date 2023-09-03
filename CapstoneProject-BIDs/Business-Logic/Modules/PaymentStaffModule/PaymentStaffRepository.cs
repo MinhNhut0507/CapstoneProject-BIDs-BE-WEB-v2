@@ -43,7 +43,7 @@ namespace Business_Logic.Modules.PaymentStaffModule
 
             query = query.Include(s => s.Session)
                 .Include(s => s.Session.SessionDetails)
-                .Include(s => s.PaymentInformation)
+                //.Include(s => s.PaymentInformation)
                 .Include(s => s.Staff);
 
             return options != null ? options(query).ToList() : await query.ToListAsync();

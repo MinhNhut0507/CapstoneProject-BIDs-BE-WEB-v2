@@ -13,12 +13,10 @@ namespace Business_Logic.Modules.PaymentStaffModule
     public class PaymentStaffService : IPaymentStaffService
     {
         private readonly IPaymentStaffRepository _PaymentStaffRepository;
-        private readonly IStaffRepository _StaffRepository;
         public PaymentStaffService(IPaymentStaffRepository PaymentStaffRepository
             ,IStaffRepository staffRepository)
         {
             _PaymentStaffRepository = PaymentStaffRepository;
-            _StaffRepository = staffRepository;
         }
 
         public async Task<ICollection<PaymentStaff>> GetAll()
@@ -70,10 +68,10 @@ namespace Business_Logic.Modules.PaymentStaffModule
 
             newPaymentStaff.Id = Guid.NewGuid();
             newPaymentStaff.StaffId = PaymentStaffRequest.StaffId;
-            newPaymentStaff.UserPaymentInformationId = PaymentStaffRequest.UserPaymentInformationId;
             newPaymentStaff.SessionId = PaymentStaffRequest.SessionId;
             newPaymentStaff.Amount = PaymentStaffRequest.Amount;
             newPaymentStaff.PaymentDate = PaymentStaffRequest.PaymentDate;
+            newPaymentStaff.UserId = PaymentStaffRequest.UserId;
             newPaymentStaff.PaymentDetail = PaymentStaffRequest.PaymentDetail;
             newPaymentStaff.PayPalTransactionId = PaymentStaffRequest.PayPalTransactionId;
             newPaymentStaff.Status = PaymentStaffRequest.Status;
@@ -98,6 +96,7 @@ namespace Business_Logic.Modules.PaymentStaffModule
             newPaymentStaff.PayPalRecieveAccount = PaymentStaffRequest.PayPalRecieveAccount;
             newPaymentStaff.SessionId = PaymentStaffRequest.SessionId;
             newPaymentStaff.Amount = PaymentStaffRequest.Amount;
+            newPaymentStaff.UserId = PaymentStaffRequest.UserId;
             newPaymentStaff.PaymentDate = PaymentStaffRequest.PaymentDate;
             newPaymentStaff.PaymentDetail = PaymentStaffRequest.PaymentDetail;
             newPaymentStaff.PayPalTransactionId = PaymentStaffRequest.PayPalTransactionId;

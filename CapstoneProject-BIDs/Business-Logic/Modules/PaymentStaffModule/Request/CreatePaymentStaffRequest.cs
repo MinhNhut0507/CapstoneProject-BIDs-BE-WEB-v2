@@ -7,7 +7,7 @@ namespace Business_Logic.Modules.PaymentStaffModule.Request
     {
         public Guid StaffId { get; set; }
         public Guid SessionId { get; set; }
-        public Guid UserPaymentInformationId { get; set; }
+        public Guid UserId { get; set; }
         public string PayPalTransactionId { get; set; }
         public string PaymentDetail { get; set; }
         public double Amount { get; set; }
@@ -20,7 +20,7 @@ namespace Business_Logic.Modules.PaymentStaffModule.Request
         {
             RuleFor(x => x.StaffId).NotEmpty().NotNull();
             RuleFor(x => x.SessionId).NotEmpty().NotNull();
-            RuleFor(x => x.UserPaymentInformationId).NotEmpty().NotNull();
+            RuleFor(x => x.UserId).NotEmpty().NotNull();
             RuleFor(x => x.PayPalTransactionId).NotEmpty().NotNull();
             RuleFor(x => x.PaymentDetail).NotEmpty().NotNull();
             RuleFor(x => x.Amount);

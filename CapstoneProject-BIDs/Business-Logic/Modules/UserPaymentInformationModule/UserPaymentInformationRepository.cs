@@ -41,8 +41,8 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
                 }
             }
 
-            query = query.Include(s => s.PaymentStaffs)
-                .Include(s => s.User);
+            //query = query.Include(s => s.PaymentStaffs)
+            //    .Include(s => s.User);
 
             return options != null ? options(query).ToList() : await query.ToListAsync();
         }

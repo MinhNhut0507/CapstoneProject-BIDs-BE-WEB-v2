@@ -13,6 +13,7 @@ namespace Data_Access.Entities
             Items = new HashSet<Item>();
             UserPaymentInformations = new HashSet<UserPaymentInformation>();
             PaymentUsers = new HashSet<PaymentUser>();
+            PaymentStaffs = new HashSet<PaymentStaff>();
             SessionDetails = new HashSet<SessionDetail>();
             UserNotificationDetails = new HashSet<UserNotificationDetail>();
         }
@@ -38,6 +39,7 @@ namespace Data_Access.Entities
         public virtual ICollection<SessionDetail> SessionDetails { get; set; }
         public virtual ICollection<UserPaymentInformation> UserPaymentInformations { get; set; }
         public virtual ICollection<PaymentUser> PaymentUsers { get; set; }
+        public virtual ICollection<PaymentStaff> PaymentStaffs { get; set; }
         public virtual ICollection<UserNotificationDetail> UserNotificationDetails { get; set; }
 
     }

@@ -431,26 +431,26 @@ namespace Data_Access.Entities
                     .HasMaxLength(100)
                     .HasColumnName("PayPalRecieveAccount");
 
-                entity.Property(e => e.SessionId).HasColumnName("SessionID");
-
-                entity.Property(e => e.UserPaymentInformationId).HasColumnName("UserPaymentInformationID");
+                entity.Property(e => e.SessionId).IsRequired().HasColumnName("SessionID");
 
                 entity.Property(e => e.Amount)
                     .IsRequired()
                     .HasColumnName("Amount");
 
-                entity.Property(e => e.StaffId).HasColumnName("StaffID");
-
-                entity.HasOne(d => d.PaymentInformation)
-                    .WithMany(p => p.PaymentStaffs)
-                    .HasForeignKey(d => d.UserPaymentInformationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_PaymentStaff_UserPaymentInfomation");
+                entity.Property(e => e.StaffId).IsRequired().HasColumnName("StaffID");
+                entity.Property(e => e.StaffId).IsRequired().HasColumnName("UserID");
 
                 entity.HasOne(d => d.Session)
                     .WithMany(p => p.PaymentStaffs)
                     .HasForeignKey(d => d.SessionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PaymentStaff_Session");
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.PaymentStaffs)
+                    .HasForeignKey(d => d.SessionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PaymentStaff_Users");
 
                 entity.HasOne(d => d.Staff)
                     .WithMany(p => p.PaymentStaffs)

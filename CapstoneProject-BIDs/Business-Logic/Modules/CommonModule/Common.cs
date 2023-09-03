@@ -1198,7 +1198,7 @@ namespace Business_Logic.Modules.CommonModule
                         command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = userPaymentInformation.Id;
                         command.Parameters.Add("@StartDate", SqlDbType.Date).Value = Start;
                         command.Parameters.Add("@EndDate", SqlDbType.Date).Value = End;
-                        command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+                        command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "OK";
 
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         DataTable dataTable = new DataTable();
@@ -1288,7 +1288,7 @@ namespace Business_Logic.Modules.CommonModule
                         SqlCommand command = new SqlCommand(query, connection);
                         //    Thay đổi giá trị của tham số ngày tháng tương ứng
                         command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = userPaymentInformation.Id;
-                        command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+                        command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "OK";
 
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         DataTable dataTable = new DataTable();
@@ -1372,7 +1372,7 @@ namespace Business_Logic.Modules.CommonModule
                     string query = "SELECT * FROM PaymentStaff Where Status = @Status";
                     SqlCommand command = new SqlCommand(query, connection);
                     //    Thay đổi giá trị của tham số ngày tháng tương ứng
-                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "APPROVED";
+                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "OK";
 
                     SqlDataAdapter adapter = new SqlDataAdapter(command);
                     DataTable dataTable = new DataTable();

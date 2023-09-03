@@ -5,43 +5,6 @@ namespace Data_Access.Entities
 {
     public class BIDsContextSeed
     {
-        //public Guid adminIDseed = Guid.NewGuid();
-        //public Guid staffIDseed = Guid.NewGuid();
-        //public Guid userWaittingIDseed = Guid.NewGuid();
-        //public Guid userActiveIDseed = Guid.NewGuid();
-        //public Guid userActive2IDseed = Guid.NewGuid();
-        //public Guid userDenyIDseed = Guid.NewGuid();
-        //public Guid userBanIDseed = Guid.NewGuid();
-        //public Guid banIDseed = Guid.NewGuid();
-        //public Guid categoryTechIDseed = Guid.NewGuid();
-        //public Guid categoryBikeIDseed = Guid.NewGuid();
-        //public Guid categoryMotoIDseed = Guid.NewGuid();
-        //public Guid categoryOldIDseed = Guid.NewGuid();
-        //public Guid descriptionTech1IDseed = Guid.NewGuid();
-        //public Guid descriptionTech2IDseed = Guid.NewGuid();
-        //public Guid descriptionTech3IDseed = Guid.NewGuid();
-        //public Guid descriptionTech4IDseed = Guid.NewGuid();
-        //public Guid descriptionBike1IDseed = Guid.NewGuid();
-        //public Guid descriptionBike2IDseed = Guid.NewGuid();
-        //public Guid descriptionBike3IDseed = Guid.NewGuid();
-        //public Guid descriptionMoto1IDseed = Guid.NewGuid();
-        //public Guid descriptionMoto2IDseed = Guid.NewGuid();
-        //public Guid descriptionMoto3IDseed = Guid.NewGuid();
-        //public Guid descriptionMoto4IDseed = Guid.NewGuid();
-        //public Guid descriptionOld1IDseed = Guid.NewGuid();
-        //public Guid descriptionOld2IDseed = Guid.NewGuid();
-        //public Guid descriptionOld3IDseed = Guid.NewGuid();
-        //public Guid descriptionOld4IDseed = Guid.NewGuid();
-        //public Guid item1IDseed = Guid.NewGuid();
-        //public Guid item2IDseed = Guid.NewGuid();
-        //public Guid itemdescriptionTech1IDseed = Guid.NewGuid();
-        //public Guid itemdescriptionTech2IDseed = Guid.NewGuid();
-        //public Guid itemdescriptionTech3IDseed = Guid.NewGuid();
-        //public Guid itemdescriptionTech4IDseed = Guid.NewGuid();
-        //public Guid itemdescriptionMoto1IDseed = Guid.NewGuid();
-        //public Guid itemdescriptionMoto2IDseed = Guid.NewGuid();
-        //public Guid itemdescriptionMoto3IDseed = Guid.NewGuid();
-        //public Guid itemdescriptionMoto4IDseed = Guid.NewGuid();
 
         public async Task SeedAsync(BIDsContext context, ILogger<BIDsContextSeed> logger)
         {

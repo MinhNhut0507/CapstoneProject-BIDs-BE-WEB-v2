@@ -1541,6 +1541,7 @@ namespace BIDs_API.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPut("check_and_update_order")]
         public async Task<IActionResult> CheckAndUpdateOrder([FromQuery] Guid userId)
         {
@@ -1548,19 +1549,20 @@ namespace BIDs_API.Controllers
             {
                 var response = await _payPal.CheckAndUpdateOrderComplete(userId);
                 var session = await _SessionService.GetSessionByID(response.SessionID);
+                var deposit = session.ElementAt(0).Fee.DepositFee * session.ElementAt(0).Item.FirstPrice;
                 var listPayment = await _paymentUserService.GetPaymentUserBySessionAndUser(response.SessionID,userId);
-                if(response.Status != "OK")
-                {
-                    return Ok(response.Status);
-                }
-                if(session.ElementAt(0).Status != (int)SessionStatusEnum.HaventTranferYet)
+                //if (response.Status != "APPROVED")
+                //{
+                //    return Ok(response.Status);
+                //}
+                if (session.ElementAt(0).Status != (int)SessionStatusEnum.HaventTranferYet)
                 {
                     return Ok(response.SessionID);
                 }
                 else
                 {
                     var sortPayment = listPayment.OrderByDescending(x => x.Amount);
-                    if(session.ElementAt(0).FinalPrice == sortPayment.ElementAt(0).Amount)
+                    if((session.ElementAt(0).FinalPrice - deposit) == sortPayment.ElementAt(0).Amount)
                     {
                         var updateSessionStatus = new UpdateSessionStatusRequest()
                         {

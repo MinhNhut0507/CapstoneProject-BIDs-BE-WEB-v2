@@ -159,15 +159,6 @@ namespace BIDs_API.Controllers
             try
             {
                 var response = await _payPal.PaymentPaypalComplete(sessionId, payerId, urlSuccess, urlFail);
-                if(response == urlSuccess)
-                {
-                    var request = new UpdateSessionStatusRequest()
-                    {
-                        SessionID = sessionId
-                    };
-                    await _sessionService.UpdateSessionStatusComplete(request);
-                    await _payPal.PaymentStaffReturnDeposit(sessionId);
-                }
                 return Ok(response);
             }
             catch (Exception ex)

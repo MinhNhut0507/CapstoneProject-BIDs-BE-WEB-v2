@@ -15,7 +15,7 @@ namespace Business_Logic.Modules.PaymentUserModule.Request
         {
             RuleFor(x => x.TransactionId).NotEmpty().NotNull();
             RuleFor(x => x.Status).NotEmpty().NotNull();
-            RuleFor(x => x.PayPalAccount).NotEmpty().NotNull();
+            RuleFor(x => x.PayPalAccount);
         }
     }
 }

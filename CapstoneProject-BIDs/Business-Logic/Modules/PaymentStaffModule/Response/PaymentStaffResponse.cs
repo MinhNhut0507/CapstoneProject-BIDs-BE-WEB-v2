@@ -11,7 +11,6 @@ namespace Business_Logic.Modules.PaymentStaffModule.Response
         public Guid Id { get; set; }
         public Guid StaffId { get; set; }
         public Guid SessionId { get; set; }
-        public Guid UserPaymentInformationId { get; set; }
         public Guid PayPalTransactionId { get; set; }
         public string PaymentDetail { get; set; }
         public double Amount { get; set; }
