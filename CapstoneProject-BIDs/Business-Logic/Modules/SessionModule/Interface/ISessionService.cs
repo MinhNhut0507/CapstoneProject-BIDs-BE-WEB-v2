@@ -58,6 +58,11 @@ namespace Business_Logic.Modules.SessionModule.Interface
         public Task<ICollection<Session>> GetSessionsIsHaventPayByUser(Guid id);
 
         public Task<ICollection<Session>> GetSessionsIsFailByUser(Guid id);
+
+        public Task<ICollection<Session>> GetSessionsIsReceivedByUser(Guid id);
+
+        public Task<ICollection<Session>> GetSessionsIsErrorItemByUser(Guid id);
+
         public Task<Session> AddNewBeginSession(CreateBeginSessionRequest SessionRequest);
     }
 }

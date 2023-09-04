@@ -125,6 +125,18 @@ namespace Business_Logic.Modules.SessionModule
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.Fail).ToList());
         }
 
+        public async Task<ICollection<Session>> GetSessionsIsReceivedByUser(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.Received).ToList());
+        }
+
+        public async Task<ICollection<Session>> GetSessionsIsErrorItemByUser(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
+                , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.ErrorItem).ToList());
+        }
+
         public async Task<ICollection<Session>> GetSessionByID(Guid? id)
         {
             if (id == null)
