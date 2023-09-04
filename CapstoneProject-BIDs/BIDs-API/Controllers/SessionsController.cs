@@ -1567,6 +1567,7 @@ namespace BIDs_API.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("report_session_total")]
         public async Task<IActionResult> ReportSessionTotal()
         {
@@ -1651,7 +1652,6 @@ namespace BIDs_API.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPut("check_and_update_order")]
         public async Task<IActionResult> CheckAndUpdateOrder([FromQuery] Guid userId)
         {

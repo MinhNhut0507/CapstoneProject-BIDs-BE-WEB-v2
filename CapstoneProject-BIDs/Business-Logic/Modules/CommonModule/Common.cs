@@ -850,7 +850,7 @@ namespace Business_Logic.Modules.CommonModule
             return listUser;
         }
 
-        public async Task<ReportSessionCount> ReportSessionTotal()
+        public async Task<ReportTotalSessionPayment> ReportSessionTotal()
         {
             try
             {
@@ -858,6 +858,8 @@ namespace Business_Logic.Modules.CommonModule
                 //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
                 var totalPrice = 0.00;
+                var totalReceive = 0.00;
+                var totalSend = 0.00;
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
@@ -873,11 +875,39 @@ namespace Business_Logic.Modules.CommonModule
                         totalCount++;
                         totalPrice += Convert.ToDouble(row["FinalPrice"]);
                     }
+
+                    string queryPaymentUser = "SELECT * FROM PaymentUser WHERE Status = @StatusUser";
+                    SqlCommand commandPaymentUser = new SqlCommand(queryPaymentUser, connection);
+
+                    commandPaymentUser.Parameters.Add("@StatusUser", SqlDbType.NVarChar).Value = "APPROVED";
+
+                    SqlDataAdapter adapterPaymentUser = new SqlDataAdapter(commandPaymentUser);
+                    DataTable dataTablePaymentUser = new DataTable();
+                    adapterPaymentUser.Fill(dataTablePaymentUser);
+                    foreach (DataRow row in dataTablePaymentUser.Rows)
+                    {
+                        totalReceive += Convert.ToDouble(row["Amount"]);
+                    }
+
+                    string queryPaymentStaff = "SELECT * FROM PaymentStaff WHERE Status = @StatusStaff";
+                    SqlCommand commandPaymentStaff = new SqlCommand(queryPaymentStaff, connection);
+
+                    commandPaymentStaff.Parameters.Add("@StatusStaff", SqlDbType.NVarChar).Value = "OK";
+
+                    SqlDataAdapter adapterPaymentStaff = new SqlDataAdapter(commandPaymentStaff);
+                    DataTable dataTablePaymentStaff = new DataTable();
+                    adapterPaymentStaff.Fill(dataTablePaymentStaff);
+                    foreach (DataRow row in dataTablePaymentStaff.Rows)
+                    {
+                        totalSend += Convert.ToDouble(row["Amount"]);
+                    }
                 }
-                var responseReport = new ReportSessionCount()
+                var responseReport = new ReportTotalSessionPayment()
                 {
                     TotalCount = totalCount,
-                    TotalPrice = totalPrice
+                    TotalPrice = totalPrice,
+                    TotalReceive = totalReceive,
+                    TotalSend = totalSend
                 };
                 return responseReport;
             }
