@@ -1183,42 +1183,36 @@ namespace Business_Logic.Modules.CommonModule
                         reportPaymentUser.PaymentReport.Add(Payment);
                     }
                 }
-
-                var checkPaymentUserInformation = await _UserPaymentInformationService.CheckUserPaymentInformationByUser(UserId);
-                if (checkPaymentUserInformation)
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(UserId);
-                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    connection.Open();
+
+                    string query = "SELECT * FROM PaymentStaff Where UserID = @Id AND PaymentDate >= @StartDate AND PaymentDate <= @EndDate AND Status = @Status";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    //    Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = UserId;
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = Start;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = End;
+                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "OK";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
                     {
-                        connection.Open();
-
-                        string query = "SELECT * FROM PaymentStaff Where UserPaymentInformationID = @Id AND PaymentDate >= @StartDate AND PaymentDate <= @EndDate AND Status = @Status";
-                        SqlCommand command = new SqlCommand(query, connection);
-                        //    Thay đổi giá trị của tham số ngày tháng tương ứng
-                        command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = userPaymentInformation.Id;
-                        command.Parameters.Add("@StartDate", SqlDbType.Date).Value = Start;
-                        command.Parameters.Add("@EndDate", SqlDbType.Date).Value = End;
-                        command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "OK";
-
-                        SqlDataAdapter adapter = new SqlDataAdapter(command);
-                        DataTable dataTable = new DataTable();
-                        adapter.Fill(dataTable);
-                        foreach (DataRow row in dataTable.Rows)
+                        reportPaymentUser.TotalReceive += Convert.ToDouble(row["Amount"]);
+                        var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
+                        var Payment = new PaymentReport()
                         {
-                            reportPaymentUser.TotalReceive += Convert.ToDouble(row["Amount"]);
-                            var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
-                            var Payment = new PaymentReport()
-                            {
-                                IsReceive = true,
-                                PaymentID = row["PayPalTransactionId"].ToString(),
-                                PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
-                                PaymentTotal = Convert.ToDouble(row["Amount"]),
-                                PaymentContent = Convert.ToString(row["PaymentDetails"]),
-                                PayPalAccount = Convert.ToString(row["PayPalRecieveAccount"]),
-                                SessionName = session.ElementAt(0).Name
-                            };
-                            reportPaymentUser.PaymentReport.Add(Payment);
-                        }
+                            IsReceive = true,
+                            PaymentID = row["PayPalTransactionId"].ToString(),
+                            PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
+                            PaymentTotal = Convert.ToDouble(row["Amount"]),
+                            PaymentContent = Convert.ToString(row["PaymentDetails"]),
+                            PayPalAccount = Convert.ToString(row["PayPalRecieveAccount"]),
+                            SessionName = session.ElementAt(0).Name
+                        };
+                        reportPaymentUser.PaymentReport.Add(Payment);
                     }
                 }
                 return reportPaymentUser;
@@ -1275,40 +1269,34 @@ namespace Business_Logic.Modules.CommonModule
                         reportPaymentUser.PaymentReport.Add(Payment);
                     }
                 }
-
-                var checkPaymentUserInformation = await _UserPaymentInformationService.CheckUserPaymentInformationByUser(UserId);
-                if (checkPaymentUserInformation)
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(UserId);
-                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    connection.Open();
+
+                    string query = "SELECT * FROM PaymentStaff Where UserID = @Id AND Status = @Status";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    //    Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = UserId;
+                    command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "OK";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
                     {
-                        connection.Open();
-
-                        string query = "SELECT * FROM PaymentStaff Where UserPaymentInformationID = @Id AND Status = @Status";
-                        SqlCommand command = new SqlCommand(query, connection);
-                        //    Thay đổi giá trị của tham số ngày tháng tương ứng
-                        command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = userPaymentInformation.Id;
-                        command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = "OK";
-
-                        SqlDataAdapter adapter = new SqlDataAdapter(command);
-                        DataTable dataTable = new DataTable();
-                        adapter.Fill(dataTable);
-                        foreach (DataRow row in dataTable.Rows)
+                        reportPaymentUser.TotalReceive += Convert.ToDouble(row["Amount"]);
+                        var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
+                        var Payment = new PaymentReport()
                         {
-                            reportPaymentUser.TotalReceive += Convert.ToDouble(row["Amount"]);
-                            var session = await _SessionService.GetSessionByID(Guid.Parse(row["SessionID"].ToString()));
-                            var Payment = new PaymentReport()
-                            {
-                                IsReceive = true,
-                                PaymentID = row["PayPalTransactionId"].ToString(),
-                                PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
-                                PaymentTotal = Convert.ToDouble(row["Amount"]),
-                                PaymentContent = Convert.ToString(row["PaymentDetails"]),
-                                PayPalAccount = Convert.ToString(row["PayPalRecieveAccount"]),
-                                SessionName = session.ElementAt(0).Name
-                            };
-                            reportPaymentUser.PaymentReport.Add(Payment);
-                        }
+                            IsReceive = true,
+                            PaymentID = row["PayPalTransactionId"].ToString(),
+                            PaymentTime = Convert.ToDateTime(row["PaymentDate"]),
+                            PaymentTotal = Convert.ToDouble(row["Amount"]),
+                            PaymentContent = Convert.ToString(row["PaymentDetails"]),
+                            PayPalAccount = Convert.ToString(row["PayPalRecieveAccount"]),
+                            SessionName = session.ElementAt(0).Name
+                        };
+                        reportPaymentUser.PaymentReport.Add(Payment);
                     }
                 }
                 return reportPaymentUser;
