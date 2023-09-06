@@ -27,7 +27,7 @@ namespace Business_Logic.Modules.PaymentStaffModule
 
         public async Task<ICollection<PaymentStaff>> GetPaymentStaffByID(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -42,7 +42,7 @@ namespace Business_Logic.Modules.PaymentStaffModule
 
         public async Task<ICollection<PaymentStaff>> GetPaymentStaffBySession(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

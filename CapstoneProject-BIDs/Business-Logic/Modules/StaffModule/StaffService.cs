@@ -39,7 +39,7 @@ namespace Business_Logic.Modules.StaffModule
 
         public async Task<Staff> GetStaffByID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -240,7 +240,7 @@ namespace Business_Logic.Modules.StaffModule
         {
             try
             {
-                if (StaffDeleteID == null)
+                if (StaffDeleteID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
@@ -267,7 +267,7 @@ namespace Business_Logic.Modules.StaffModule
         {
             try
             {
-                if (accountCreateID == null)
+                if (accountCreateID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
@@ -321,7 +321,7 @@ namespace Business_Logic.Modules.StaffModule
         {
             try
             {
-                if (accountCreateID == null)
+                if (accountCreateID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
@@ -376,7 +376,7 @@ namespace Business_Logic.Modules.StaffModule
         {
             try
             {
-                if (UserBanID == null)
+                if (UserBanID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
@@ -428,7 +428,7 @@ namespace Business_Logic.Modules.StaffModule
         {
             try
             {
-                if (UserUnbanID == null)
+                if (UserUnbanID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }

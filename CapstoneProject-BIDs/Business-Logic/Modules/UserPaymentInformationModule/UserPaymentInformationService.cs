@@ -31,7 +31,7 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
 
         public async Task<ICollection<UserPaymentInformation>> GetUserPaymentInformationByID(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -46,7 +46,7 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
 
         public async Task<UserPaymentInformation> GetUserPaymentInformationByUser(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -60,7 +60,7 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
 
         public async Task<bool> CheckUserPaymentInformationByUser(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

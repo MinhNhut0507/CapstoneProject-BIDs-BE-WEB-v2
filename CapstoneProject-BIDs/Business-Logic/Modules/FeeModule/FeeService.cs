@@ -27,7 +27,7 @@ namespace Business_Logic.Modules.FeeModule
 
         public async Task<Fee> GetFeeByID(int id)
         {
-            if (id == null)
+            if (id <= 0)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

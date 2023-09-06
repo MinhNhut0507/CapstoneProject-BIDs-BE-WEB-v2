@@ -50,7 +50,7 @@ namespace Business_Logic.Modules.ItemModule
 
         public async Task<ICollection<Item>> GetItemByID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -80,7 +80,7 @@ namespace Business_Logic.Modules.ItemModule
 
         public async Task<ICollection<Item>> GetItemByUserID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -264,7 +264,7 @@ namespace Business_Logic.Modules.ItemModule
         //{
         //    try
         //    {
-        //        if (ItemDeleteID == null)
+        //        if (ItemDeleteid == Guid.Empty)
         //        {
         //            throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
         //        }

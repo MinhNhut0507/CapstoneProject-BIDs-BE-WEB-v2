@@ -918,10 +918,59 @@ namespace Business_Logic.Modules.CommonModule
             }
         }
 
+        public async Task<ReportSessionCount> ReportSessionTotalByDate(DateTime Start, DateTime End)
+        {
+            try
+            {
+                if(Start >= End)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
+                }
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
+                var totalCount = 0;
+                var totalPrice = 0.00;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM Session WHERE CreateDate >= @Start AND CreateDate <= @End";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    command.Parameters.Add("@Start", SqlDbType.DateTime).Value = Start;
+                    command.Parameters.Add("@End", SqlDbType.DateTime).Value = End;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        totalCount++;
+                        totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                    }
+                }
+                var responseReport = new ReportSessionCount()
+                {
+                    TotalCount = totalCount,
+                    TotalPrice = totalPrice,
+                };
+                return responseReport;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<ReportSessionTotal> ReportSessionAfterPayment(DateTime startDate, DateTime endDate)
         {
             try
             {
+                if (startDate >= endDate)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
+                }
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
                 //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
@@ -977,6 +1026,10 @@ namespace Business_Logic.Modules.CommonModule
         {
             try
             {
+                if (startDate >= endDate)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
+                }
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
                 //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
@@ -1023,6 +1076,10 @@ namespace Business_Logic.Modules.CommonModule
         {
             try
             {
+                if (startDate >= endDate)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
+                }
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
                 //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
@@ -1069,6 +1126,10 @@ namespace Business_Logic.Modules.CommonModule
         {
             try
             {
+                if (startDate >= endDate)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
+                }
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
                 //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
@@ -1115,6 +1176,10 @@ namespace Business_Logic.Modules.CommonModule
         {
             try
             {
+                if (startDate >= endDate)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
+                }
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
                 //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
@@ -1170,6 +1235,10 @@ namespace Business_Logic.Modules.CommonModule
         {
             try
             {
+                if (Start >= End)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
+                }
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
                 //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalSend = 0.00;
@@ -1413,6 +1482,167 @@ namespace Business_Logic.Modules.CommonModule
                     }
                 }
                 return reportPaymentUser;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportCategory> ReportCategoryDetail(Guid CategoryId, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                if (CategoryId == Guid.Empty)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+                }
+                if (startDate >= endDate)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
+                }
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
+                var totalCount = 0;
+                var totalNotStart = 0;
+                var totalInStage = 0;
+                var totalHaventTranfer = 0;
+                var totalFail = 0;
+                var totalComplete= 0;
+                var totalReceive = 0;
+                var totalErrorItem = 0;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT s.* " +
+                        "FROM Session AS s " +
+                        "INNER JOIN Item AS i ON s.ItemID = i.ID " +
+                        "WHERE i.CategoryID = @CategoryId " +
+                        "AND s.CreateDate >= @StartDate AND s.CreateDate <= @EndDate;";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+                    command.Parameters.Add("@CategoryId", SqlDbType.UniqueIdentifier).Value = CategoryId;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        totalCount++;
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.NotStart)
+                        {
+                            totalNotStart++;
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.InStage)
+                        {
+                            totalInStage++;
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.HaventTranferYet)
+                        {
+                            totalHaventTranfer++;
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Fail)
+                        {
+                            totalFail++;
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Complete)
+                        {
+                            totalComplete++;
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Received)
+                        {
+                            totalReceive++;
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.ErrorItem)
+                        {
+                            totalErrorItem++;
+                        }
+                    }
+                }
+                var responseReport = new ReportCategory()
+                {
+                    TotalCount = totalCount,
+                    CompleteCount = totalComplete,
+                    ErrorItemCount = totalErrorItem,
+                    FailCount = totalFail,
+                    HaventTranferCount = totalHaventTranfer,
+                    InStageCount = totalInStage,
+                    NotStartCount = totalNotStart,
+                    ReceiveCount = totalReceive
+                };
+                return responseReport;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ReportUser> ReportUser(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                if (startDate >= endDate)
+                {
+                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
+                }
+                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
+                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
+                var totalCount = 0;
+                var totalAccepted = 0;
+                var totalRejected = 0;
+                var totalBanned = 0;
+                var totalWaiting = 0;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM Users WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    // Thay đổi giá trị của tham số ngày tháng tương ứng
+                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
+                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        totalCount++;
+                        if (Convert.ToInt32(row["Status"]) == (int)UserStatusEnum.Acctive)
+                        {
+                            totalAccepted++;
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)UserStatusEnum.Waitting)
+                        {
+                            totalWaiting++;
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)UserStatusEnum.Ban)
+                        {
+                            totalBanned++;
+                        }
+                        if (Convert.ToInt32(row["Status"]) == (int)UserStatusEnum.Deny)
+                        {
+                            totalRejected++;
+                        }
+                    }
+                }
+                var responseReport = new ReportUser()
+                {
+                    TotalCount = totalCount,
+                    TotalAccountAccepted = totalAccepted,
+                    TotalAccountBanned = totalBanned,
+                    TotalAccountRejected = totalRejected,
+                    TotalAccountWaiting = totalWaiting
+                };
+                return responseReport;
             }
             catch (Exception ex)
             {

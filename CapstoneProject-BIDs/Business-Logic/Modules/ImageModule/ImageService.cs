@@ -34,7 +34,7 @@ namespace Business_Logic.Modules.ImageModule
 
         public async Task<ICollection<Image>> GetImageByID(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -49,7 +49,7 @@ namespace Business_Logic.Modules.ImageModule
 
         public async Task<ICollection<Image>> GetImageByItem(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

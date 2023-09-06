@@ -8,6 +8,7 @@ using Business_Logic.Modules.SessionModule.Interface;
 using Business_Logic.Modules.SessionModule.Request;
 using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.UserModule.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
@@ -27,7 +28,7 @@ namespace BIDs_API.Controllers
         private readonly ISessionService _sessionService;
         private readonly IHubContext<SessionHub> _hubContext;
         private readonly IPayPalPayment _payPal;
-        private readonly ICommon _common;
+        private readonly ICommon _Common;
         public LoginController(ILoginService LoginService
             , IConfiguration configuration
             , IStaffService staffService
@@ -42,7 +43,7 @@ namespace BIDs_API.Controllers
             _sessionService = sessionService;
             _hubContext = hubContext;
             _payPal = payPal;
-            _common = common;
+            _Common = common;
         }
 
 
@@ -200,7 +201,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var response = await _common.ReportPaymentUser(userId, start, end);
+                var response = await _Common.ReportPaymentUser(userId, start, end);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -214,7 +215,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var response = await _common.ReportPaymentUserToTal(userId);
+                var response = await _Common.ReportPaymentUserToTal(userId);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -228,7 +229,133 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var response = await _common.ReportPaymentToTal();
+                var response = await _Common.ReportPaymentToTal();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_total")]
+        public async Task<IActionResult> ReportSessionTotal()
+        {
+            try
+            {
+                var response = await _Common.ReportSessionTotal();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_after_payment")]
+        public async Task<IActionResult> ReportSessionAfterPayment([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionAfterPayment(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_not_start")]
+        public async Task<IActionResult> ReportSessionNotStart([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionNotStart(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_in_stage")]
+        public async Task<IActionResult> ReportSessionInStage([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionInStage(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_havent_tranfer")]
+        public async Task<IActionResult> ReportSessionHaventTranfer([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionHaventTranfer(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_after_received_item")]
+        public async Task<IActionResult> ReportSessionAfterReceivedItem([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionAfterReceivedItem(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_session_total_by_date")]
+        public async Task<IActionResult> ReportSessionTotalByDate([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportSessionTotalByDate(startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_category")]
+        public async Task<IActionResult> ReportCategory([FromQuery] Guid CategoryId,[FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportCategoryDetail(CategoryId,startDate, endDate);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("report_user")]
+        public async Task<IActionResult> ReportUser([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var response = await _Common.ReportUser(startDate, endDate);
                 return Ok(response);
             }
             catch (Exception ex)

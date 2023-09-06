@@ -33,7 +33,7 @@ namespace Business_Logic.Modules.DescriptionModule
 
         public async Task<ICollection<Description>> GetDescriptionByID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -135,7 +135,7 @@ namespace Business_Logic.Modules.DescriptionModule
         {
             try
             {
-                if (DescriptionDeleteID == null)
+                if (DescriptionDeleteID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }

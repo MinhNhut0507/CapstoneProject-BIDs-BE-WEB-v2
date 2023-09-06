@@ -27,7 +27,7 @@ namespace Business_Logic.Modules.NotificationModule
 
         public async Task<Notification> GetNotificationByID(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

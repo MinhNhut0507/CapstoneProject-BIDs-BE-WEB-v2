@@ -29,7 +29,7 @@ namespace Business_Logic.Modules.PaymentUserModule
 
         public async Task<ICollection<PaymentUser>> GetPaymentUserByID(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -44,7 +44,7 @@ namespace Business_Logic.Modules.PaymentUserModule
 
         public async Task<ICollection<PaymentUser>> GetPaymentUserBySessionAndUser(Guid sessionId, Guid userId)
         {
-            if (sessionId == null || userId == null)
+            if (sessionId == Guid.Empty || userId == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -59,7 +59,7 @@ namespace Business_Logic.Modules.PaymentUserModule
 
         public async Task<ICollection<PaymentUser>> GetPaymentUserBySession(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -74,7 +74,7 @@ namespace Business_Logic.Modules.PaymentUserModule
 
         public async Task<ICollection<PaymentUser>> GetPaymentUserByUser(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

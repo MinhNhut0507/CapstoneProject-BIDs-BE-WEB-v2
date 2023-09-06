@@ -28,7 +28,7 @@ namespace Business_Logic.Modules.AdminModule
 
         public async Task<Admin> GetAdminByID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

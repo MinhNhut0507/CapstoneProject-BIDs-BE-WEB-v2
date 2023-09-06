@@ -35,7 +35,7 @@ namespace Business_Logic.Modules.BookingItemModule
 
         public async Task<ICollection<BookingItem>> GetBookingItemByID(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -50,7 +50,7 @@ namespace Business_Logic.Modules.BookingItemModule
 
         public async Task<ICollection<BookingItem>> GetBookingItemByStaff(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -100,7 +100,7 @@ namespace Business_Logic.Modules.BookingItemModule
         public async Task<ICollection<BookingItem>> GetBookingItemByUserIsWaiting(Guid id)
         {
 
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -117,7 +117,7 @@ namespace Business_Logic.Modules.BookingItemModule
         public async Task<ICollection<BookingItem>> GetBookingItemByUserIsBeginWaiting(Guid id)
         {
 
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -134,7 +134,7 @@ namespace Business_Logic.Modules.BookingItemModule
         public async Task<ICollection<BookingItem>> GetBookingItemByUserIsNotCreateSession(Guid id)
         {
 
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -151,7 +151,7 @@ namespace Business_Logic.Modules.BookingItemModule
         public async Task<ICollection<BookingItem>> GetBookingItemByUserIsAccepted(Guid id)
         {
 
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -168,7 +168,7 @@ namespace Business_Logic.Modules.BookingItemModule
         public async Task<ICollection<BookingItem>> GetBookingItemByUserIsDenied(Guid id)
         {
 
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -201,7 +201,7 @@ namespace Business_Logic.Modules.BookingItemModule
 
         public async Task<ICollection<BookingItem>> GetBookingItemByItem(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

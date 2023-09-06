@@ -34,7 +34,7 @@ namespace Business_Logic.Modules.ItemDescriptionModule
 
         public async Task<ICollection<ItemDescription>> GetItemDescriptionByID(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -48,7 +48,7 @@ namespace Business_Logic.Modules.ItemDescriptionModule
 
         public async Task<ICollection<ItemDescription>> GetItemDescriptionByItem(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -62,7 +62,7 @@ namespace Business_Logic.Modules.ItemDescriptionModule
 
         public async Task<ICollection<ItemDescription>> GetItemDescriptionByDescription(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

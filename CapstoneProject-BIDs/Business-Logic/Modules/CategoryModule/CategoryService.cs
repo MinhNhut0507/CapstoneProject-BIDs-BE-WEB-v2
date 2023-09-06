@@ -29,7 +29,7 @@ namespace Business_Logic.Modules.CategoryModule
 
         public async Task<ICollection<Category>> GetCategoryByID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -133,7 +133,7 @@ namespace Business_Logic.Modules.CategoryModule
         {
             try
             {
-                if (CategoryDeleteID == null)
+                if (CategoryDeleteID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }

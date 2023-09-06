@@ -32,7 +32,7 @@ namespace Business_Logic.Modules.BanHistoryModule
 
         public async Task<ICollection<BanHistory>> GetBanHistoryByID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -47,7 +47,7 @@ namespace Business_Logic.Modules.BanHistoryModule
 
         public async Task<ICollection<BanHistory>> GetBanHistoryByUserID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -135,7 +135,7 @@ namespace Business_Logic.Modules.BanHistoryModule
         //{
         //    try
         //    {
-        //        if (BanHistoryDeleteID == null)
+        //        if (BanHistoryDeleteid == Guid.Empty)
         //        {
         //            throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
         //        }

@@ -22,7 +22,7 @@ namespace Business_Logic.Modules.NotificationTypeModule
 
         public async Task<NotificationType> GetNotificationTypeByID(int id)
         {
-            if (id == null)
+            if (id <= 0)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

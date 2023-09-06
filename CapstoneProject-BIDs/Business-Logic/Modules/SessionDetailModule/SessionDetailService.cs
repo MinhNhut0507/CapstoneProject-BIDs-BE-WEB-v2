@@ -61,7 +61,7 @@ namespace Business_Logic.Modules.SessionDetailModule
 
         public async Task<ICollection<SessionDetail>> GetSessionDetailByID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -76,7 +76,7 @@ namespace Business_Logic.Modules.SessionDetailModule
 
         public async Task<ICollection<SessionDetail>> GetSessionDetailByUser(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -91,7 +91,7 @@ namespace Business_Logic.Modules.SessionDetailModule
 
         public async Task<ICollection<SessionDetail>> GetSessionDetailBySession(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
@@ -106,7 +106,7 @@ namespace Business_Logic.Modules.SessionDetailModule
 
         public async Task<ICollection<SessionDetail>> GetSessionDetailBySessionForBidder(Guid? sessionId, Guid? userId)
         {
-            if (sessionId == null || userId == null)
+            if (sessionId == Guid.Empty || userId == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -358,7 +358,7 @@ namespace Business_Logic.Modules.SessionDetailModule
         {
             try
             {
-                if (SessionDetailDeleteID == null)
+                if (SessionDetailDeleteID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }

@@ -22,7 +22,7 @@ namespace Business_Logic.Modules.StaffNotificationDetailModule
 
         public async Task<ICollection<StaffNotificationDetail>> GetStaffNotificationDetailByStaff(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }

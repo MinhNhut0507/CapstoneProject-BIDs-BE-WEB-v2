@@ -139,7 +139,7 @@ namespace Business_Logic.Modules.SessionModule
 
         public async Task<ICollection<Session>> GetSessionByID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -463,7 +463,7 @@ namespace Business_Logic.Modules.SessionModule
         {
             try
             {
-                if (SessionDeleteID == null)
+                if (SessionDeleteID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }

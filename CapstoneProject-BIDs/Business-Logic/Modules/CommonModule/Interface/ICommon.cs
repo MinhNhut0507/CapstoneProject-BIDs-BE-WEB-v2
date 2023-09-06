@@ -46,5 +46,8 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<ReportPaymentUser> ReportPaymentUser(Guid UserId, DateTime Start, DateTime End);
         public Task<ReportPaymentUser> ReportPaymentUserToTal(Guid UserId);
         public Task<ReportPaymentUser> ReportPaymentToTal();
+        public Task<ReportUser> ReportUser(DateTime startDate, DateTime endDate);
+        public Task<ReportCategory> ReportCategoryDetail(Guid CategoryId, DateTime startDate, DateTime endDate);
+        public Task<ReportSessionCount> ReportSessionTotalByDate(DateTime Start, DateTime End);
     }
 }

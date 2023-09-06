@@ -27,7 +27,7 @@ namespace Business_Logic.Modules.SessionRuleModule
 
         public async Task<SessionRule> GetSessionRuleByID(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
@@ -134,7 +134,7 @@ namespace Business_Logic.Modules.SessionRuleModule
         {
             try
             {
-                if (SessionRuleDeleteID == null)
+                if (SessionRuleDeleteID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }

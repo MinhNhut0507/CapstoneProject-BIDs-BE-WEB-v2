@@ -45,7 +45,7 @@ namespace Business_Logic.Modules.UserModule
 
         public async Task<Users> GetUserByID(Guid? id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
