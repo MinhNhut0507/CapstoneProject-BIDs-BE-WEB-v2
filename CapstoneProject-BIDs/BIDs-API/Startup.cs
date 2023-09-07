@@ -80,6 +80,15 @@ namespace BIDs_API
                         .AllowAnyHeader()
                         .WithExposedHeaders("Authorization");
                 });
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .SetIsOriginAllowed((host) => true)
+                        .WithOrigins("http://localhost:3000" +
+                        "http://localhost:3000");
+                });
             });
             services.AddSignalR();
             services.AddControllers();
@@ -242,6 +251,8 @@ namespace BIDs_API
             app.UseRouting();
 
             app.UseCors("AllowReact");
+
+            app.UseCors("CorsPolicy");
             
             app.UseAuthorization();
 
