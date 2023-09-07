@@ -88,8 +88,8 @@ namespace BIDs_API
                         .SetIsOriginAllowed((host) => true)
                         .WithOrigins("http://localhost:3000",
 "https://localhost:3000",
-"https://capstone-bid-fe-git-descrip-f85d2b-doannguyenquochuy13-gmailcom.vercel.app",
-"https://capstone-bid-fe.vercel.app/");
+"https://capstone-bid-rdw1ri2u9-doannguyenquochuy13-gmailcom.vercel.app",
+"https://capstone-bid-fe.vercel.app");
                 });
             });
             services.AddSignalR();
