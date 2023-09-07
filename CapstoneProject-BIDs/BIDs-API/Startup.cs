@@ -86,8 +86,10 @@ namespace BIDs_API
                         .AllowAnyHeader()
                         .AllowCredentials()
                         .SetIsOriginAllowed((host) => true)
-                        .WithOrigins("http://localhost:3000" +
-                        "http://localhost:3000");
+                        .WithOrigins("http://localhost:3000",
+"https://localhost:3000",
+"https://capstone-bid-fe-git-descrip-f85d2b-doannguyenquochuy13-gmailcom.vercel.app",
+"https://capstone-bid-fe.vercel.app/");
                 });
             });
             services.AddSignalR();
