@@ -275,7 +275,7 @@ namespace Business_Logic.Modules.UserModule
         {
             try
             {
-                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Email == email && x.Status == (int)UserStatusEnum.Acctive);
+                Users user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Email == email && x.Status != (int)UserStatusEnum.Ban);
                 if (user == null)
                 {
                     throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);

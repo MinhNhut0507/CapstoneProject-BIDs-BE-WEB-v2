@@ -1479,7 +1479,7 @@ namespace BIDs_API.Controllers
 
         [AllowAnonymous]
         [HttpPut("session_status_to_error_item")]
-        public async Task<IActionResult> PutSessionStatusErrorItem([FromRoute] string reason ,[FromBody] UpdateSessionStatusRequest updateSessionRequest)
+        public async Task<IActionResult> PutSessionStatusErrorItem([FromQuery] string reason ,[FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
             try
             {
@@ -1489,7 +1489,7 @@ namespace BIDs_API.Controllers
                 string message = "Bạn đã xác nhận đã nhận được sản phẩm LỖI " + item.ElementAt(0).Name + " với lỗi là " + reason + ". Chúng tôi sẽ liên lạc với bạn trong thời gian sớm nhất để xác nhận và làm các thủ tục hoàn trả nếu đúng sự thật. Xin vui lòng kiểm tra email và số điện thoại để không bỏ lỡ liên lạc từ hệ thống";
                 var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
                 var staff = await _StaffService.GetAll();
-                string messageStaff = "Sản phẩm " + item.ElementAt(0).Name + " đã được thông báo là hàng lỗi. Xin vui lòng kiểm tra xác nhận và hoàn tiền nếu cần thiết.";
+                string messageStaff = "Sản phẩm " + item.ElementAt(0).Name + " đã được thông báo là hàng lỗi" + " với lỗi là " + reason + " . Xin vui lòng kiểm tra xác nhận và hoàn tiền nếu cần thiết.";
                 foreach (var x in staff)
                 {
                     var staffNoti = await _Common.StaffNotification(10, (int)NotificationTypeEnum.Item, messageStaff, x.Id);

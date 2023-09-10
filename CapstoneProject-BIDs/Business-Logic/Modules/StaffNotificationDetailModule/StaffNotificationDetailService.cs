@@ -17,7 +17,7 @@ namespace Business_Logic.Modules.StaffNotificationDetailModule
 
         public async Task<ICollection<StaffNotificationDetail>> GetAll()
         {
-            return await _StaffNotificationDetailRepository.GetAll(includeProperties: "Staff,Type");
+            return await _StaffNotificationDetailRepository.GetAll(includeProperties: "Staff,Type,Notification");
         }
 
         public async Task<ICollection<StaffNotificationDetail>> GetStaffNotificationDetailByStaff(Guid id)
@@ -26,8 +26,8 @@ namespace Business_Logic.Modules.StaffNotificationDetailModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var StaffNotificationDetail = await _StaffNotificationDetailRepository.GetAll(includeProperties: "Staff,Type",
-                options: o => o.OrderBy( x => x.StaffId == id).ToList());
+            var StaffNotificationDetail = await _StaffNotificationDetailRepository.GetAll(includeProperties: "Staff,Type,Notification",
+                options: o => o.Where(x => x.StaffId == id).ToList());
             if (StaffNotificationDetail == null)
             {
                 throw new Exception(ErrorMessage.StaffNotificationDetailError.STAFF_NOTIFICATION_DETAIL_NOT_FOUND);

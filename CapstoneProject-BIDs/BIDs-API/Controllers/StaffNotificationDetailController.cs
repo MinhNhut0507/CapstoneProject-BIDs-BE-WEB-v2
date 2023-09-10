@@ -48,7 +48,8 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
-                var response = list.Select
+                var sort = list.OrderByDescending(x => x.Notification.CreateDate);
+                var response = sort.Select
                            (
                              emp => _mapper.Map<StaffNotificationDetail, StaffNotificationDetailResponse>(emp)
                            );
@@ -72,7 +73,8 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
-                var response = list.Select
+                var sort = list.OrderByDescending(x => x.Notification.CreateDate);
+                var response = sort.Select
                            (
                              emp => _mapper.Map<StaffNotificationDetail, StaffNotificationDetailResponse>(emp)
                            );

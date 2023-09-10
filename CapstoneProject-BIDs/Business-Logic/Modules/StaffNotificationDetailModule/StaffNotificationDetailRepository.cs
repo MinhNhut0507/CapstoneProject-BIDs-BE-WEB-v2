@@ -42,7 +42,8 @@ namespace Business_Logic.Modules.StaffNotificationDetailModule
             }
 
             query = query.Include(x => x.Staff)
-                .Include(x => x.Type);
+                .Include(x => x.Type)
+                .Include(x => x.Notification);
 
             return options != null ? options(query).ToList() : await query.ToListAsync();
         }
