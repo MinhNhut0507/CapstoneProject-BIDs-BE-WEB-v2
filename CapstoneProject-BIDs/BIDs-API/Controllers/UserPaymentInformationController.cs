@@ -20,7 +20,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Dev")]
+    [Authorize]
     public class UserPaymentInformationController : ControllerBase
     {
         private readonly IUserPaymentInformationService _UserPaymentInformationService;
@@ -78,6 +78,7 @@ namespace BIDs_API.Controllers
 
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<UserPaymentInformationResponse>> PostUserPaymentInformation([FromBody] CreateUserPaymentInformationRequest createUserPaymentInformationRequest)
         {

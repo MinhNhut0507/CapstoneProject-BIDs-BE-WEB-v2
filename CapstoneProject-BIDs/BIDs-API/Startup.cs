@@ -78,6 +78,7 @@ namespace BIDs_API
                     builder.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
+                        .SetIsOriginAllowed((host) => true)
                         .WithExposedHeaders("Authorization");
                 });
                 options.AddPolicy("CorsPolicy", builder =>
