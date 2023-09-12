@@ -374,11 +374,11 @@ namespace BIDs_API.Controllers
         // PUT api/<ValuesController>/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("re_auction")]
-        public async Task<IActionResult> ReAuction([FromBody] UpdateItemRequest updateItemRequest, [FromQuery] Guid id)
+        public async Task<IActionResult> ReAuction([FromBody] UpdateItemRequest updateItemRequest)
         {
             try
             {
-                var BookingItem = await _Common.ReAuction(updateItemRequest, id);
+                var BookingItem = await _Common.ReAuction(updateItemRequest);
                 var item = await _ItemService.GetItemByID(updateItemRequest.ItemId);
                 await _hubContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem);
                 await _itemHubContext.Clients.All.SendAsync("ReceiveItemUpdate", item);

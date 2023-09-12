@@ -663,15 +663,17 @@ namespace Business_Logic.Modules.CommonModule
             return Winner;
         }
 
-        public async Task<BookingItem> ReAuction(UpdateItemRequest updateItemRequest, Guid id)
+        public async Task<BookingItem> ReAuction(UpdateItemRequest updateItemRequest)
         {
             try
             {
-                await _ItemService.UpdateItem(updateItemRequest);
+                var item = await _ItemService.UpdateItem(updateItemRequest);
+
+                var bookingItem = await _BookingItemService.GetBookingItemByItem(item.Id);
 
                 var bookingRequest = new UpdateBookingItemRequest()
                 {
-                    Id = id,
+                    Id = bookingItem.ElementAt(0).Id,
                     Status = (int)BookingItemEnum.Waitting
                 };
 
