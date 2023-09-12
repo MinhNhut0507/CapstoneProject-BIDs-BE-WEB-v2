@@ -571,7 +571,9 @@ namespace BIDs_API.PaymentPayPal
             var sessionList = await _sessionService.GetSessionByID(SesionId);
             var session = sessionList.ElementAt(0);
             var User = await _userService.GetUserByID(UserID);
-            var Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
+            var Deposit = 0.0;
+            if (session.Item.Deposit == true)
+                Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
             var JoiningFee = session.Item.FirstPrice * session.Fee.ParticipationFee;
             if (JoiningFee > 200000)
             {
@@ -588,13 +590,13 @@ namespace BIDs_API.PaymentPayPal
             {
                 new Item()
                 {
-                    Name = session.Item.Name,
+                    Name = session.Name,
                     UnitAmount = new Money()
                     {
                         CurrencyCode = "USD",
                         Value = total.ToString()
                     },
-                    Description = session.Item.DescriptionDetail,
+                    Description = session.Item.Name,
                     Quantity = session.Item.Quantity.ToString(),
                     Sku = "sku",
                     Tax = new Money()
