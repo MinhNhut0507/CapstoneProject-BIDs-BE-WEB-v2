@@ -775,7 +775,9 @@ namespace BIDs_API.PaymentPayPal
             var session = sessionList.ElementAt(0);
             var bookingItem = await _bookingItemService.GetBookingItemByItem(session.ItemId);
             var staffId = bookingItem.ElementAt(0).StaffId;
-            var Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
+            var Deposit = 0.0;
+            if (session.Item.Deposit == true)
+                Deposit = session.Item.FirstPrice * session.Fee.DepositFee;
 
             if (Deposit == 0)
             {
