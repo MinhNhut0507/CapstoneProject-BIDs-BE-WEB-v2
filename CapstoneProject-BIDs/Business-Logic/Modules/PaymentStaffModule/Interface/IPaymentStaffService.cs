@@ -11,7 +11,6 @@ namespace Business_Logic.Modules.PaymentStaffModule.Interface
     public interface IPaymentStaffService
     {
         public Task<PaymentStaff> AddNewPaymentStaff(CreatePaymentStaffRequest PaymentStaffCreate);
-        public Task<PaymentStaff> AddNewReturnDeposit(CreateReturnDepositRequest PaymentStaffCreate);
         public Task<PaymentStaff> UpdatePaymentStaff(UpdatePaymentStaffStatusRequest PaymentStaffUpdate);
         public Task<ICollection<PaymentStaff>> GetAll();
         public Task<ICollection<PaymentStaff>> GetPaymentStaffByID(Guid id);

@@ -37,17 +37,12 @@ namespace Business_Logic.Modules.CommonModule.Interface
         public Task<double> Exchange();
         public Task<ICollection<Users>> GetUserJoinSession(Guid sessionId);
         public Task<ICollection<Session>> GetSessionFailHadJoin();
-        public Task<ReportSessionTotal> ReportSessionAfterPayment(DateTime startDate, DateTime endDate);
-        public Task<ReportSessionCount> ReportSessionHaventTranfer(DateTime startDate, DateTime endDate);
-        public Task<ReportSessionCount> ReportSessionNotStart(DateTime startDate, DateTime endDate);
-        public Task<ReportSessionCount> ReportSessionInStage(DateTime startDate, DateTime endDate);
-        public Task<ReportSessionTotal> ReportSessionAfterReceivedItem(DateTime startDate, DateTime endDate);
         public Task<ReportTotalSessionPayment> ReportSessionTotal();
         public Task<ReportPaymentUser> ReportPaymentUser(Guid UserId, DateTime Start, DateTime End);
         public Task<ReportPaymentUser> ReportPaymentUserToTal(Guid UserId);
         public Task<ReportPaymentUser> ReportPaymentToTal();
         public Task<ReportUser> ReportUser(DateTime startDate, DateTime endDate);
-        public Task<ReportCategory> ReportCategoryDetail(Guid CategoryId, DateTime startDate, DateTime endDate);
-        public Task<ReportSessionCount> ReportSessionTotalByDate(DateTime Start, DateTime End);
+        public Task<ReportSessionTotal> ReportCategoryDetail(Guid CategoryId, DateTime startDate, DateTime endDate);
+        public Task<ReportSessionTotal> ReportSessionTotalByDate(DateTime Start, DateTime End);
     }
 }

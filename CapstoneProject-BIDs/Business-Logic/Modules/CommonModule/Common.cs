@@ -918,18 +918,34 @@ namespace Business_Logic.Modules.CommonModule
             }
         }
 
-        public async Task<ReportSessionCount> ReportSessionTotalByDate(DateTime Start, DateTime End)
+        public async Task<ReportSessionTotal> ReportSessionTotalByDate(DateTime Start, DateTime End)
         {
             try
             {
-                if(Start >= End)
+                if (Start >= End)
                 {
                     throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
                 }
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
                 //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
-                var totalPrice = 0.00;
+                var totalPayment = 0.0;
+                var totalCountNotStart = 0;
+                var totalPaymentNotStart = 0.0;
+                var totalCountInStage = 0;
+                var totalPaymentInStage = 0.0;
+                var totalCountHaventTranfer = 0;
+                var totalPaymentHaventTranfer = 0.0;
+                var totalCountComplete = 0;
+                var totalPaymentComplete = 0.0;
+                var totalCountFail = 0;
+                var totalPaymentFail = 0.0;
+                var totalCountReceived = 0;
+                var totalPaymentReceived = 0.0;
+                var totalCountErrorItem = 0;
+                var totalPaymentErrorItem = 0.0;
+                var totalCountDelete = 0;
+                var totalPaymentDelete = 0.0;
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
@@ -946,281 +962,76 @@ namespace Business_Logic.Modules.CommonModule
                     foreach (DataRow row in dataTable.Rows)
                     {
                         totalCount++;
-                        totalPrice += Convert.ToDouble(row["FinalPrice"]);
-                    }
-                }
-                var responseReport = new ReportSessionCount()
-                {
-                    TotalCount = totalCount,
-                    TotalPrice = totalPrice,
-                };
-                return responseReport;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<ReportSessionTotal> ReportSessionAfterPayment(DateTime startDate, DateTime endDate)
-        {
-            try
-            {
-                if (startDate >= endDate)
-                {
-                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
-                }
-                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
-                var totalCount = 0;
-                var totalComplete = 0;
-                var totalFail = 0;
-                var totalPrice = 0.00;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @StatusComplete OR Status = @StatusFail";
-                    SqlCommand command = new SqlCommand(query, connection);
-
-                    // Thay đổi giá trị của tham số ngày tháng tương ứng
-                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
-                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
-                    command.Parameters.Add("@StatusComplete", SqlDbType.Int).Value = 4;
-                    command.Parameters.Add("@StatusFail", SqlDbType.Int).Value = 5;
-
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-                    foreach (DataRow row in dataTable.Rows)
-                    {
-                        totalCount++;
-                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Complete)
-                        {
-                            totalComplete++;
-                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
-                        }
-                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Fail)
-                            totalFail++;
-
-                    }
-                }
-                var responseReport = new ReportSessionTotal()
-                {
-                    Total = totalCount,
-                    TotalComplete = totalComplete,
-                    TotalFail = totalFail,
-                    TotalPrice = totalPrice
-                };
-                return responseReport;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<ReportSessionCount> ReportSessionNotStart(DateTime startDate, DateTime endDate)
-        {
-            try
-            {
-                if (startDate >= endDate)
-                {
-                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
-                }
-                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
-                var totalCount = 0;
-                var totalPrice = 0.00;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @Status";
-                    SqlCommand command = new SqlCommand(query, connection);
-
-                    // Thay đổi giá trị của tham số ngày tháng tương ứng
-                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
-                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
-                    command.Parameters.Add("@Status", SqlDbType.Int).Value = 1;
-
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-                    foreach (DataRow row in dataTable.Rows)
-                    {
+                        totalPayment += Convert.ToDouble(row["FinalPrice"]);
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.NotStart)
                         {
-                            totalCount++;
-                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                            totalCountNotStart ++;
+                            totalPaymentNotStart += Convert.ToDouble(row["FinalPrice"]);
                         }
-                    }
-                }
-                var responseReport = new ReportSessionCount()
-                {
-                    TotalCount = totalCount,
-                    TotalPrice = totalPrice
-                };
-                return responseReport;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                throw new Exception(ex.Message);
-            }
-        }
 
-        public async Task<ReportSessionCount> ReportSessionInStage(DateTime startDate, DateTime endDate)
-        {
-            try
-            {
-                if (startDate >= endDate)
-                {
-                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
-                }
-                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
-                var totalCount = 0;
-                var totalPrice = 0.00;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @Status";
-                    SqlCommand command = new SqlCommand(query, connection);
-
-                    // Thay đổi giá trị của tham số ngày tháng tương ứng
-                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
-                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
-                    command.Parameters.Add("@Status", SqlDbType.Int).Value = 2;
-
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-                    foreach (DataRow row in dataTable.Rows)
-                    {
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.InStage)
                         {
-                            totalCount++;
-                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                            totalCountInStage++;
+                            totalPaymentInStage += Convert.ToDouble(row["FinalPrice"]);
                         }
-                    }
-                }
-                var responseReport = new ReportSessionCount()
-                {
-                    TotalCount = totalCount,
-                    TotalPrice = totalPrice
-                };
-                return responseReport;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                throw new Exception(ex.Message);
-            }
-        }
 
-        public async Task<ReportSessionCount> ReportSessionHaventTranfer(DateTime startDate, DateTime endDate)
-        {
-            try
-            {
-                if (startDate >= endDate)
-                {
-                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
-                }
-                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
-                var totalCount = 0;
-                var totalPrice = 0.00;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @Status";
-                    SqlCommand command = new SqlCommand(query, connection);
-
-                    // Thay đổi giá trị của tham số ngày tháng tương ứng
-                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
-                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
-                    command.Parameters.Add("@Status", SqlDbType.Int).Value = 3;
-
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-                    foreach (DataRow row in dataTable.Rows)
-                    {
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.HaventTranferYet)
                         {
-                            totalCount++;
-                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                            totalCountHaventTranfer++;
+                            totalPaymentHaventTranfer += Convert.ToDouble(row["FinalPrice"]);
                         }
-                    }
-                }
-                var responseReport = new ReportSessionCount()
-                {
-                    TotalCount = totalCount,
-                    TotalPrice = totalPrice
-                };
-                return responseReport;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                throw new Exception(ex.Message);
-            }
-        }
 
-        public async Task<ReportSessionTotal> ReportSessionAfterReceivedItem(DateTime startDate, DateTime endDate)
-        {
-            try
-            {
-                if (startDate >= endDate)
-                {
-                    throw new Exception(ErrorMessage.CommonError.ERROR_DATE_TIME);
-                }
-                string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
-                //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
-                var totalCount = 0;
-                var totalComplete = 0;
-                var totalFail = 0;
-                var totalPrice = 0.00;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Complete)
+                        {
+                            totalCountComplete++;
+                            totalPaymentComplete += Convert.ToDouble(row["FinalPrice"]);
+                        }
 
-                    string query = "SELECT * FROM Session WHERE CreateDate >= @StartDate AND CreateDate <= @EndDate AND Status = @StatusReceived OR Status = @StatusErrorItem";
-                    SqlCommand command = new SqlCommand(query, connection);
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Fail)
+                        {
+                            totalCountFail++;
+                            totalPaymentFail += Convert.ToDouble(row["FinalPrice"]);
+                        }
 
-                    // Thay đổi giá trị của tham số ngày tháng tương ứng
-                    command.Parameters.Add("@StartDate", SqlDbType.Date).Value = startDate;
-                    command.Parameters.Add("@EndDate", SqlDbType.Date).Value = endDate;
-                    command.Parameters.Add("@StatusReceived", SqlDbType.Int).Value = 6;
-                    command.Parameters.Add("@StatusErrorItem", SqlDbType.Int).Value = 7;
-
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-                    foreach (DataRow row in dataTable.Rows)
-                    {
-                        totalCount++;
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Received)
                         {
-                            totalComplete++;
-                            totalPrice += Convert.ToDouble(row["FinalPrice"]);
+                            totalCountReceived++;
+                            totalPaymentReceived += Convert.ToDouble(row["FinalPrice"]);
                         }
-                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.ErrorItem)
-                            totalFail++;
 
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.ErrorItem)
+                        {
+                            totalCountErrorItem++;
+                            totalPaymentErrorItem += Convert.ToDouble(row["FinalPrice"]);
+                        }
+
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Delete)
+                        {
+                            totalCountDelete++;
+                            totalPaymentDelete += Convert.ToDouble(row["FinalPrice"]);
+                        }
                     }
                 }
                 var responseReport = new ReportSessionTotal()
                 {
-                    Total = totalCount,
-                    TotalComplete = totalComplete,
-                    TotalFail = totalFail,
-                    TotalPrice = totalPrice
+                    TotalCount = totalCount,
+                    TotalPayment = totalPayment,
+                    TotalCountComplete = totalCountComplete,
+                    TotalCountErrorItem = totalCountErrorItem,
+                    TotalCountFail = totalCountFail,
+                    TotalCountHaventTranfer = totalCountHaventTranfer,
+                    TotalCountInStage = totalCountInStage,
+                    TotalCountNotStart = totalCountNotStart,
+                    TotalCountReceived = totalCountReceived,
+                    TotalPaymentComplete = totalPaymentComplete,
+                    TotalPaymentErrorItem = totalPaymentErrorItem,
+                    TotalPaymentFail = totalPaymentFail,
+                    TotalPaymentHaventTranfer = totalPaymentHaventTranfer,
+                    TotalPaymentInStage = totalPaymentInStage,
+                    TotalPaymentNotStart = totalPaymentNotStart,
+                    TotalPaymentReceived = totalPaymentReceived,
+                    TotalCountDelete = totalCountDelete,
+                    TotalPaymentDelete = totalPaymentDelete
                 };
                 return responseReport;
             }
@@ -1490,7 +1301,7 @@ namespace Business_Logic.Modules.CommonModule
             }
         }
 
-        public async Task<ReportCategory> ReportCategoryDetail(Guid CategoryId, DateTime startDate, DateTime endDate)
+        public async Task<ReportSessionTotal> ReportCategoryDetail(Guid CategoryId, DateTime startDate, DateTime endDate)
         {
             try
             {
@@ -1505,13 +1316,23 @@ namespace Business_Logic.Modules.CommonModule
                 string connectionString = "server =DESKTOP-ARAK6K1\\SQLEXPRESS;database=BIDsLocal;uid=sa;pwd=05072001;Trusted_Connection=True;TrustServerCertificate=True;";
                 //string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
-                var totalNotStart = 0;
-                var totalInStage = 0;
-                var totalHaventTranfer = 0;
-                var totalFail = 0;
-                var totalComplete= 0;
-                var totalReceive = 0;
-                var totalErrorItem = 0;
+                var totalPayment = 0.0;
+                var totalCountNotStart = 0;
+                var totalPaymentNotStart = 0.0;
+                var totalCountInStage = 0;
+                var totalPaymentInStage = 0.0;
+                var totalCountHaventTranfer = 0;
+                var totalPaymentHaventTranfer = 0.0;
+                var totalCountComplete = 0;
+                var totalPaymentComplete = 0.0;
+                var totalCountFail = 0;
+                var totalPaymentFail = 0.0;
+                var totalCountReceived = 0;
+                var totalPaymentReceived = 0.0;
+                var totalCountErrorItem = 0;
+                var totalPaymentErrorItem = 0.0;
+                var totalCountDelete = 0;
+                var totalPaymentDelete = 0.0;
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
@@ -1534,46 +1355,76 @@ namespace Business_Logic.Modules.CommonModule
                     foreach (DataRow row in dataTable.Rows)
                     {
                         totalCount++;
+                        totalPayment += Convert.ToDouble(row["FinalPrice"]);
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.NotStart)
                         {
-                            totalNotStart++;
+                            totalCountNotStart++;
+                            totalPaymentNotStart += Convert.ToDouble(row["FinalPrice"]);
                         }
+
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.InStage)
                         {
-                            totalInStage++;
+                            totalCountInStage++;
+                            totalPaymentInStage += Convert.ToDouble(row["FinalPrice"]);
                         }
+
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.HaventTranferYet)
                         {
-                            totalHaventTranfer++;
+                            totalCountHaventTranfer++;
+                            totalPaymentHaventTranfer += Convert.ToDouble(row["FinalPrice"]);
                         }
-                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Fail)
-                        {
-                            totalFail++;
-                        }
+
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Complete)
                         {
-                            totalComplete++;
+                            totalCountComplete++;
+                            totalPaymentComplete += Convert.ToDouble(row["FinalPrice"]);
                         }
+
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Fail)
+                        {
+                            totalCountFail++;
+                            totalPaymentFail += Convert.ToDouble(row["FinalPrice"]);
+                        }
+
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Received)
                         {
-                            totalReceive++;
+                            totalCountReceived++;
+                            totalPaymentReceived += Convert.ToDouble(row["FinalPrice"]);
                         }
+
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.ErrorItem)
                         {
-                            totalErrorItem++;
+                            totalCountErrorItem++;
+                            totalPaymentErrorItem += Convert.ToDouble(row["FinalPrice"]);
+                        }
+
+                        if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.Delete)
+                        {
+                            totalCountDelete++;
+                            totalPaymentDelete += Convert.ToDouble(row["FinalPrice"]);
                         }
                     }
                 }
-                var responseReport = new ReportCategory()
+                var responseReport = new ReportSessionTotal()
                 {
                     TotalCount = totalCount,
-                    CompleteCount = totalComplete,
-                    ErrorItemCount = totalErrorItem,
-                    FailCount = totalFail,
-                    HaventTranferCount = totalHaventTranfer,
-                    InStageCount = totalInStage,
-                    NotStartCount = totalNotStart,
-                    ReceiveCount = totalReceive
+                    TotalPayment = totalPayment,
+                    TotalCountComplete = totalCountComplete,
+                    TotalCountErrorItem = totalCountErrorItem,
+                    TotalCountFail = totalCountFail,
+                    TotalCountHaventTranfer = totalCountHaventTranfer,
+                    TotalCountInStage = totalCountInStage,
+                    TotalCountNotStart = totalCountNotStart,
+                    TotalCountReceived = totalCountReceived,
+                    TotalPaymentComplete = totalPaymentComplete,
+                    TotalPaymentErrorItem = totalPaymentErrorItem,
+                    TotalPaymentFail = totalPaymentFail,
+                    TotalPaymentHaventTranfer = totalPaymentHaventTranfer,
+                    TotalPaymentInStage = totalPaymentInStage,
+                    TotalPaymentNotStart = totalPaymentNotStart,
+                    TotalPaymentReceived = totalPaymentReceived,
+                    TotalCountDelete = totalCountDelete,
+                    TotalPaymentDelete = totalPaymentDelete
                 };
                 return responseReport;
             }

@@ -425,6 +425,7 @@ namespace Data_Access.Entities
 
                 entity.Property(e => e.PayPalTransactionId).IsRequired()
                     .HasMaxLength(int.MaxValue)
+                    .IsRequired()
                     .HasColumnName("PayPalTransactionID");
 
                 entity.Property(e => e.PayPalRecieveAccount)
@@ -438,7 +439,7 @@ namespace Data_Access.Entities
                     .HasColumnName("Amount");
 
                 entity.Property(e => e.StaffId).IsRequired().HasColumnName("StaffID");
-                entity.Property(e => e.StaffId).IsRequired().HasColumnName("UserID");
+                entity.Property(e => e.UserId).IsRequired().HasColumnName("UserID");
 
                 entity.HasOne(d => d.Session)
                     .WithMany(p => p.PaymentStaffs)
@@ -446,9 +447,9 @@ namespace Data_Access.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PaymentStaff_Session");
 
-                entity.HasOne(d => d.Session)
+                entity.HasOne(d => d.Users)
                     .WithMany(p => p.PaymentStaffs)
-                    .HasForeignKey(d => d.SessionId)
+                    .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PaymentStaff_Users");
 

@@ -68,36 +68,11 @@ namespace Business_Logic.Modules.PaymentStaffModule
 
             newPaymentStaff.Id = Guid.NewGuid();
             newPaymentStaff.StaffId = PaymentStaffRequest.StaffId;
-            newPaymentStaff.SessionId = PaymentStaffRequest.SessionId;
-            newPaymentStaff.Amount = PaymentStaffRequest.Amount;
-            newPaymentStaff.PaymentDate = PaymentStaffRequest.PaymentDate;
-            newPaymentStaff.UserId = PaymentStaffRequest.UserId;
-            newPaymentStaff.PaymentDetail = PaymentStaffRequest.PaymentDetail;
-            newPaymentStaff.PayPalTransactionId = PaymentStaffRequest.PayPalTransactionId;
-            newPaymentStaff.Status = PaymentStaffRequest.Status;
-
-            await _PaymentStaffRepository.AddAsync(newPaymentStaff);
-            return newPaymentStaff;
-        }
-
-        public async Task<PaymentStaff> AddNewReturnDeposit(CreateReturnDepositRequest PaymentStaffRequest)
-        {
-
-            ValidationResult result = new CreateReturnDepositRequestValidator().Validate(PaymentStaffRequest);
-            if (!result.IsValid)
-            {
-                throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
-            }
-
-            var newPaymentStaff = new PaymentStaff();
-
-            newPaymentStaff.Id = Guid.NewGuid();
-            newPaymentStaff.StaffId = PaymentStaffRequest.StaffId;
             newPaymentStaff.PayPalRecieveAccount = PaymentStaffRequest.PayPalRecieveAccount;
             newPaymentStaff.SessionId = PaymentStaffRequest.SessionId;
             newPaymentStaff.Amount = PaymentStaffRequest.Amount;
-            newPaymentStaff.UserId = PaymentStaffRequest.UserId;
             newPaymentStaff.PaymentDate = PaymentStaffRequest.PaymentDate;
+            newPaymentStaff.UserId = PaymentStaffRequest.UserId;
             newPaymentStaff.PaymentDetail = PaymentStaffRequest.PaymentDetail;
             newPaymentStaff.PayPalTransactionId = PaymentStaffRequest.PayPalTransactionId;
             newPaymentStaff.Status = PaymentStaffRequest.Status;

@@ -293,6 +293,7 @@ namespace BIDs_API.PaymentPayPal
                     {
                         SessionId = sessionId,
                         StaffId = staffId,
+                        PayPalRecieveAccount = EmailPaypalUser,
                         UserId = PaypalUser.UserId,
                         PayPalTransactionId = orderId,
                         Amount = (session.FinalPrice - participantFee),
@@ -415,6 +416,7 @@ namespace BIDs_API.PaymentPayPal
                     {
                         SessionId = sessionId,
                         StaffId = staffId,
+                        PayPalRecieveAccount = EmailPaypalUser,
                         UserId = PaypalUser.UserId,
                         PayPalTransactionId = orderId,
                         Amount = (session.FinalPrice - surcharge),
@@ -537,6 +539,7 @@ namespace BIDs_API.PaymentPayPal
                     {
                         SessionId = sessionId,
                         StaffId = staffId,
+                        PayPalRecieveAccount = EmailPaypalUser,
                         UserId = PaypalUser.UserId,
                         PayPalTransactionId = orderId,
                         Amount = returnFee*(0.3),
@@ -890,7 +893,7 @@ namespace BIDs_API.PaymentPayPal
                     // Xử lý phản hồi từ PayPal và trả về status xác nhận nguồn thanh toán
                     if (responseConfirm.IsSuccessStatusCode)
                     {
-                        var createPaymentStaff = new CreateReturnDepositRequest()
+                        var createPaymentStaff = new CreatePaymentStaffRequest()
                         {
                             SessionId = sessionId,
                             StaffId = staffId,
@@ -903,7 +906,7 @@ namespace BIDs_API.PaymentPayPal
                             UserId = paymentUser.UserId
                         };
 
-                        var paymentStaff = await _paymentStaffService.AddNewReturnDeposit(createPaymentStaff);
+                        var paymentStaff = await _paymentStaffService.AddNewPaymentStaff(createPaymentStaff);
 
                         await _staffHubContext.Clients.All.SendAsync("ReceivePaymentStaffAdd", paymentStaff);
 
