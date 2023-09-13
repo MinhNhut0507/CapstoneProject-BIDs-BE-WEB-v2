@@ -12,6 +12,7 @@ using Business_Logic.Modules.BookingItemModule.Interface;
 using Business_Logic.Modules.BookingItemModule.Request;
 using Business_Logic.Modules.SessionModule.Response;
 using System.Data.SqlTypes;
+using PayPal.Api;
 
 namespace Business_Logic.Modules.SessionModule
 {
@@ -43,7 +44,13 @@ namespace Business_Logic.Modules.SessionModule
                 , options: o => o.Where(x => x.Item.UserId == id ).ToList());
         }
 
-            public async Task<ICollection<Session>> GetSessionsIsNotStartAndInStage()
+        public async Task<ICollection<Session>> GetSessionsByItem(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
+                , options: o => o.Where(x => x.ItemId == id).ToList());
+        }
+
+        public async Task<ICollection<Session>> GetSessionsIsNotStartAndInStage()
         {
             var list = await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
                 , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.NotStart || x.Status == (int)SessionStatusEnum.InStage).ToList());
@@ -335,7 +342,60 @@ namespace Business_Logic.Modules.SessionModule
             }
         }
 
-        public async Task<Session> UpdateSessionStatusNotStart(UpdateSessionStatusRequest SessionRequest)
+        public async Task<Session> ReAuction(ReAuctionRequest SessionRequest)
+        {
+            try
+            {
+                var Session = await _SessionRepository.GetFirstOrDefaultAsync(x => x.Id == SessionRequest.SessionId);
+
+                if (Session == null)
+                {
+                    throw new Exception(ErrorMessage.SessionError.SESSION_NOT_FOUND);
+                }
+
+                ValidationResult result = new ReAuctionRequestValidator().Validate(SessionRequest);
+                if (!result.IsValid)
+                {
+                    throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                var newSession = new Session();
+
+                newSession.Id = Guid.NewGuid();
+                newSession.ItemId = SessionRequest.ItemId;
+                newSession.Name = Session.Name;
+
+                var fee = await _FeeService.GetAll();
+
+                foreach (var i in fee)
+                {
+                    if (i.Min <= SessionRequest.FinalPrice && i.Max >= SessionRequest.FinalPrice)
+                    {
+                        newSession.FeeId = i.Id;
+                        break;
+                    }
+                }
+
+                newSession.SessionRuleId = Session.SessionRuleId;
+                DateTime dateTime = DateTime.UtcNow;
+                newSession.BeginTime = dateTime.AddHours(7);
+                newSession.EndTime = dateTime.AddMinutes((7 * 60) + SessionRequest.AuctionTime);
+                newSession.FinalPrice = SessionRequest.FinalPrice;
+                newSession.CreateDate = dateTime.AddHours(7);
+                newSession.UpdateDate = dateTime.AddHours(7);
+                newSession.Status = (int)SessionStatusEnum.InStage;
+
+                await _SessionRepository.AddAsync(newSession);
+                return newSession;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Session> UpdateSessionStatusToInStage(UpdateSessionStatusRequest SessionRequest)
         {
             try
             {
@@ -366,7 +426,7 @@ namespace Business_Logic.Modules.SessionModule
             }
         }
 
-        public async Task<Session> UpdateSessionStatusInStage(UpdateSessionStatusRequest SessionRequest)
+        public async Task<Session> UpdateSessionStatusToHaventTranfer(UpdateSessionStatusRequest SessionRequest)
         {
             try
             {
@@ -397,7 +457,7 @@ namespace Business_Logic.Modules.SessionModule
             }
         }
 
-        public async Task<Session> UpdateSessionStatusFail(UpdateSessionStatusRequest SessionRequest)
+        public async Task<Session> UpdateSessionStatusToFail(UpdateSessionStatusRequest SessionRequest)
         {
             try
             {
@@ -428,7 +488,7 @@ namespace Business_Logic.Modules.SessionModule
             }
         }
 
-        public async Task<Session> UpdateSessionStatusComplete(UpdateSessionStatusRequest SessionRequest)
+        public async Task<Session> UpdateSessionStatusToComplete(UpdateSessionStatusRequest SessionRequest)
         {
             try
             {
@@ -551,7 +611,7 @@ namespace Business_Logic.Modules.SessionModule
             return newSession;
         }
 
-        public async Task<Session> UpdateSessionStatusReceived(UpdateSessionStatusRequest SessionRequest)
+        public async Task<Session> UpdateSessionStatusToReceived(UpdateSessionStatusRequest SessionRequest)
         {
             try
             {
@@ -582,7 +642,7 @@ namespace Business_Logic.Modules.SessionModule
             }
         }
 
-        public async Task<Session> UpdateSessionStatusErrorItem(UpdateSessionStatusRequest SessionRequest)
+        public async Task<Session> UpdateSessionStatusToErrorItem(UpdateSessionStatusRequest SessionRequest)
         {
             try
             {

@@ -392,7 +392,7 @@ namespace BIDs_API.Controllers
                         {
                             SessionID = list.ElementAt(i).Id
                         };
-                        var sessionUpdate = await _SessionService.UpdateSessionStatusFail(updateRequest);
+                        var sessionUpdate = await _SessionService.UpdateSessionStatusToFail(updateRequest);
                         await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
                         list.Remove(list.ElementAt(i));
                         i--;
@@ -1295,7 +1295,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var session = await _SessionService.UpdateSessionStatusNotStart(updateSessionRequest);
+                var session = await _SessionService.UpdateSessionStatusToInStage(updateSessionRequest);
                 await _Common.SendEmailBeginAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 var item = await _ItemService.GetItemByID(session.ItemId);
@@ -1322,7 +1322,7 @@ namespace BIDs_API.Controllers
                 var checkSession = await _Common.CheckSessionJoining(updateSessionRequest.SessionID);
                 if (checkSession == true)
                 {
-                    var session = await _SessionService.UpdateSessionStatusInStage(updateSessionRequest);
+                    var session = await _SessionService.UpdateSessionStatusToHaventTranfer(updateSessionRequest);
                     var winner = await _Common.SendEmailWinnerAuction(session);
                     await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                     var item = await _ItemService.GetItemByID(session.ItemId);
@@ -1343,7 +1343,7 @@ namespace BIDs_API.Controllers
                 }
                 else
                 {
-                    var session = await _SessionService.UpdateSessionStatusFail(updateSessionRequest);
+                    var session = await _SessionService.UpdateSessionStatusToFail(updateSessionRequest);
                     await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                     return Ok();
                 }
@@ -1362,7 +1362,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var session = await _SessionService.UpdateSessionStatusFail(updateSessionRequest);
+                var session = await _SessionService.UpdateSessionStatusToFail(updateSessionRequest);
                 await _Common.SendEmailFailAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 var item = await _ItemService.GetItemByID(session.ItemId);
@@ -1400,7 +1400,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var session = await _SessionService.UpdateSessionStatusFail(updateSessionRequest);
+                var session = await _SessionService.UpdateSessionStatusToFail(updateSessionRequest);
                 await _Common.SendEmailFailAuction(session);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 var item = await _ItemService.GetItemByID(session.ItemId);
@@ -1438,7 +1438,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var session = await _SessionService.UpdateSessionStatusComplete(updateSessionRequest);
+                var session = await _SessionService.UpdateSessionStatusToComplete(updateSessionRequest);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 await _Common.SendEmailCompleteAuction(session);
                 var item = await _ItemService.GetItemByID(session.ItemId);
@@ -1461,7 +1461,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var session = await _SessionService.UpdateSessionStatusReceived(updateSessionRequest);
+                var session = await _SessionService.UpdateSessionStatusToReceived(updateSessionRequest);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 var item = await _ItemService.GetItemByID(session.ItemId);
                 string message = "Bạn đã xác nhận đã nhận sản phẩm " + item.ElementAt(0).Name + ". Cảm ơn bạn đã sử dụng hệ thống đấu giá trực tuyến BIDs.";
@@ -1483,7 +1483,7 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var session = await _SessionService.UpdateSessionStatusErrorItem(updateSessionRequest);
+                var session = await _SessionService.UpdateSessionStatusToErrorItem(updateSessionRequest);
                 await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session);
                 var item = await _ItemService.GetItemByID(session.ItemId);
                 string message = "Bạn đã xác nhận đã nhận được sản phẩm LỖI " + item.ElementAt(0).Name + " với lỗi là " + reason + ". Chúng tôi sẽ liên lạc với bạn trong thời gian sớm nhất để xác nhận và làm các thủ tục hoàn trả nếu đúng sự thật. Xin vui lòng kiểm tra email và số điện thoại để không bỏ lỡ liên lạc từ hệ thống";

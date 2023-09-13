@@ -12,6 +12,7 @@ using Business_Logic.Modules.NotificationModule.Request;
 using Business_Logic.Modules.NotificationTypeModule.Interface;
 using Business_Logic.Modules.SessionDetailModule.Interface;
 using Business_Logic.Modules.SessionModule.Interface;
+using Business_Logic.Modules.SessionModule.Request;
 using Business_Logic.Modules.StaffNotificationDetailModule.Interface;
 using Business_Logic.Modules.StaffNotificationDetailModule.Request;
 using Business_Logic.Modules.UserModule.Interface;
@@ -663,11 +664,34 @@ namespace Business_Logic.Modules.CommonModule
             return Winner;
         }
 
-        public async Task<BookingItem> ReAuction(UpdateItemRequest updateItemRequest)
+        public async Task<BookingItem> ReAuction(UpdateItemRequest reAuctionRequest)
         {
             try
             {
-                var item = await _ItemService.UpdateItem(updateItemRequest);
+                var getItem = await _ItemService.GetItemByID(reAuctionRequest.ItemId);
+                var item = getItem.ElementAt(0);
+                var AuctionTime = (reAuctionRequest.AuctionHour * 60) + reAuctionRequest.AuctionMinute;
+                if (item.Name == reAuctionRequest.ItemName
+                    && item.DescriptionDetail == reAuctionRequest.Description
+                    && item.Quantity == reAuctionRequest.Quantity
+                    && item.Deposit == reAuctionRequest.Deposit
+                    && item.AuctionTime == AuctionTime
+                    && item.FirstPrice == reAuctionRequest.FirstPrice
+                    && item.StepPrice == reAuctionRequest.StepPrice)
+                {
+                    var session = await _SessionService.GetSessionsByItem(item.Id);
+                    var reAutionBeginNow = new ReAuctionRequest()
+                    {
+                        ItemId = reAuctionRequest.ItemId,
+                        AuctionTime = AuctionTime,
+                        FinalPrice = reAuctionRequest.FirstPrice,
+                        SessionId = session.ElementAt(0).Id
+                    };
+                    await _SessionService.ReAuction(reAutionBeginNow);
+                }
+
+
+                await _ItemService.UpdateItem(reAuctionRequest);
 
                 var bookingItem = await _BookingItemService.GetBookingItemByItem(item.Id);
 
@@ -967,7 +991,7 @@ namespace Business_Logic.Modules.CommonModule
                         totalPayment += Convert.ToDouble(row["FinalPrice"]);
                         if (Convert.ToInt32(row["Status"]) == (int)SessionStatusEnum.NotStart)
                         {
-                            totalCountNotStart ++;
+                            totalCountNotStart++;
                             totalPaymentNotStart += Convert.ToDouble(row["FinalPrice"]);
                         }
 

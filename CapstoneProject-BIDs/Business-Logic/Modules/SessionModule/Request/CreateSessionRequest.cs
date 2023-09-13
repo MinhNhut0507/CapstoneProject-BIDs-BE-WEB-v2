@@ -14,7 +14,7 @@ namespace Business_Logic.Modules.SessionModule.Request
 
     }
 
-        public class CreateSessionRequestValidator : AbstractValidator<CreateSessionRequest>
+    public class CreateSessionRequestValidator : AbstractValidator<CreateSessionRequest>
     {
         public CreateSessionRequestValidator()
         {

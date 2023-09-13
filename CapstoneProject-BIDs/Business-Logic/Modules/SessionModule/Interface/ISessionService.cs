@@ -16,18 +16,20 @@ namespace Business_Logic.Modules.SessionModule.Interface
 
         public Task UpdatePriceSession(Guid id, double price);
 
-        public Task<Session> UpdateSessionStatusInStage(UpdateSessionStatusRequest SessionUpdate);
-        public Task<Session> UpdateSessionStatusNotStart(UpdateSessionStatusRequest SessionUpdate);
-        public Task<Session> UpdateSessionStatusComplete(UpdateSessionStatusRequest SessionUpdate);
-        public Task<Session> UpdateSessionStatusFail(UpdateSessionStatusRequest SessionRequest);
-        public Task<Session> UpdateSessionStatusReceived(UpdateSessionStatusRequest SessionRequest);
-        public Task<Session> UpdateSessionStatusErrorItem(UpdateSessionStatusRequest SessionRequest);
+        public Task<Session> UpdateSessionStatusToInStage(UpdateSessionStatusRequest SessionUpdate);
+        public Task<Session> UpdateSessionStatusToHaventTranfer(UpdateSessionStatusRequest SessionUpdate);
+        public Task<Session> UpdateSessionStatusToComplete(UpdateSessionStatusRequest SessionUpdate);
+        public Task<Session> UpdateSessionStatusToFail(UpdateSessionStatusRequest SessionRequest);
+        public Task<Session> UpdateSessionStatusToReceived(UpdateSessionStatusRequest SessionRequest);
+        public Task<Session> UpdateSessionStatusToErrorItem(UpdateSessionStatusRequest SessionRequest);
 
         public Task<Session> DeleteSession(Guid? SessionDeleteID);
 
         public Task<ICollection<Session>> GetAll();
 
         public Task<ICollection<Session>> GetSessionByID(Guid? id);
+
+        public Task<ICollection<Session>> GetSessionsByItem(Guid id);
 
         public Task<ICollection<Session>> GetSessionByName(string Name);
 
@@ -64,5 +66,7 @@ namespace Business_Logic.Modules.SessionModule.Interface
         public Task<ICollection<Session>> GetSessionsIsErrorItemByUser(Guid id);
 
         public Task<Session> AddNewBeginSession(CreateBeginSessionRequest SessionRequest);
+
+        public Task<Session> ReAuction(ReAuctionRequest SessionRequest);
     }
 }
