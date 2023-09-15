@@ -130,6 +130,7 @@ namespace BIDs_API.Mapper
 
             CreateMap<Session, SessionResponseComplete>()
                 .ForMember(x => x.SessionId, d => d.MapFrom(s => s.Id))
+                .ForMember(x => x.ItemId, d => d.MapFrom(s => s.ItemId))
                 .ForMember(x => x.FeeName, d => d.MapFrom(s => s.Fee.Name))
                 .ForMember(x => x.SessionName, d => d.MapFrom(s => s.Name))
                 .ForMember(x => x.ItemName, d => d.MapFrom(s => s.Item.Name))
