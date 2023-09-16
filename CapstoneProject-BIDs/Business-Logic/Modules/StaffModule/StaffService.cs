@@ -284,7 +284,7 @@ namespace Business_Logic.Modules.StaffModule
 
                 string sendto = UserCreate.Email;
                 string subject = "[BIDs] - Dịch vụ tài khoản";
-                string content = "Tài khoản" + UserCreate.Name + " đã được khởi tạo thành công, chúc bạn có những phút giây sử dụng hệ thống vui vẻ. Cảm ơn bạn đã tin tưởng và sử dụng BIDs - Hệ Thống Đấu Giá Trực Tuyến.";
+                string content = "Tài khoản " + UserCreate.Name + " đã được khởi tạo thành công, chúc bạn có những phút giây sử dụng hệ thống vui vẻ. Cảm ơn bạn đã tin tưởng và sử dụng BIDs - Hệ Thống Đấu Giá Trực Tuyến.";
 
                 UserCreate.Status = (int)UserStatusEnum.Acctive;
                 UserCreate.Role = (int)RoleEnum.User;
@@ -338,7 +338,7 @@ namespace Business_Logic.Modules.StaffModule
 
                 string sendto = UserCreate.Email;
                 string subject = "[BIDs] - Dịch vụ tài khoản";
-                string content = "Tài khoản" + UserCreate.Name + " khởi tạo không thành công vì thông tin bạn cung cấp không chính xác!"
+                string content = "Tài khoản " + UserCreate.Name + " khởi tạo không thành công vì thông tin bạn cung cấp không chính xác!"
                     + " Cụ thể lỗi ở việc "
                     + reason
                     + ". Bạn hãy cung cấp đúng thông tin hơn trong lần tiếp theo.";
@@ -393,7 +393,7 @@ namespace Business_Logic.Modules.StaffModule
 
                 string sendto = UserBan.Email;
                 string subject = "[BIDs] - Dịch vụ tài khoản";
-                string content = "Tài khoản" + UserBan.Name + "đã bị khóa vì vi phạm điều luật của hệ thống chúng tôi, bạn sẽ không thể sử dụng dịch vụ của hệ thống chúng tôi! ";
+                string content = "Tài khoản " + UserBan.Name + " đã bị khóa vì vi phạm điều luật của hệ thống chúng tôi, bạn sẽ không thể sử dụng dịch vụ của hệ thống chúng tôi! ";
 
                 UserBan.Status = (int)UserStatusEnum.Ban;
                 await _UserRepository.UpdateAsync(UserBan);
@@ -445,7 +445,7 @@ namespace Business_Logic.Modules.StaffModule
 
                 string sendto = UserUnban.Email;
                 string subject = "[BIDs] - Dịch vụ tài khoản";
-                string content = "Tài khoản" + UserUnban.Name + "đã được mở khóa, mong bạn sẽ có những trải nghiệm tốt tại hệ thống. ";
+                string content = "Tài khoản " + UserUnban.Name + " đã được mở khóa, mong bạn sẽ có những trải nghiệm tốt tại hệ thống. ";
 
                 UserUnban.Status = (int)UserStatusEnum.Acctive;
                 await _UserRepository.UpdateAsync(UserUnban);

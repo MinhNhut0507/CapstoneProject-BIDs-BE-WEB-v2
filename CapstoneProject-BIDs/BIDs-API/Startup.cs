@@ -73,14 +73,14 @@ namespace BIDs_API
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowReact", builder =>
-                {
-                    builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .SetIsOriginAllowed((host) => true)
-                        .WithExposedHeaders("Authorization");
-                });
+                //options.AddPolicy("AllowReact", builder =>
+                //{
+                //    builder.AllowAnyOrigin()
+                //        .AllowAnyMethod()
+                //        .AllowAnyHeader()
+                //        .SetIsOriginAllowed((host) => true)
+                //        .WithExposedHeaders("Authorization");
+                //});
                 options.AddPolicy("CorsPolicy", builder =>
                 {
                     builder.AllowAnyMethod()
@@ -253,7 +253,7 @@ namespace BIDs_API
 
             app.UseRouting();
 
-            app.UseCors("AllowReact");
+            //app.UseCors("AllowReact");
 
             app.UseCors("CorsPolicy");
             

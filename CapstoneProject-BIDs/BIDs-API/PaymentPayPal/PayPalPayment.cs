@@ -84,13 +84,13 @@ namespace BIDs_API.PaymentPayPal
             {
                 new Item()
                 {
-                    Name = session.Item.Name,
+                    Name = session.Name,
                     UnitAmount = new Money()
                     {
                         CurrencyCode = "USD",
                         Value = Total.ToString()
                     },
-                    Description = session.Item.DescriptionDetail,
+                    Description = session.Item.Name,
                     Quantity = session.Item.Quantity.ToString(),
                     Sku = "sku",
                     Tax = new Money()

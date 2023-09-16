@@ -311,67 +311,6 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [HttpGet("by_complete_by_auctioneer")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionCompleteByAuctioneer([FromQuery] Guid id)
-        {
-            try
-            {
-                var list = await _Common.GetSessionCompleteByAuctioneer(id);
-                if (list.Count() == 0)
-                {
-                    return NotFound();
-                }
-                var response = list.Select
-                           (
-                             emp => _mapper.Map<Session, SessionResponse>(emp)
-                           );
-                return Ok(response);
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }
-
-        // GET api/<ValuesController>/abc
-        [HttpGet("by_havent_tranfer_yet_by_auctioneer")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionHaventTranferByAuctioneer([FromQuery] Guid id)
-        {
-            try
-            {
-                var list = await _Common.GetSessionHaventTranferByAuctioneer(id);
-                if (list.Count() == 0)
-                {
-                    var Empty = new List<SessionResponse>();
-                    return Empty;
-                }
-                for (int i = 0; i < list.Count(); i++)
-                {
-                    var date = list.ElementAt(i).EndTime.AddDays(3);
-                    if (date <= DateTime.UtcNow.AddHours(7))
-                    {
-                        var updateRequest = new UpdateSessionStatusRequest()
-                        {
-                            SessionID = list.ElementAt(i).Id
-                        };
-                        var sessionUpdate = await PutSessionStatusToFail(updateRequest);
-                        list.Remove(list.ElementAt(i));
-                        i--;
-                    }
-                }
-                var response = list.Select
-                           (
-                             emp => _mapper.Map<Session, SessionResponse>(emp)
-                           );
-                return Ok(response);
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }
-
-        // GET api/<ValuesController>/abc
         [HttpGet("by_user_for_payment")]
         public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionByUserForPayment([FromQuery] Guid id)
         {
@@ -648,6 +587,267 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _Common.GetSessionCompleteByWinner(userId);
+                if (list.Count() == 0)
+                {
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                }
+                return Ok(Response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_received_by_auctioneer")]
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionReceivedByAuctioneer([FromQuery] Guid userId)
+        {
+            try
+            {
+                var list = await _Common.GetSessionReceivedByAuctioneer(userId);
+                if (list.Count() == 0)
+                {
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                }
+                return Ok(Response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_complete_by_auctioneer")]
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionCompleteByAuctioneer([FromQuery] Guid userId)
+        {
+            try
+            {
+                var list = await _Common.GetSessionCompleteByAuctioneer(userId);
+                if (list.Count() == 0)
+                {
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                }
+                return Ok(Response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_havent_tranfer_by_auctioneer")]
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionHaventTranferByAuctioneer([FromQuery] Guid userId)
+        {
+            try
+            {
+                var list = await _Common.GetSessionHaventTranferByAuctioneer(userId);
+                if (list.Count() == 0)
+                {
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                }
+                return Ok(Response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_fail_by_auctioneer")]
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionFailByAuctioneer([FromQuery] Guid userId)
+        {
+            try
+            {
+                var list = await _Common.GetSessionFailByAuctioneer(userId);
+                if (list.Count() == 0)
+                {
+                    var Empty = new List<SessionWinnerResponse>();
+                    return Empty;
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
+                           );
+                var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                }
+                return Ok(Response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_error_item_by_auctioneer")]
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionErrorItemByAuctioneer([FromQuery] Guid userId)
+        {
+            try
+            {
+                var list = await _Common.GetSessionErrorItemByAuctioneer(userId);
                 if (list.Count() == 0)
                 {
                     var Empty = new List<SessionWinnerResponse>();

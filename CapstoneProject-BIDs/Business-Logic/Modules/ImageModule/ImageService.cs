@@ -1,5 +1,6 @@
 ﻿using Business_Logic.Modules.ImageModule.Interface;
 using Business_Logic.Modules.ImageModule.Request;
+using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.UserModule.Interface;
 using Data_Access.Constant;
@@ -15,7 +16,7 @@ namespace Business_Logic.Modules.ImageModule
         private readonly IImageRepository _ImageRepository;
         private readonly IStaffRepository _StaffRepository;
         public ImageService(IImageRepository ImageRepository
-            ,IStaffRepository staffRepository)
+            , IStaffRepository staffRepository)
         {
             _ImageRepository = ImageRepository;
             _StaffRepository = staffRepository;
@@ -76,6 +77,12 @@ namespace Business_Logic.Modules.ImageModule
                 && !ImageRequest.DetailImage.Contains(".heic"))
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
+            }
+
+            var listImage = await GetImageByItem(ImageRequest.ItemId);
+            if(listImage.Count() >= 4)
+            {
+                throw new Exception(ErrorMessage.CommonError.OUT_OF_RANGE_IMAGE);
             }
 
             var newImage = new Image();

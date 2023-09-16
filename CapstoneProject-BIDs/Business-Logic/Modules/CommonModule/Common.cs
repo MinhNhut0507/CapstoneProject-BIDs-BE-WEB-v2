@@ -395,7 +395,7 @@ namespace Business_Logic.Modules.CommonModule
                 var checkSession = await _SessionService.GetSessionByID(x.SessionId);
                 if (listSession.Count() == 0)
                 {
-                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Received)
                         listSession.Add(checkSession.ElementAt(0));
                 }
                 else
@@ -429,7 +429,7 @@ namespace Business_Logic.Modules.CommonModule
                 var checkSession = await _SessionService.GetSessionByID(x.SessionId);
                 if (listSession.Count() == 0)
                 {
-                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.ErrorItem)
                         listSession.Add(checkSession.ElementAt(0));
                 }
                 else
@@ -460,7 +460,7 @@ namespace Business_Logic.Modules.CommonModule
                 var checkSession = await _SessionService.GetSessionByID(x.SessionId);
                 if (listSession.Count() == 0)
                 {
-                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Received)
                         listSession.Add(checkSession.ElementAt(0));
                 }
                 else
@@ -470,6 +470,37 @@ namespace Business_Logic.Modules.CommonModule
                         if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
                             break;
                         if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Received)
+                            if (i == listSession.Count - 1)
+                                listSession.Add(checkSession.ElementAt(0));
+                    }
+                }
+            }
+            return listSession;
+        }
+
+        public async Task<ICollection<Session>> GetSessionFailByAuctioneer(Guid id)
+        {
+            if (id == null)
+            {
+                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
+            }
+            var listSession = new List<Session>();
+            var sessionDetail = await _SessionDetailService.GetSessionDetailByUser(id);
+            foreach (var x in sessionDetail)
+            {
+                var checkSession = await _SessionService.GetSessionByID(x.SessionId);
+                if (listSession.Count() == 0)
+                {
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Fail)
+                        listSession.Add(checkSession.ElementAt(0));
+                }
+                else
+                {
+                    for (int i = 0; i < listSession.Count; i++)
+                    {
+                        if (listSession.ElementAt(i).Id == checkSession.ElementAt(0).Id)
+                            break;
+                        if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Fail)
                             if (i == listSession.Count - 1)
                                 listSession.Add(checkSession.ElementAt(0));
                     }
@@ -491,7 +522,7 @@ namespace Business_Logic.Modules.CommonModule
                 var checkSession = await _SessionService.GetSessionByID(x.SessionId);
                 if (listSession.Count() == 0)
                 {
-                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.Complete)
+                    if (checkSession.ElementAt(0).Status == (int)SessionStatusEnum.ErrorItem)
                         listSession.Add(checkSession.ElementAt(0));
                 }
                 else

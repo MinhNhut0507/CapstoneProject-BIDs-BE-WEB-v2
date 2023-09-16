@@ -101,6 +101,13 @@ namespace Business_Logic.Modules.UserModule
                 throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
             }
 
+            Users userCheckName = _UserRepository.GetFirstOrDefaultAsync(x => x.Name == userRequest.UserName).Result;
+
+            if (userCheckName != null)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_IS_EXITED);
+            }
+
             Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
 
             if (userCheckPhone != null)

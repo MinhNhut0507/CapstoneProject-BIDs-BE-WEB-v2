@@ -5,11 +5,12 @@
         #region Common error message
         public static class CommonError
         {
-            public readonly static string NAME_IS_NULL = "Tên trồng(vui lòng nhập tên)";
+            public readonly static string NAME_IS_NULL = "Tên trống(vui lòng nhập tên)";
             public readonly static string ID_IS_NULL = "ID trống(Vui lòng nhập ID)";
             public readonly static string INVALID_REQUEST = "Yêu cầu không hợp lệ";
             public readonly static string ACCOUNT_NAME_IS_EXITED = "Tài khoản đã tồn tại";
-            public readonly static string EMAIL_IS_EXITED = "Email Đã tồn tại";
+            public readonly static string EMAIL_IS_EXITED = "Email đã tồn tại";
+            public readonly static string NAME_IS_EXITED = "Tên đã tồn tại";
             public readonly static string WRONG_EMAIL_FORMAT = "Email sai định dạng";
             public readonly static string CCCD_NUMBER_IS_EXITED = "Số CCCD đã tồn tại";
             public readonly static string WRONG_CCCD_NUMBER_FORMAT = "Số CCCD sai định dạng";
@@ -17,6 +18,7 @@
             public readonly static string WRONG_PHONE_FORMAT = "Số điện thoại sai định dạng";
             public readonly static string EMAIL_IS_NULL = "Email trống(vui lòng nhập email)";
             public readonly static string WRONG_IMAGE_FORMAT = "Hình ảnh sai định dạng";
+            public readonly static string OUT_OF_RANGE_IMAGE = "Chỉ cho phép tối đa 4 hình ảnh";
             public readonly static string ERROR_DATE_TIME = "Ngày bắt đầu phải trước ngày kết thúc";
         }
         #endregion
