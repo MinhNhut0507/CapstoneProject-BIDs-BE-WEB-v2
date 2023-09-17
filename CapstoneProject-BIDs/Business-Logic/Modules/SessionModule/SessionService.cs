@@ -114,6 +114,18 @@ namespace Business_Logic.Modules.SessionModule
                 , options: o => o.Where(x => x.Item.UserId == id && x.Status == (int)SessionStatusEnum.InStage).ToList());
         }
 
+        public async Task<ICollection<Session>> GetSessionsIsNotStartByCategory(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
+                , options: o => o.Where(x => x.Item.CategoryId == id && x.Status == (int)SessionStatusEnum.NotStart).ToList());
+        }
+
+        public async Task<ICollection<Session>> GetSessionsIsInStageByCategory(Guid id)
+        {
+            return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"
+                , options: o => o.Where(x => x.Item.CategoryId == id && x.Status == (int)SessionStatusEnum.InStage).ToList());
+        }
+
         public async Task<ICollection<Session>> GetSessionsIsCompleteByUser(Guid id)
         {
             return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.User,Item.Category.Descriptions"

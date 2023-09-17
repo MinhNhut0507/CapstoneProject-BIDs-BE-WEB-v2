@@ -271,6 +271,87 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
+        [AllowAnonymous]
+        [HttpGet("by_not_start_by_category")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionNotStartByCategory([FromRoute] Guid SessionId)
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsNotStartByCategory(SessionId);
+                if (list.Count() == 0)
+                {
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
+                }
+                var date = DateTime.UtcNow.AddHours(7);
+                for (int i = 0; i < list.Count(); i++)
+                {
+
+                    if (list.ElementAt(i).BeginTime <= date)
+                    {
+                        var request = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        var sessionUpdate = await PutSessionStatusNotStart(request);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
+                        list.Remove(list.ElementAt(i));
+                        i--;
+                    }
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("by_in_stage_by_category")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByCategory([FromRoute] Guid SessionId)
+        {
+            try
+            {
+                var list = await _SessionService.GetSessionsIsInStageByCategory(SessionId);
+                if (list.Count() == 0)
+                {
+                    var Empty = new List<SessionResponse>();
+                    return Empty;
+                }
+                var date = DateTime.UtcNow.AddHours(7);
+                for (int i = 0; i < list.Count(); i++)
+                {
+
+                    if (list.ElementAt(i).EndTime <= date)
+                    {
+                        var request = new UpdateSessionStatusRequest()
+                        {
+                            SessionID = list.ElementAt(i).Id
+                        };
+                        var sessionUpdate = await PutSessionStatusInStage(request);
+                        await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", sessionUpdate);
+                        list.Remove(list.ElementAt(i));
+                        i--;
+                    }
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Session, SessionResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
         [HttpGet("by_in_stage_by_auctioneer")]
         public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionInStageByAuctioneer([FromQuery] Guid id)
         {

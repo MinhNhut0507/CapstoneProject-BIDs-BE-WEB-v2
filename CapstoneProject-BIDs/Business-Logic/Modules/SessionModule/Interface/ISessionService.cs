@@ -65,6 +65,10 @@ namespace Business_Logic.Modules.SessionModule.Interface
 
         public Task<ICollection<Session>> GetSessionsIsErrorItemByUser(Guid id);
 
+        public Task<ICollection<Session>> GetSessionsIsNotStartByCategory(Guid id);
+
+        public Task<ICollection<Session>> GetSessionsIsInStageByCategory(Guid id);
+
         public Task<Session> AddNewBeginSession(CreateBeginSessionRequest SessionRequest);
 
         public Task<Session> ReAuction(ReAuctionRequest SessionRequest);
