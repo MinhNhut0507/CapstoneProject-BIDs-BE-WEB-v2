@@ -93,6 +93,11 @@ namespace Business_Logic.Modules.StaffModule
             {
                 throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
             }
+            Staff staffCheckName = _StaffRepository.GetFirstOrDefaultAsync(x => x.Name == StaffRequest.StaffName).Result;
+            if (staffCheckName != null)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_IS_EXITED);
+            }
             Staff staffTestPhone = _StaffRepository.GetFirstOrDefaultAsync(x => x.Phone == StaffRequest.Phone).Result;
             if (staffTestPhone != null)
             {
@@ -154,6 +159,14 @@ namespace Business_Logic.Modules.StaffModule
                     if(staffCheckPhone.Id != StaffUpdate.Id)
                     {
                         throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                    }
+                }
+                Staff staffCheckName = _StaffRepository.GetFirstOrDefaultAsync(x => x.Name == StaffRequest.StaffName).Result;
+                if (staffCheckName != null)
+                {
+                    if (staffCheckName.Id != StaffUpdate.Id)
+                    {
+                        throw new Exception(ErrorMessage.CommonError.NAME_IS_EXITED);
                     }
                 }
 

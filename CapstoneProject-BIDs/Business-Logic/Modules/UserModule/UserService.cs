@@ -239,6 +239,14 @@ namespace Business_Logic.Modules.UserModule
                         throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
                     }
                 }
+                Users userCheckName = _UserRepository.GetFirstOrDefaultAsync(x => x.Name == userRequest.UserName).Result;
+                if (userCheckName != null)
+                {
+                    if (userCheckName.Id != userUpdate.Id)
+                    {
+                        throw new Exception(ErrorMessage.CommonError.NAME_IS_EXITED);
+                    }
+                }
 
                 if ((!userRequest.Phone.StartsWith("09")
                     && !userRequest.Phone.StartsWith("08")

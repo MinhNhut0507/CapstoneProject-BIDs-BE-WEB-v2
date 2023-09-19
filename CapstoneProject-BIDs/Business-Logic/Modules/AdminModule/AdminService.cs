@@ -82,6 +82,11 @@ namespace Business_Logic.Modules.AdminModule
             {
                 throw new Exception(ErrorMessage.CommonError.EMAIL_IS_EXITED);
             }
+            Admin AdminCheckName = _AdminRepository.GetFirstOrDefaultAsync(x => x.Name == AdminRequest.AdminName).Result;
+            if (AdminCheckName != null)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_IS_EXITED);
+            }
             Admin AdminCheckPhone = _AdminRepository.GetFirstOrDefaultAsync(x => x.Phone == AdminRequest.Phone).Result;
             if (AdminCheckPhone != null)
             {
@@ -139,6 +144,14 @@ namespace Business_Logic.Modules.AdminModule
                     if(AdminCheckPhone.Id != AdminUpdate.Id)
                     {
                         throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
+                    }
+                }
+                var AdminCheckName = await _AdminRepository.GetFirstOrDefaultAsync(x => x.Name == AdminRequest.AdminName);
+                if (AdminCheckName != null)
+                {
+                    if (AdminCheckName.Id != AdminUpdate.Id)
+                    {
+                        throw new Exception(ErrorMessage.CommonError.NAME_IS_EXITED);
                     }
                 }
 
