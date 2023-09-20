@@ -25,7 +25,7 @@ namespace Business_Logic.Modules.UserModule.Interface
 
         public Task<ICollection<Users>> GetUsersIsWaitting();
 
-        public Task<Users> GetUserByID(Guid? id);
+        public Task<ICollection<Users>> GetUserByID(Guid? id);
 
         public Task<Users> GetUserByName(string Name);
 

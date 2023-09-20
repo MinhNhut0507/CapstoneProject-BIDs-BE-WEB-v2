@@ -1,4 +1,5 @@
-﻿using Common.Helper;
+﻿using Business_Logic.Modules.UserPaymentInformationModule.Response;
+using Common.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,10 @@ namespace Business_Logic.Modules.UserModule.Response
 {
     public class UserResponse
     {
+        public UserResponse() 
+        {
+            PayPalAccount = new HashSet<PaymentInformationResponse>();
+        }
         public Guid UserId { get; set; }
         public string Role { get; set; }
         public string UserName { get; set; }
@@ -17,6 +22,7 @@ namespace Business_Logic.Modules.UserModule.Response
         public string Avatar { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
+        public ICollection<PaymentInformationResponse> PayPalAccount { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Cccdnumber { get; set; }
         public string CccdfrontImage { get; set; }

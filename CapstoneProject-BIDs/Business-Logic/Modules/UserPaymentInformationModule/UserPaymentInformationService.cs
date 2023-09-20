@@ -20,7 +20,7 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
 
         public async Task<ICollection<UserPaymentInformation>> GetAll()
         {
-            var result = await _UserPaymentInformationRepository.GetAll(includeProperties: "PaymentStaffs,User");
+            var result = await _UserPaymentInformationRepository.GetAll(includeProperties: "User");
             return result;
         }
 
@@ -35,7 +35,7 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var UserPaymentInformation = await _UserPaymentInformationRepository.GetAll(includeProperties: "PaymentStaffs,User",
+            var UserPaymentInformation = await _UserPaymentInformationRepository.GetAll(includeProperties: "User",
                 options: o => o.Where(x => x.Id == id).ToList());
             if (UserPaymentInformation == null)
             {
@@ -92,7 +92,7 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
 
             var user = await _UserService.GetUserByID(UserPaymentInformationRequest.UserId);
 
-            await _UserService.UpdateRoleAccount(user.Email);
+            await _UserService.UpdateRoleAccount(user.ElementAt(0).Email);
 
             return newUserPaymentInformation;
         }
@@ -101,7 +101,7 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
         {
             try
             {
-                var UserPaymentInformationUpdate = _UserPaymentInformationRepository.GetFirstOrDefaultAsync(x => x.Id == UserPaymentInformationRequest.Id).Result;
+                var UserPaymentInformationUpdate = _UserPaymentInformationRepository.GetFirstOrDefaultAsync(x => x.UserId == UserPaymentInformationRequest.UserId).Result;
 
                 if (UserPaymentInformationUpdate == null)
                 {
@@ -115,7 +115,6 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
                 }
 
                 UserPaymentInformationUpdate.PayPalAccount = UserPaymentInformationRequest.PayPalAccount;
-                UserPaymentInformationUpdate.Status = UserPaymentInformationRequest.Status;
 
                 await _UserPaymentInformationRepository.UpdateAsync(UserPaymentInformationUpdate);
                 return UserPaymentInformationUpdate;

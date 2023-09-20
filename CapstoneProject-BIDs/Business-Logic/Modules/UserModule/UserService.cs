@@ -43,18 +43,10 @@ namespace Business_Logic.Modules.UserModule
             return await _UserRepository.GetUsersBy(x => x.Status == (int)UserStatusEnum.Waitting, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
-        public async Task<Users> GetUserByID(Guid? id)
+        public async Task<ICollection<Users>> GetUserByID(Guid? id)
         {
-            if (id == Guid.Empty)
-            {
-                throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
-            }
-            var user = await _UserRepository.GetFirstOrDefaultAsync(s => s.Id == id);
-            if (user == null)
-            {
-                throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);
-            }
-            return user;
+            return await _UserRepository.GetAll(includeProperties: "UserPaymentInformations"
+                , options: o => o.Where(x => x.Id == id).ToList());
         }
 
         public async Task<Users> GetUserByName(string userName)
@@ -218,7 +210,7 @@ namespace Business_Logic.Modules.UserModule
         {
             try
             {
-                var userUpdate = GetUserByID(userRequest.UserId).Result;
+                var userUpdate = await _UserRepository.GetFirstOrDefaultAsync(x => x.Id == userRequest.UserId);
 
                 if (userUpdate == null)
                 {

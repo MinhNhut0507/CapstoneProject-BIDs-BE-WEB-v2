@@ -166,14 +166,23 @@ namespace BIDs_API.Controllers
         [HttpGet("by_id")]
         public async Task<ActionResult<UserResponse>> GetUserByID([FromQuery] Guid id)
         {
-            var user = _mapper.Map<UserResponse>(await _userService.GetUserByID(id));
-
-            if (user == null)
+            try
             {
-                return NotFound();
+                var list = await _userService.GetUserByID(id);
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Users, UserResponse>(emp)
+                           );
+                return Ok(response.ElementAt(0));
             }
-
-            return user;
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/<ValuesController>/abc

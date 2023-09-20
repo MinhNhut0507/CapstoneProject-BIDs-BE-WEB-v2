@@ -78,7 +78,8 @@ namespace Business_Logic.Modules.CommonModule
 
             for (int i = 0; i < SessionDetail.Count; i++)
             {
-                var user = await _UserService.GetUserByID(SessionDetail.ElementAt(i).UserId);
+                var listUser = await _UserService.GetUserByID(SessionDetail.ElementAt(i).UserId);
+                var user = listUser.ElementAt(0);
 
                 string _gmail = "bidauctionfloor@gmail.com";
                 string _password = "gnauvhbfubtgxjow";
@@ -122,7 +123,8 @@ namespace Business_Logic.Modules.CommonModule
             if (check == true)
             {
                 SessionWinner = await _SessionDetailService.Getwinner(session.Id);
-                Winner = await _UserService.GetUserByID(SessionWinner.UserId);
+                var listWinner = await _UserService.GetUserByID(SessionWinner.UserId);
+                Winner = listWinner.ElementAt(0);
             }
             else
             {
@@ -175,14 +177,16 @@ namespace Business_Logic.Modules.CommonModule
             if (check == true)
             {
                 SessionWinner = await _SessionDetailService.Getwinner(session.Id);
-                Winner = await _UserService.GetUserByID(SessionWinner.UserId);
+                var listUser = await _UserService.GetUserByID(SessionWinner.UserId);
+                Winner = listUser.ElementAt(0);
             }
             else
             {
                 Winner = await GetUserWinningByJoining(session.Id);
             }
 
-            var owner = await _UserService.GetUserByID(item.ElementAt(0).UserId);
+            var listOwner = await _UserService.GetUserByID(item.ElementAt(0).UserId);
+            var owner = listOwner.ElementAt(0);
 
             string _gmail = "bidauctionfloor@gmail.com";
             string _password = "gnauvhbfubtgxjow";
@@ -232,7 +236,8 @@ namespace Business_Logic.Modules.CommonModule
             if (check == true)
             {
                 SessionWinner = await _SessionDetailService.Getwinner(session.Id);
-                Winner = await _UserService.GetUserByID(SessionWinner.UserId);
+                var listWinner = await _UserService.GetUserByID(SessionWinner.UserId);
+                Winner = listWinner.ElementAt(0);
             }
             else
             {
@@ -609,7 +614,8 @@ namespace Business_Logic.Modules.CommonModule
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
             var sessionDetailWinner = await _SessionDetailService.Getwinner(id);
-            var Winner = await _UserService.GetUserByID(sessionDetailWinner.UserId);
+            var listWinner = await _UserService.GetUserByID(sessionDetailWinner.UserId);
+            var Winner = listWinner.ElementAt(0);
             return Winner;
         }
 
@@ -692,7 +698,7 @@ namespace Business_Logic.Modules.CommonModule
             var sessionDetailJoining = await _SessionDetailService.GetSessionDetailBySession(id);
             var sortList = sessionDetailJoining.OrderByDescending(s => s.CreateDate);
             var Winner = await _UserService.GetUserByID(sortList.ElementAt(sortList.Count() - 1).UserId);
-            return Winner;
+            return Winner.ElementAt(0);
         }
 
         public async Task<BookingItem> ReAuction(UpdateItemRequest reAuctionRequest)
@@ -880,7 +886,8 @@ namespace Business_Logic.Modules.CommonModule
             var listUser = new List<Users>();
             foreach (var detail in listSessionDetail)
             {
-                var user = await _UserService.GetUserByID(detail.UserId);
+                var list = await _UserService.GetUserByID(detail.UserId);
+                var user = listUser.ElementAt(0);
                 if (listUser.Count == 0)
                     listUser.Add(user);
                 for (int i = 0; i < listUser.Count; i++)

@@ -131,7 +131,7 @@ namespace BIDs_API.PaymentPayPal
                 CheckoutPaymentIntent = "CAPTURE",
                 Payer = new Payer()
                 {
-                    Email = User.Email,
+                    Email = User.ElementAt(0).Email,
                 },
                 PurchaseUnits = new List<PurchaseUnitRequest>()
                 {
@@ -260,8 +260,8 @@ namespace BIDs_API.PaymentPayPal
                         {
                             name = new
                             {
-                                given_name = User.Name,
-                                surname = User.Email
+                                given_name = User.ElementAt(0).Name,
+                                surname = User.ElementAt(0).Email
                             },
                             email_address = EmailPaypalUser,
                             experience_context = new
@@ -638,7 +638,7 @@ namespace BIDs_API.PaymentPayPal
                 CheckoutPaymentIntent = "CAPTURE",
                 Payer = new Payer()
                 {
-                    Email = User.Email,
+                    Email = User.ElementAt(0).Email,
                 },
                 PurchaseUnits = new List<PurchaseUnitRequest>()
                 {
@@ -868,8 +868,8 @@ namespace BIDs_API.PaymentPayPal
                             {
                                 name = new
                                 {
-                                    given_name = user.Name,
-                                    surname = user.Email
+                                    given_name = user.ElementAt(0).Name,
+                                    surname = user.ElementAt(0).Email
                                 },
                                 email_address = paymentUser.PayPalAccount,
                                 experience_context = new
