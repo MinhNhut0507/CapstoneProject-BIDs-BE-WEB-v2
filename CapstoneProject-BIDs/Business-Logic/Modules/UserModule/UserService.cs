@@ -40,7 +40,7 @@ namespace Business_Logic.Modules.UserModule
 
         public async Task<ICollection<Users>> GetUsersIsWaitting()
         {
-            return await _UserRepository.GetUsersBy(x => x.Status == (int)UserStatusEnum.Waitting, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
+            return await _UserRepository.GetUsersBy(x => x.Status == (int)UserStatusEnum.Waiting, options: o => o.OrderByDescending(x => x.UpdateDate).ToList());
         }
 
         public async Task<ICollection<Users>> GetUserByID(Guid? id)
@@ -119,11 +119,17 @@ namespace Business_Logic.Modules.UserModule
                 throw new Exception(ErrorMessage.CommonError.WRONG_EMAIL_FORMAT);
             }
 
+            if (userRequest.UserName.Length > 50)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+            }
+
             if ((!userRequest.Phone.StartsWith("09")
                 && !userRequest.Phone.StartsWith("08")
                 && !userRequest.Phone.StartsWith("07")
                 && !userRequest.Phone.StartsWith("05")
-                && !userRequest.Phone.StartsWith("03"))
+                && !userRequest.Phone.StartsWith("03")
+                && !userRequest.Phone.StartsWith("02"))
                 || userRequest.Phone.Length != 10)
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_PHONE_FORMAT);
@@ -156,6 +162,11 @@ namespace Business_Logic.Modules.UserModule
                 throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
             }
 
+            if (userRequest.Password.Length > 50)
+            {
+                throw new Exception(ErrorMessage.CommonError.PASSWORD_OUT_OF_LENGHT);
+            }
+
             var newUser = new Users();
 
             newUser.Id = Guid.NewGuid();
@@ -173,7 +184,7 @@ namespace Business_Logic.Modules.UserModule
             DateTime dateTime = DateTime.UtcNow;
             newUser.CreateDate = dateTime.AddHours(7);
             newUser.UpdateDate = dateTime.AddHours(7);
-            newUser.Status = (int)UserStatusEnum.Waitting;
+            newUser.Status = (int)UserStatusEnum.Waiting;
 
             await _UserRepository.AddAsync(newUser);
 
@@ -244,7 +255,8 @@ namespace Business_Logic.Modules.UserModule
                     && !userRequest.Phone.StartsWith("08")
                     && !userRequest.Phone.StartsWith("07")
                     && !userRequest.Phone.StartsWith("05")
-                    && !userRequest.Phone.StartsWith("03"))
+                    && !userRequest.Phone.StartsWith("03")
+                    && !userRequest.Phone.StartsWith("02"))
                     || userRequest.Phone.Length != 10)
                 {
                     throw new Exception(ErrorMessage.CommonError.WRONG_PHONE_FORMAT);
@@ -255,6 +267,16 @@ namespace Business_Logic.Modules.UserModule
                 && !userRequest.Avatar.Contains(".heic"))
                 {
                     throw new Exception(ErrorMessage.CommonError.WRONG_IMAGE_FORMAT);
+                }
+
+                if (userRequest.UserName.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+                }
+
+                if (userRequest.Password.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.PASSWORD_OUT_OF_LENGHT);
                 }
 
                 userUpdate.Name = userRequest.UserName;
@@ -346,6 +368,11 @@ namespace Business_Logic.Modules.UserModule
                 if (!result.IsValid)
                 {
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                if (updatePasswordRequest.NewPassword.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.PASSWORD_OUT_OF_LENGHT);
                 }
 
                 user.Password = updatePasswordRequest.NewPassword;

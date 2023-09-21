@@ -8,11 +8,11 @@ namespace Data_Access.Enum
 {
     public enum BookingItemEnum
     {
-        Waitting = 1,
+        Waiting = 1,
         Accepted = 2,
         NotCreateSessionYet = 3,
         Denied = 4,
-        SessionWaitting = 5,
+        SessionWaiting = 5,
         InActive = -1
     }
 }

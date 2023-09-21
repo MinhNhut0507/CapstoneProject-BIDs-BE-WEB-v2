@@ -81,6 +81,11 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
                 throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
             }
 
+            if (!UserPaymentInformationRequest.PayPalAccount.Contains("@"))
+            {
+                throw new Exception(ErrorMessage.CommonError.WRONG_EMAIL_FORMAT);
+            }
+
             var newUserPaymentInformation = new UserPaymentInformation();
 
             newUserPaymentInformation.Id = Guid.NewGuid();

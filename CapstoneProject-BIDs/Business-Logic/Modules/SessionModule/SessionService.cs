@@ -204,6 +204,11 @@ namespace Business_Logic.Modules.SessionModule
                 throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
             }
 
+            if (SessionRequest.SessionName.Length > 50)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+            }
+
             var BeginTime = SessionRequest.BeginTime;
 
             if (BeginTime < DateTime.UtcNow)
@@ -302,6 +307,11 @@ namespace Business_Logic.Modules.SessionModule
                 //{
                 //    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
                 //}
+
+                if (SessionRequest.SessionName.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+                }
 
                 if (item.ElementAt(0).AuctionTime > (7*24*60))
                 {

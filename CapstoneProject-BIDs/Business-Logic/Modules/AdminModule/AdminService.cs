@@ -93,6 +93,16 @@ namespace Business_Logic.Modules.AdminModule
                 throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
             }
 
+            if (AdminRequest.AdminName.Length > 50)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+            }
+
+            if (AdminRequest.Password.Length > 50)
+            {
+                throw new Exception(ErrorMessage.CommonError.PASSWORD_OUT_OF_LENGHT);
+            }
+
             if (!AdminRequest.Email.Contains("@"))
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_EMAIL_FORMAT);
@@ -155,11 +165,22 @@ namespace Business_Logic.Modules.AdminModule
                     }
                 }
 
+                if (AdminRequest.AdminName.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+                }
+
+                if (AdminRequest.Password.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.PASSWORD_OUT_OF_LENGHT);
+                }
+
                 if ((!AdminRequest.Phone.StartsWith("09")
                     && !AdminRequest.Phone.StartsWith("08")
                     && !AdminRequest.Phone.StartsWith("07")
                     && !AdminRequest.Phone.StartsWith("05")
-                    && !AdminRequest.Phone.StartsWith("03"))
+                    && !AdminRequest.Phone.StartsWith("03")
+                    && !AdminRequest.Phone.StartsWith("02"))
                     || AdminRequest.Phone.Length != 10)
                 {
                     throw new Exception(ErrorMessage.CommonError.WRONG_PHONE_FORMAT);
@@ -196,6 +217,11 @@ namespace Business_Logic.Modules.AdminModule
                 if (!result.IsValid)
                 {
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                if (updatePasswordRequest.NewPassword.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.PASSWORD_OUT_OF_LENGHT);
                 }
 
                 Admin.Password = updatePasswordRequest.NewPassword;

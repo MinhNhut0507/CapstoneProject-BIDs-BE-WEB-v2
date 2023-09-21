@@ -20,6 +20,8 @@
             public readonly static string WRONG_IMAGE_FORMAT = "Hình ảnh sai định dạng";
             public readonly static string OUT_OF_RANGE_IMAGE = "Chỉ cho phép tối đa 4 hình ảnh";
             public readonly static string ERROR_DATE_TIME = "Ngày bắt đầu phải trước ngày kết thúc";
+            public readonly static string NAME_OUT_OF_LENGHT = "Tên quá dài(trong vòng 50 ký tự)";
+            public readonly static string PASSWORD_OUT_OF_LENGHT = "Mật khẩu quá dài(trong vòng 50 ký tự)";
         }
         #endregion
 

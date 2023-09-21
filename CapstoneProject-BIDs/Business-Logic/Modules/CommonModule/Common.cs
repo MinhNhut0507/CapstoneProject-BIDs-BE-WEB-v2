@@ -735,7 +735,7 @@ namespace Business_Logic.Modules.CommonModule
                 var bookingRequest = new UpdateBookingItemRequest()
                 {
                     Id = bookingItem.ElementAt(0).Id,
-                    Status = (int)BookingItemEnum.Waitting
+                    Status = (int)BookingItemEnum.Waiting
                 };
 
                 var result = await _BookingItemService.UpdateStatusBookingItem(bookingRequest);
@@ -1535,7 +1535,7 @@ namespace Business_Logic.Modules.CommonModule
                         {
                             totalAccepted++;
                         }
-                        if (Convert.ToInt32(row["Status"]) == (int)UserStatusEnum.Waitting)
+                        if (Convert.ToInt32(row["Status"]) == (int)UserStatusEnum.Waiting)
                         {
                             totalWaiting++;
                         }

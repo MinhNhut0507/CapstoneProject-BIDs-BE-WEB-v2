@@ -8,7 +8,7 @@ namespace Data_Access.Enum
 {
     public enum UserStatusEnum
     {
-        Waitting = 0,
+        Waiting = 0,
         Acctive = 1,
         Ban = 2,
         Deny = -1

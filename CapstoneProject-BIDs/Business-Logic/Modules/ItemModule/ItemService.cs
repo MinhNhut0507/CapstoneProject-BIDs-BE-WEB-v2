@@ -163,6 +163,11 @@ namespace Business_Logic.Modules.ItemModule
                 throw new Exception(ErrorMessage.ItemError.INVALID_FIRST_PRICE);
             };
 
+            if(ItemRequest.ItemName.Length > 50)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+            }
+
             //var userPaymentInformation = await _UserPaymentInformationService.GetUserPaymentInformationByUser(ItemRequest.UserId);
 
             //if(userPaymentInformation == null)
@@ -234,6 +239,11 @@ namespace Business_Logic.Modules.ItemModule
                 && ItemRequest.StepPrice < (ItemRequest.FirstPrice * 0.1))
                 {
                     throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
+                }
+
+                if (ItemRequest.ItemName.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
                 }
 
                 var AuctionTime = (ItemRequest.AuctionHour * 60) + ItemRequest.AuctionMinute;

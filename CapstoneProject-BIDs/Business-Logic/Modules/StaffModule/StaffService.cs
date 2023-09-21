@@ -104,6 +104,11 @@ namespace Business_Logic.Modules.StaffModule
                 throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
             }
 
+            if (StaffRequest.StaffName.Length > 50)
+            {
+                throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+            }
+
             if (!StaffRequest.Email.Contains("@"))
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_EMAIL_FORMAT);
@@ -112,7 +117,8 @@ namespace Business_Logic.Modules.StaffModule
                 && !StaffRequest.Phone.StartsWith("08")
                 && !StaffRequest.Phone.StartsWith("07")
                 && !StaffRequest.Phone.StartsWith("05")
-                && !StaffRequest.Phone.StartsWith("03"))
+                && !StaffRequest.Phone.StartsWith("03")
+                && !StaffRequest.Phone.StartsWith("02"))
                 || StaffRequest.Phone.Length != 10)
             {
                 throw new Exception(ErrorMessage.CommonError.WRONG_PHONE_FORMAT);
@@ -170,11 +176,17 @@ namespace Business_Logic.Modules.StaffModule
                     }
                 }
 
+                if (StaffRequest.StaffName.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+                }
+
                 if ((!StaffRequest.Phone.StartsWith("09")
                     && !StaffRequest.Phone.StartsWith("08")
                     && !StaffRequest.Phone.StartsWith("07")
                     && !StaffRequest.Phone.StartsWith("05")
-                    && !StaffRequest.Phone.StartsWith("03"))
+                    && !StaffRequest.Phone.StartsWith("03")
+                    && !StaffRequest.Phone.StartsWith("02"))
                     || StaffRequest.Phone.Length != 10)
                 {
                     throw new Exception(ErrorMessage.CommonError.WRONG_PHONE_FORMAT);
@@ -222,6 +234,11 @@ namespace Business_Logic.Modules.StaffModule
                 if (!result.IsValid)
                 {
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
+                }
+
+                if (updatePasswordRequest.NewPassword.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.PASSWORD_OUT_OF_LENGHT);
                 }
 
                 staff.Password = updatePasswordRequest.NewPassword;
