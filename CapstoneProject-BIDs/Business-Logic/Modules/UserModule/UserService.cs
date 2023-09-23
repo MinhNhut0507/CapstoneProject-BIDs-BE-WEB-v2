@@ -237,7 +237,7 @@ namespace Business_Logic.Modules.UserModule
                 Users userCheckPhone = _UserRepository.GetFirstOrDefaultAsync(x => x.Phone == userRequest.Phone).Result;
                 if (userCheckPhone != null)
                 {
-                    if(userCheckPhone.Id != userUpdate.Id)
+                    if(userCheckPhone.Id != userRequest.UserId)
                     {
                         throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
                     }
@@ -245,7 +245,7 @@ namespace Business_Logic.Modules.UserModule
                 Users userCheckName = _UserRepository.GetFirstOrDefaultAsync(x => x.Name == userRequest.UserName).Result;
                 if (userCheckName != null)
                 {
-                    if (userCheckName.Id != userUpdate.Id)
+                    if (userCheckName.Id != userRequest.UserId)
                     {
                         throw new Exception(ErrorMessage.CommonError.NAME_IS_EXITED);
                     }

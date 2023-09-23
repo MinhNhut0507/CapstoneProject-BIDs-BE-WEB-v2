@@ -151,7 +151,7 @@ namespace Business_Logic.Modules.AdminModule
                 var AdminCheckPhone = await _AdminRepository.GetFirstOrDefaultAsync(x => x.Phone == AdminRequest.Phone);
                 if (AdminCheckPhone != null)
                 {
-                    if(AdminCheckPhone.Id != AdminUpdate.Id)
+                    if(AdminCheckPhone.Id != AdminRequest.AdminId)
                     {
                         throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
                     }
@@ -159,7 +159,7 @@ namespace Business_Logic.Modules.AdminModule
                 var AdminCheckName = await _AdminRepository.GetFirstOrDefaultAsync(x => x.Name == AdminRequest.AdminName);
                 if (AdminCheckName != null)
                 {
-                    if (AdminCheckName.Id != AdminUpdate.Id)
+                    if (AdminCheckName.Id != AdminRequest.AdminId)
                     {
                         throw new Exception(ErrorMessage.CommonError.NAME_IS_EXITED);
                     }

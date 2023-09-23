@@ -162,7 +162,7 @@ namespace Business_Logic.Modules.StaffModule
                 Staff staffCheckPhone = _StaffRepository.GetFirstOrDefaultAsync(x => x.Phone == StaffRequest.Phone).Result;
                 if (staffCheckPhone != null)
                 {
-                    if(staffCheckPhone.Id != StaffUpdate.Id)
+                    if(staffCheckPhone.Id != StaffRequest.StaffId)
                     {
                         throw new Exception(ErrorMessage.CommonError.PHONE_IS_EXITED);
                     }
@@ -170,7 +170,7 @@ namespace Business_Logic.Modules.StaffModule
                 Staff staffCheckName = _StaffRepository.GetFirstOrDefaultAsync(x => x.Name == StaffRequest.StaffName).Result;
                 if (staffCheckName != null)
                 {
-                    if (staffCheckName.Id != StaffUpdate.Id)
+                    if (staffCheckName.Id != StaffRequest.StaffId)
                     {
                         throw new Exception(ErrorMessage.CommonError.NAME_IS_EXITED);
                     }
