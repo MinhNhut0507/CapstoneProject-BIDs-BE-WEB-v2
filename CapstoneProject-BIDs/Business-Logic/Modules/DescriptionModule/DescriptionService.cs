@@ -72,7 +72,7 @@ namespace Business_Logic.Modules.DescriptionModule
             }
 
             var Category = await _CategoryRepository.GetFirstOrDefaultAsync(x => x.Id == DescriptionRequest.CategoryId);
-            Description DescriptionCheck = await _DescriptionRepository.GetFirstOrDefaultAsync(x => x.Name == DescriptionRequest.Detail);
+            Description DescriptionCheck = await _DescriptionRepository.GetFirstOrDefaultAsync(x => x.Name == DescriptionRequest.Detail && x.CategoryId == DescriptionRequest.CategoryId);
 
             if (DescriptionCheck != null)
             {
