@@ -24,7 +24,7 @@ namespace Business_Logic.Modules.CategoryModule
         public Task<ICollection<Category>> GetCategorysIsValid()
         {
             return _CategoryRepository.GetAll(includeProperties: "Descriptions"
-                , options: o => o.OrderByDescending(x => x.Status == true).ToList());
+                , options: o => o.Where(x => x.Status == true).ToList());
         }
 
         public async Task<ICollection<Category>> GetCategoryByID(Guid? id)
@@ -34,7 +34,7 @@ namespace Business_Logic.Modules.CategoryModule
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
             var Category = await _CategoryRepository.GetAll(includeProperties: "Descriptions"
-                , options: o => o.OrderByDescending(x => x.Id == id).ToList());
+                , options: o => o.Where(x => x.Id == id).ToList());
             if (Category == null)
             {
                 throw new Exception(ErrorMessage.CategoryError.CATEGORY_NOT_FOUND);
@@ -49,7 +49,7 @@ namespace Business_Logic.Modules.CategoryModule
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
             var Category = await _CategoryRepository.GetAll(includeProperties: "Descriptions"
-                , options: o => o.OrderByDescending(x => x.Name == CategoryName).ToList());
+                , options: o => o.Where(x => x.Name == CategoryName).ToList());
             if (Category == null)
             {
                 throw new Exception(ErrorMessage.CategoryError.CATEGORY_NOT_FOUND);

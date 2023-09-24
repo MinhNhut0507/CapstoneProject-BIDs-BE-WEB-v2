@@ -10,5 +10,6 @@ namespace Business_Logic.Modules.DescriptionModule.Response
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public bool Status { get; set; }
     }
 }

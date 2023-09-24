@@ -91,7 +91,8 @@ namespace BIDs_API.Mapper
 
             CreateMap<Description, DescriptionResponse>()
                 .ForMember(x => x.Name, d => d.MapFrom(s => s.Name))
-                .ForMember(x => x.Id, d => d.MapFrom(s => s.Id));
+                .ForMember(x => x.Id, d => d.MapFrom(s => s.Id))
+                .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
             CreateMap<Description, DescriptionDetailResponse>()
                 .ForMember(x => x.DescriptionId, d => d.MapFrom(s => s.Id))

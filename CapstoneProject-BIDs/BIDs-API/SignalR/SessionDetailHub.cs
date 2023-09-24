@@ -19,5 +19,10 @@ namespace BIDs_API.SignalR
         {
             await Clients.All.SendAsync("ReceiveSessionDetailDelete", SessionDetail);
         }
+
+        public async Task SendMessage(string message)
+        {
+            await Clients.All.SendAsync("ReceiveMessage", message);
+        }
     }
 }

@@ -39,6 +39,14 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                foreach(var category in list)
+                {
+                    foreach (var description in category.Descriptions)
+                    {
+                        if (description.Status == false)
+                            category.Descriptions.Remove(description);
+                    }
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Category, CategoryResponse>(emp)
@@ -63,6 +71,11 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                foreach (var description in list.ElementAt(0).Descriptions)
+                {
+                    if (description.Status == false)
+                        list.ElementAt(0).Descriptions.Remove(description);
+                }
                 var response = list.Select
                            (
                              emp => _mapper.Map<Category, CategoryResponse>(emp)
@@ -86,6 +99,11 @@ namespace BIDs_API.Controllers
                 if (list == null)
                 {
                     return NotFound();
+                }
+                foreach (var description in list.ElementAt(0).Descriptions)
+                {
+                    if (description.Status == false)
+                        list.ElementAt(0).Descriptions.Remove(description);
                 }
                 var response = list.Select
                            (
