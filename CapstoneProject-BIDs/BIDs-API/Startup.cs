@@ -89,7 +89,7 @@ namespace BIDs_API
                         .SetIsOriginAllowed((host) => true)
                         .WithOrigins("http://localhost:3000",
 "https://localhost:3000",
-"https://capstone-bid-aob2du5u2-doannguyenquochuy13-gmailcom.vercel.app",
+"https://capstone-bid-h70yuvqdd-doannguyenquochuy13-gmailcom.vercel.app",
 "https://capstone-bid-fe.vercel.app");
                 });
             });
