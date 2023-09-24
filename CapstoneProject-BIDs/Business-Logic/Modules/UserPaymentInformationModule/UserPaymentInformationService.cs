@@ -106,7 +106,7 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
         {
             try
             {
-                var UserPaymentInformationUpdate = _UserPaymentInformationRepository.GetFirstOrDefaultAsync(x => x.UserId == UserPaymentInformationRequest.UserId).Result;
+                var UserPaymentInformationUpdate = await _UserPaymentInformationRepository.GetFirstOrDefaultAsync(x => x.UserId == UserPaymentInformationRequest.UserId);
 
                 if (UserPaymentInformationUpdate == null)
                 {
