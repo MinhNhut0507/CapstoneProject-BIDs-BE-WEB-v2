@@ -12,6 +12,8 @@ namespace Business_Logic.Modules.SessionRuleModule.Interface
     {
         public Task<SessionRule> AddNewSessionRule(CreateSessionRuleRequest SessionRuleCreate);
 
+        public Task<ICollection<SessionRule>> GetSessionRulesIsValid();
+
         public Task<SessionRule> UpdateSessionRule(UpdateSessionRuleRequest SessionRuleUpdate);
 
         public Task<SessionRule> DeleteSessionRule(Guid SessionRuleDeleteID);

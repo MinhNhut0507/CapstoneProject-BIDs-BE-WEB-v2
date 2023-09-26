@@ -11,6 +11,5 @@ namespace Data_Access.Enum
         Waiting = 0,
         Acctive = 1,
         Ban = 2,
-        Deny = -1
     }
 }

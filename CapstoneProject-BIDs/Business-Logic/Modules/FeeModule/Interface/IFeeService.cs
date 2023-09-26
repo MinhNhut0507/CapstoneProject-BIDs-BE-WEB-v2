@@ -12,6 +12,8 @@ namespace Business_Logic.Modules.FeeModule.Interface
     {
         public Task<Fee> AddNewFee(CreateFeeRequest FeeCreate);
 
+        public Task<ICollection<Fee>> GetFeesIsValid();
+
         public Task<Fee> UpdateFee(UpdateFeeRequest FeeUpdate);
 
         public Task<Fee> DeleteFee(int FeeDeleteID);

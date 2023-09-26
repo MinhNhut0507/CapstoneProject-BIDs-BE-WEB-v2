@@ -32,7 +32,8 @@ namespace Business_Logic.Modules.StaffNotificationDetailModule
             {
                 throw new Exception(ErrorMessage.StaffNotificationDetailError.STAFF_NOTIFICATION_DETAIL_NOT_FOUND);
             }
-            return StaffNotificationDetail;
+            var response = StaffNotificationDetail.OrderByDescending(x => x.Notification.CreateDate).ToList();
+            return response;
         }
 
         public async Task<StaffNotificationDetail> AddNewStaffNotificationDetail(CreateStaffNotificationDetailRequest StaffNotificationDetailRequest)
@@ -55,34 +56,24 @@ namespace Business_Logic.Modules.StaffNotificationDetailModule
             return newStaffNotificationDetail;
         }
 
-        //public async Task<StaffNotificationDetail> UpdateStaffNotificationDetail(UpdateStaffNotificationDetailRequest StaffNotificationDetailRequest)
-        //{
-        //    try
-        //    {
-        //        var StaffNotificationDetailUpdate = await GetStaffNotificationDetailByID(StaffNotificationDetailRequest.Id);
+        public async Task Delete(Guid notificationId, Guid staffId)
+        {
+            try
+            {
+                var StaffNotificationDetailUpdate = await _StaffNotificationDetailRepository.GetFirstOrDefaultAsync(x => x.NotificationId == notificationId & x.StaffId == staffId);
 
-        //        if (StaffNotificationDetailUpdate == null)
-        //        {
-        //            throw new Exception(ErrorMessage.StaffNotificationDetailError.NOTIFICATION_TYPE_NOT_FOUND);
-        //        }
+                if (StaffNotificationDetailUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.StaffNotificationDetailError.STAFF_NOTIFICATION_DETAIL_NOT_FOUND);
+                }
 
-        //        ValidationResult result = new UpdateStaffNotificationDetailRequestValidator().Validate(StaffNotificationDetailRequest);
-        //        if (!result.IsValid)
-        //        {
-        //            throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
-        //        }
-
-        //        StaffNotificationDetailUpdate.Name = StaffNotificationDetailRequest.Name;
-
-        //        await _StaffNotificationDetailRepository.UpdateAsync(StaffNotificationDetailUpdate);
-        //        return StaffNotificationDetailUpdate;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Error at update type: " + ex.Message);
-        //        throw new Exception(ex.Message);
-        //    }
-
-        //}
+                await _StaffNotificationDetailRepository.RemoveAsync(StaffNotificationDetailUpdate);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

@@ -42,7 +42,8 @@ namespace Business_Logic.Modules.UserNotificationDetailModule
             }
 
             query = query.Include(x => x.User)
-                .Include(x => x.Type);
+                .Include(x => x.Type)
+                .Include(x => x.Notification);
 
             return options != null ? options(query).ToList() : await query.ToListAsync();
         }

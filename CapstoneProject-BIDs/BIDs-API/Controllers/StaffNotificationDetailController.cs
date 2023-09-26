@@ -15,6 +15,7 @@ using System.Data;
 using AutoMapper;
 using Business_Logic.Modules.StaffNotificationDetailModule.Response;
 using Business_Logic.Modules.UserModule.Response;
+using Business_Logic.Modules.NotificationModule.Interface;
 
 namespace BIDs_API.Controllers
 {
@@ -25,15 +26,18 @@ namespace BIDs_API.Controllers
     {
         private readonly IStaffNotificationDetailService _StaffNotificationDetailService;
         public readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
         private readonly IHubContext<StaffNotificationDetailHub> _hubContext;
 
         public StaffNotificationDetailController(IStaffNotificationDetailService StaffNotificationDetailService
             , IMapper mapper
-            , IHubContext<StaffNotificationDetailHub> hubContext)
+            , IHubContext<StaffNotificationDetailHub> hubContext
+            , INotificationService notificationService)
         {
             _StaffNotificationDetailService = StaffNotificationDetailService;
             _mapper = mapper;
             _hubContext = hubContext;
+            _notificationService = notificationService;
         }
 
         // GET api/<ValuesController>
@@ -64,17 +68,25 @@ namespace BIDs_API.Controllers
         // GET api/<ValuesController>/5
         [Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("by_id")]
-        public async Task<ActionResult<StaffNotificationDetailResponse>> GetStaffNotificationDetailByStaff([FromQuery] Guid id)
+        public async Task<ActionResult<StaffNotificationDetailResponse>> GetStaffNotificationDetailByStaff([FromQuery] Guid staffId)
         {
             try
             {
-                var list = await _StaffNotificationDetailService.GetStaffNotificationDetailByStaff(id);
+                var list = await _StaffNotificationDetailService.GetStaffNotificationDetailByStaff(staffId);
                 if (list == null)
                 {
                     return NotFound();
                 }
-                var sort = list.OrderByDescending(x => x.Notification.CreateDate);
-                var response = sort.Select
+                foreach (var staffNoti in list)
+                {
+                    if (staffNoti.Notification.ExpireDate <= DateTime.UtcNow.AddHours(7))
+                    {
+                        await _StaffNotificationDetailService.Delete(staffNoti.Notification.Id, staffId);
+                        await _notificationService.DeleteNotification(staffNoti.Notification.Id);
+                    }
+                    list.Remove(staffNoti);
+                }
+                var response = list.Select
                            (
                              emp => _mapper.Map<StaffNotificationDetail, StaffNotificationDetailResponse>(emp)
                            );

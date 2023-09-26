@@ -85,7 +85,7 @@ namespace Business_Logic.Modules.SessionModule
         public async Task<ICollection<Session>> GetSessionsIsErrorItem()
         {
             return await _SessionRepository.GetAll(includeProperties: "Fee,Item,SessionRule,Item.Category,Item.Images,Item.ItemDescriptions,Item.Category.Descriptions"
-                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.Complete).ToList());
+                , options: o => o.Where(x => x.Status == (int)SessionStatusEnum.ErrorItem).ToList());
         }
 
         public async Task<ICollection<Session>> GetSessionsIsHaventPay()

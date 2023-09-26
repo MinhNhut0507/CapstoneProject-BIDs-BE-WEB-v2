@@ -373,7 +373,6 @@ namespace Business_Logic.Modules.StaffModule
                     + reason
                     + ". Bạn hãy cung cấp đúng thông tin hơn trong lần tiếp theo.";
 
-                UserCreate.Status = (int)UserStatusEnum.Deny;
                 await _UserRepository.RemoveAsync(UserCreate);
 
                 MailMessage mail = new MailMessage();

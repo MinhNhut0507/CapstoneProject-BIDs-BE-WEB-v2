@@ -17,6 +17,7 @@ namespace Business_Logic.Modules.UserNotificationDetailModule.Interface
         public Task<ICollection<UserNotificationDetail>> GetAll();
 
         public Task<ICollection<UserNotificationDetail>> GetUserNotificationDetailByUser(Guid id);
+        public Task Delete(Guid notificationId, Guid userId);
 
     }
 }

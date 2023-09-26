@@ -59,6 +59,29 @@ namespace BIDs_API.Controllers
             }
         }
 
+        // GET api/<ValuesController>
+        [HttpGet("valid")]
+        public async Task<ActionResult<IEnumerable<FeeResponse>>> GetFeesValid()
+        {
+            try
+            {
+                var list = await _FeeService.GetFeesIsValid();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Fee, FeeResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         // GET api/<ValuesController>/5
         [HttpGet("by_id")]
         public async Task<ActionResult<FeeResponse>> GetFeeByID([FromQuery] int id)

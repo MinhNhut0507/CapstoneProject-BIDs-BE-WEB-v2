@@ -277,6 +277,12 @@ namespace Business_Logic.Modules.SessionDetailModule
 
             var newSessionDetail = new SessionDetail();
 
+            var checkDulicate = await _SessionDetailRepository.GetFirstOrDefaultAsync(x => x.UserId == jonningRequest.UserId && x.Price == Session.ElementAt(0).Item.FirstPrice);
+            if(checkDulicate != null)
+            {
+                return newSessionDetail;
+            }
+
             newSessionDetail.Id = Guid.NewGuid();
             newSessionDetail.UserId = jonningRequest.UserId;
             newSessionDetail.SessionId = jonningRequest.SessionId;

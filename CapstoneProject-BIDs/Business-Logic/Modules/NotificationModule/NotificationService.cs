@@ -100,15 +100,14 @@ namespace Business_Logic.Modules.NotificationModule
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }
 
-                var NotificationDelete = await _NotificationRepository.GetFirstOrDefaultAsync(x => x.Id == NotificationDeleteID && x.Status == true);
+                var NotificationDelete = await _NotificationRepository.GetFirstOrDefaultAsync(x => x.Id == NotificationDeleteID);
 
                 if (NotificationDelete == null)
                 {
                     throw new Exception(ErrorMessage.NotificationError.NOTIFICATION_NOT_FOUND);
                 }
 
-                NotificationDelete.Status = false;
-                await _NotificationRepository.UpdateAsync(NotificationDelete);
+                await _NotificationRepository.RemoveAsync(NotificationDelete);
                 return NotificationDelete;
             }
             catch (Exception ex)

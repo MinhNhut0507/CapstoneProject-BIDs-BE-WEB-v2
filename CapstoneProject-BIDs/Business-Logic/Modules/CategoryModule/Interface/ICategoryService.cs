@@ -12,6 +12,7 @@ namespace Business_Logic.Modules.CategoryModule.Interface
     {
         public Task<Category> AddNewCategory(CreateCategoryRequest CategoryCreate);
 
+        public Task<ICollection<Category>> GetCategorysIsValid();
         public Task<Category> UpdateCategory(UpdateCategoryRequest CategoryUpdate);
 
         public Task<Category> DeleteCategory(Guid? CategoryDeleteID);

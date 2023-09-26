@@ -17,7 +17,7 @@ namespace Business_Logic.Modules.UserNotificationDetailModule
 
         public async Task<ICollection<UserNotificationDetail>> GetAll()
         {
-            return await _UserNotificationDetailRepository.GetAll(includeProperties: "User,Type");
+            return await _UserNotificationDetailRepository.GetAll(includeProperties: "User,Type,Notification");
         }
 
         public async Task<ICollection<UserNotificationDetail>> GetUserNotificationDetailByUser(Guid id)
@@ -26,13 +26,14 @@ namespace Business_Logic.Modules.UserNotificationDetailModule
             {
                 throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
             }
-            var UserNotificationDetail = await _UserNotificationDetailRepository.GetAll(includeProperties: "User,Type",
-                options: o => o.OrderBy( x => x.UserId == id).ToList());
+            var UserNotificationDetail = await _UserNotificationDetailRepository.GetAll(includeProperties: "User,Type,Notification",
+                options: o => o.Where( x => x.UserId == id).ToList());
             if (UserNotificationDetail == null)
             {
                 throw new Exception(ErrorMessage.UserNotificationDetailError.USER_NOTIFICATION_DETAIL_NOT_FOUND);
             }
-            return UserNotificationDetail;
+            var response = UserNotificationDetail.OrderByDescending(x => x.Notification.CreateDate).ToList();
+            return response;
         }
 
         public async Task<UserNotificationDetail> AddNewUserNotificationDetail(CreateUserNotificationDetailRequest UserNotificationDetailRequest)
@@ -55,34 +56,24 @@ namespace Business_Logic.Modules.UserNotificationDetailModule
             return newUserNotificationDetail;
         }
 
-        //public async Task<UserNotificationDetail> UpdateUserNotificationDetail(UpdateUserNotificationDetailRequest UserNotificationDetailRequest)
-        //{
-        //    try
-        //    {
-        //        var UserNotificationDetailUpdate = await GetUserNotificationDetailByID(UserNotificationDetailRequest.Id);
+        public async Task Delete(Guid notificationId, Guid userId)
+        {
+            try
+            {
+                var UserNotificationDetailUpdate = await _UserNotificationDetailRepository.GetFirstOrDefaultAsync(x => x.NotificationId == notificationId & x.UserId == userId);
 
-        //        if (UserNotificationDetailUpdate == null)
-        //        {
-        //            throw new Exception(ErrorMessage.UserNotificationDetailError.NOTIFICATION_TYPE_NOT_FOUND);
-        //        }
+                if (UserNotificationDetailUpdate == null)
+                {
+                    throw new Exception(ErrorMessage.UserNotificationDetailError.USER_NOTIFICATION_DETAIL_NOT_FOUND);
+                }
 
-        //        ValidationResult result = new UpdateUserNotificationDetailRequestValidator().Validate(UserNotificationDetailRequest);
-        //        if (!result.IsValid)
-        //        {
-        //            throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
-        //        }
-
-        //        UserNotificationDetailUpdate.Name = UserNotificationDetailRequest.Name;
-
-        //        await _UserNotificationDetailRepository.UpdateAsync(UserNotificationDetailUpdate);
-        //        return UserNotificationDetailUpdate;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Error at update type: " + ex.Message);
-        //        throw new Exception(ex.Message);
-        //    }
-
-        //}
+                await _UserNotificationDetailRepository.RemoveAsync(UserNotificationDetailUpdate);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

@@ -18,5 +18,7 @@ namespace Business_Logic.Modules.StaffNotificationDetailModule.Interface
 
         public Task<ICollection<StaffNotificationDetail>> GetStaffNotificationDetailByStaff(Guid id);
 
+        public Task Delete(Guid notificationId, Guid staffId);
+
     }
 }

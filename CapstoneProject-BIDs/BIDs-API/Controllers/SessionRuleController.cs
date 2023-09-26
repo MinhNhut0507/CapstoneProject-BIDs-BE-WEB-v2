@@ -59,6 +59,29 @@ namespace BIDs_API.Controllers
             }
         }
 
+        // GET api/<ValuesController>
+        [HttpGet("valid")]
+        public async Task<ActionResult<IEnumerable<SessionRuleResponse>>> GetSessionRulesValid()
+        {
+            try
+            {
+                var list = await _SessionRuleService.GetSessionRulesIsValid();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<SessionRule, SessionRuleResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         // GET api/<ValuesController>/5
         [HttpGet("by_id")]
         public async Task<ActionResult<SessionRuleResponse>> GetSessionRuleByID([FromQuery] Guid id)

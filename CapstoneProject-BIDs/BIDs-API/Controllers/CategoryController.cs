@@ -59,6 +59,37 @@ namespace BIDs_API.Controllers
             }
         }
 
+        // GET api/<ValuesController>
+        [HttpGet("valid")]
+        public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategorysValid()
+        {
+            try
+            {
+                var list = await _CategoryService.GetCategorysIsValid();
+                if (list == null)
+                {
+                    return NotFound();
+                }
+                foreach (var category in list)
+                {
+                    foreach (var description in category.Descriptions)
+                    {
+                        if (description.Status == false)
+                            category.Descriptions.Remove(description);
+                    }
+                }
+                var response = list.Select
+                           (
+                             emp => _mapper.Map<Category, CategoryResponse>(emp)
+                           );
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         // GET api/<ValuesController>/5
         [HttpGet("by_id")]
         [Authorize(Roles = "Admin,Dev")]

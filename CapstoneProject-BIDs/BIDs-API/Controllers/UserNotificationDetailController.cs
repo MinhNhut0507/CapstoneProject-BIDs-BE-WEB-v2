@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BIDs_API.SignalR;
+using Business_Logic.Modules.NotificationModule.Interface;
 using Business_Logic.Modules.UserNotificationDetailModule.Interface;
 using Business_Logic.Modules.UserNotificationDetailModule.Request;
 using Business_Logic.Modules.UserNotificationDetailModule.Response;
@@ -18,15 +19,18 @@ namespace BIDs_API.Controllers
     {
         private readonly IUserNotificationDetailService _UserNotificationDetailService;
         public readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
         private readonly IHubContext<UserNotificationDetailHub> _hubContext;
 
         public UserNotificationDetailController(IUserNotificationDetailService UserNotificationDetailService
             , IMapper mapper
-            , IHubContext<UserNotificationDetailHub> hubContext)
+            , IHubContext<UserNotificationDetailHub> hubContext
+            , INotificationService notificationService)
         {
             _UserNotificationDetailService = UserNotificationDetailService;
             _mapper = mapper;
             _hubContext = hubContext;
+            _notificationService = notificationService;
         }
 
         // GET api/<ValuesController>
@@ -55,14 +59,23 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("by_id")]
-        public async Task<ActionResult<UserNotificationDetailResponse>> GetUserNotificationDetailByUser([FromQuery] Guid id)
+        public async Task<ActionResult<UserNotificationDetailResponse>> GetUserNotificationDetailByUser([FromQuery] Guid userId)
         {
             try
             {
-                var list = await _UserNotificationDetailService.GetUserNotificationDetailByUser(id);
+                var list = await _UserNotificationDetailService.GetUserNotificationDetailByUser(userId);
                 if (list == null)
                 {
                     return NotFound();
+                }
+                foreach (var userNoti in list)
+                {
+                    if (userNoti.Notification.ExpireDate <= DateTime.UtcNow.AddHours(7))
+                    {
+                        await _UserNotificationDetailService.Delete(userNoti.Notification.Id, userId);
+                        await _notificationService.DeleteNotification(userNoti.Notification.Id);
+                    }
+                    list.Remove(userNoti);
                 }
                 var response = list.Select
                            (
