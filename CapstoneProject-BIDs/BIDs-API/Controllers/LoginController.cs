@@ -72,7 +72,7 @@ namespace BIDs_API.Controllers
             var jwtToken = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiry = DateTime.Now.AddHours(Convert.ToInt32(2));
+            var expiry = DateTime.Now.AddHours(Convert.ToInt32(5));
 
             var tokenDescription = new SecurityTokenDescriptor
             {
