@@ -290,12 +290,6 @@ namespace Business_Logic.Modules.SessionModule
                 Session SessionCheck = _SessionRepository.GetFirstOrDefaultAsync(x => x.Name == SessionRequest.SessionName).Result;
                 var item = await _ItemService.GetItemByID(SessionUpdate.ItemId);
 
-                //if (SessionCheck != null)
-                //{
-                //    if(SessionCheck.Id != SessionUpdate.Id)
-                //        throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
-                //}
-
                 var BeginTime = SessionRequest.BeginTime;
 
                 if (BeginTime < DateTime.UtcNow)
@@ -303,25 +297,11 @@ namespace Business_Logic.Modules.SessionModule
                     throw new Exception(ErrorMessage.SessionError.DATE_TIME_LATE_ERROR);
                 }
 
-                //if (BeginTime < DateTime.UtcNow.AddDays(1))
-                //{
-                //    throw new Exception(ErrorMessage.SessionError.DATE_TIME_BEGIN_ERROR);
-                //}
-
                 if (SessionRequest.SessionName.Length > 50)
                 {
                     throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
                 }
 
-                if (item.ElementAt(0).AuctionTime > (7*24*60))
-                {
-                    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MAX_ERROR);
-                }
-
-                //if (timeSpan < checkTimeMin)
-                //{
-                //    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MIN_ERROR);
-                //}
                 DateTime dateTime = DateTime.UtcNow;
 
                 SessionUpdate.Name = SessionRequest.SessionName;

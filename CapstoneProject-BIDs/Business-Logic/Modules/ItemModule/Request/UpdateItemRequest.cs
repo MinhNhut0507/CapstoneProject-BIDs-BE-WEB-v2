@@ -8,7 +8,6 @@ namespace Business_Logic.Modules.ItemModule.Request
         public Guid ItemId { get; set; }
         public string ItemName { get; set; }
         public string Description { get; set; }
-        public Guid CategoryId { get; set; }
         public int Quantity { get; set; }
         public bool Deposit { get; set; }
         public int AuctionHour { get; set; }
@@ -23,7 +22,6 @@ namespace Business_Logic.Modules.ItemModule.Request
             RuleFor(x => x.ItemId).NotEmpty().NotNull();
             RuleFor(x => x.ItemName).NotEmpty().NotNull();
             RuleFor(x => x.Description).NotEmpty().NotNull();
-            RuleFor(x => x.CategoryId).NotEmpty().NotNull();
             RuleFor(x => x.Deposit).NotNull();
             RuleFor(x => x.AuctionHour);
             RuleFor(x => x.AuctionMinute);
