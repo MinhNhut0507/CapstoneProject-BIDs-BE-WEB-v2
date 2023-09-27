@@ -157,10 +157,12 @@ namespace Business_Logic.Modules.ItemModule
 
             var fee = await _FeeService.GetAll();
             var sortFee = fee.OrderByDescending(s => s.Min).ToList();
+            string min = sortFee.ElementAt(sortFee.Count() - 1).Min.ToString();
+            string max = sortFee.ElementAt(0).Max.ToString();
 
-            if (ItemRequest.FirstPrice < sortFee.ElementAt(sortFee.Count()-1).Min)
+            if (ItemRequest.FirstPrice < sortFee.ElementAt(sortFee.Count()-1).Min || ItemRequest.FirstPrice > sortFee.ElementAt(0).Max)
             {
-                throw new Exception(ErrorMessage.ItemError.INVALID_FIRST_PRICE);
+                throw new Exception(ErrorMessage.ItemError.INVALID_FIRST_PRICE + min + "->" + max);
             };
 
             if(ItemRequest.ItemName.Length > 50)
@@ -225,15 +227,15 @@ namespace Business_Logic.Modules.ItemModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                Item ItemCheck = _ItemRepository.GetFirstOrDefaultAsync(x => x.Name == ItemRequest.ItemName).Result;
+                //Item ItemCheck = _ItemRepository.GetFirstOrDefaultAsync(x => x.Name == ItemRequest.ItemName).Result;
 
-                if (ItemCheck != null)
-                {
-                    if(ItemUpdate.Id != ItemCheck.Id)
-                    {
-                        throw new Exception(ErrorMessage.ItemError.ITEM_EXISTED);
-                    }
-                }
+                //if (ItemCheck != null)
+                //{
+                //    if(ItemUpdate.Id != ItemCheck.Id)
+                //    {
+                //        throw new Exception(ErrorMessage.ItemError.ITEM_EXISTED);
+                //    }
+                //}
 
                 if (ItemRequest.StepPrice > (ItemRequest.FirstPrice * 0.05)
                 && ItemRequest.StepPrice < (ItemRequest.FirstPrice * 0.1))

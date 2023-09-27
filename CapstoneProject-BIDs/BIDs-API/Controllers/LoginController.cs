@@ -65,7 +65,9 @@ namespace BIDs_API.Controllers
                 result = _LoginService.Login(login);
             }
             if (result == null)
-                return BadRequest(new LoginRespone { Successful = false, Error = "Sai tài khoản hoặc mật khẩu"});
+                return BadRequest(new LoginRespone { Successful = false, Error = "Sai tài khoản hoặc mật khẩu."});
+            if (result.Role == "Guest")
+                return BadRequest(new LoginRespone { Successful = false, Error = "Tài khoản của bạn đang chờ xét duyệt bởi nhân viên hệ thống. Vui lòng kiểm tra email để nhận được thông tin mới nhất." });
 
             var jwtToken = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityKey"]));

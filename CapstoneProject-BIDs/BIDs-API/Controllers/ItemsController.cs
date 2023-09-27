@@ -72,7 +72,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [Authorize(Roles = "Staff,Admin,Dev")]
+        //[Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("by_id")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByID([FromQuery] Guid? id)
         {

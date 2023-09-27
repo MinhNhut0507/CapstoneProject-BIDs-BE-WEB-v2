@@ -113,7 +113,7 @@
             public readonly static string ITEM_NOT_FOUND = "Sản phẩm không tồn tại";
             public readonly static string ITEM_EXISTED = "Sản phẩm đã tồn tại";
             public readonly static string INVALID_STEP_PRICE = "Bước giá không hợp lệ(5-10% giá khởi điểm)";
-            public readonly static string INVALID_FIRST_PRICE = "Giá khời điểm không hợp lệ";
+            public readonly static string INVALID_FIRST_PRICE = "Giá khời điểm không hợp lệ. Giá khởi điểm phải nằm trong khoảng: ";
             public readonly static string WRONG_ROLE = "Bạn cần phải xác nhận tài khoản thanh toán mới có thể đăng bán sản phẩm.";
         }
         #endregion

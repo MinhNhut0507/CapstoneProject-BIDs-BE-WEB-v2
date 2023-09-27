@@ -232,7 +232,7 @@ namespace Business_Logic.Modules.SessionModule
             //    throw new Exception(ErrorMessage.SessionError.AUCTION_TIME_MIN_ERROR);
             //}
 
-            var fee = await _FeeService.GetAll();
+            var fee = await _FeeService.GetFeesIsValid();
 
             var newSession = new Session();
 

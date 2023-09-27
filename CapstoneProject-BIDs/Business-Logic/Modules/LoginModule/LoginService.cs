@@ -77,7 +77,7 @@ namespace Business_Logic.Modules.LoginModule
                 }
                 else
                 {
-                    throw new Exception("Tài khoản của bạn đang chờ xác nhận từ nhân viên hệ thống. Vui lòng kiểm tra email để không bỏ lỡ thông tin về tài khoản của bạn từ hệ thống");
+                    accountLogin.Role = "Guest";
                 }
                 return accountLogin;
             }
