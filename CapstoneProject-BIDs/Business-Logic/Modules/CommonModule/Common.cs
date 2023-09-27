@@ -1511,7 +1511,6 @@ namespace Business_Logic.Modules.CommonModule
                 string connectionString = "Server = tcp:bidonlinetesting.database.windows.net,1433; Initial Catalog = bidtest; Persist Security Info = False; User ID = bid - admin; Password = 123Helloall!@#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;\r<br>";
                 var totalCount = 0;
                 var totalAccepted = 0;
-                var totalRejected = 0;
                 var totalBanned = 0;
                 var totalWaiting = 0;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -1543,10 +1542,6 @@ namespace Business_Logic.Modules.CommonModule
                         {
                             totalBanned++;
                         }
-                        if (Convert.ToInt32(row["Status"]) == (int)UserStatusEnum.Deny)
-                        {
-                            totalRejected++;
-                        }
                     }
                 }
                 var responseReport = new ReportUser()
@@ -1554,7 +1549,6 @@ namespace Business_Logic.Modules.CommonModule
                     TotalCount = totalCount,
                     TotalAccountAccepted = totalAccepted,
                     TotalAccountBanned = totalBanned,
-                    TotalAccountRejected = totalRejected,
                     TotalAccountWaiting = totalWaiting
                 };
                 return responseReport;

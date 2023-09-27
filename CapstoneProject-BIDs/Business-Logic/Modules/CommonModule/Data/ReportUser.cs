@@ -12,6 +12,5 @@ namespace Business_Logic.Modules.CommonModule.Data
         public int TotalAccountWaiting { get; set; }
         public int TotalAccountBanned { get; set; }
         public int TotalAccountAccepted { get; set; }
-        public int TotalAccountRejected { get; set;}
     }
 }

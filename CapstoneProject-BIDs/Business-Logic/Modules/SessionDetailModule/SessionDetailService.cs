@@ -127,7 +127,25 @@ namespace Business_Logic.Modules.SessionDetailModule
             {
                 throw new Exception(ErrorMessage.AuctionHistoryError.AUCTION_HISTORY_NOT_FOUND);
             }
-            return result.ElementAt(0);
+            var checkListWinner = new List<SessionDetail>();
+            foreach ( var sessionDetail in result) 
+            {
+                if (sessionDetail.Price == result.ElementAt(0).Price)
+                    checkListWinner.Add(sessionDetail);
+                else
+                    break;
+            }
+            var response = new SessionDetail();
+            if (checkListWinner.Count >= 2)
+            {
+                var sortList = checkListWinner.OrderBy(x => x.CreateDate).ToList();
+                response = sortList.ElementAt(0);
+            }
+            else
+            {
+                response = checkListWinner.ElementAt(0);
+            }
+            return response;
         }
 
         public async Task<SessionDetail> IncreasePrice(CreateSessionDetailRequest SessionDetailRequest)
@@ -227,6 +245,12 @@ namespace Business_Logic.Modules.SessionDetailModule
             var Item = await _ItemService.GetItemByID(Session.ElementAt(0).ItemId);
 
             var newSessionDetail = new SessionDetail();
+
+            var checkDulicate = await _SessionDetailRepository.GetFirstOrDefaultAsync(x => x.UserId == jonningRequest.UserId && x.Price == Session.ElementAt(0).Item.FirstPrice);
+            if (checkDulicate != null)
+            {
+                return newSessionDetail;
+            }
 
             newSessionDetail.Id = Guid.NewGuid();
             newSessionDetail.UserId = jonningRequest.UserId;
