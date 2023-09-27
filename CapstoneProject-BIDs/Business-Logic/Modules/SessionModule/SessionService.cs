@@ -199,10 +199,10 @@ namespace Business_Logic.Modules.SessionModule
 
             var item = await _ItemService.GetItemByID(SessionRequest.ItemId);
 
-            if (checkSession != null)
-            {
-                throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
-            }
+            //if (checkSession != null)
+            //{
+            //    throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
+            //}
 
             if (SessionRequest.SessionName.Length > 50)
             {
@@ -290,11 +290,11 @@ namespace Business_Logic.Modules.SessionModule
                 Session SessionCheck = _SessionRepository.GetFirstOrDefaultAsync(x => x.Name == SessionRequest.SessionName).Result;
                 var item = await _ItemService.GetItemByID(SessionUpdate.ItemId);
 
-                if (SessionCheck != null)
-                {
-                    if(SessionCheck.Id != SessionUpdate.Id)
-                        throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
-                }
+                //if (SessionCheck != null)
+                //{
+                //    if(SessionCheck.Id != SessionUpdate.Id)
+                //        throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
+                //}
 
                 var BeginTime = SessionRequest.BeginTime;
 
