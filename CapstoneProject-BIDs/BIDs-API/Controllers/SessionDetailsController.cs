@@ -183,6 +183,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var SessionDetail = await _SessionDetailService.IncreasePrice(createSessionDetailRequest);
+                if (SessionDetail == null)
+                {
+                    return Ok();
+                }
                 var Session = await _SessionService.GetSessionByID(SessionDetail.SessionId);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionUpdate", Session.ElementAt(0));
@@ -203,6 +207,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var SessionDetail = await _SessionDetailService.Joinning(createSessionDetailRequest);
+                if (SessionDetail == null)
+                {
+                    return Ok();
+                }
                 var Session = await _SessionService.GetSessionByID(SessionDetail.SessionId);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionUpdate", Session.ElementAt(0));
@@ -223,6 +231,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var SessionDetail = await _SessionDetailService.JoinningInStage(createSessionDetailRequest);
+                if(SessionDetail == null)
+                {
+                    return Ok();
+                }
                 var Session = await _SessionService.GetSessionByID(SessionDetail.SessionId);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionDetailAdd", SessionDetail);
                 await _hubSessionDetailContext.Clients.All.SendAsync("ReceiveSessionUpdate", Session.ElementAt(0));
