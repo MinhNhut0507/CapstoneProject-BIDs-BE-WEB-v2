@@ -98,12 +98,12 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>
-        [HttpGet("by_item")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionsByItem([FromQuery] Guid id)
+        [HttpGet("by_id")]
+        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionsByID([FromQuery] Guid id)
         {
             try
             {
-                var list = await _SessionService.GetSessionsByItem(id);
+                var list = await _SessionService.GetSessionByID(id);
                 if (list == null)
                 {
                     return NotFound();
@@ -121,8 +121,8 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("by_id")]
-        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionByID([FromQuery] Guid? id)
+        [HttpGet("by_id_for_admin")]
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionByIDForAdmin([FromQuery] Guid? id)
         {
             try
             {
