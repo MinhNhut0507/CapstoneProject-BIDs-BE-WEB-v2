@@ -5,6 +5,7 @@ using Business_Logic.Modules.BookingItemModule.Request;
 using Business_Logic.Modules.CommonModule.Data;
 using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.CommonModule.Response;
+using Business_Logic.Modules.FeeModule.Interface;
 using Business_Logic.Modules.ItemModule.Interface;
 using Business_Logic.Modules.ItemModule.Request;
 using Business_Logic.Modules.NotificationModule.Interface;
@@ -44,6 +45,7 @@ namespace Business_Logic.Modules.CommonModule
         private readonly IStaffNotificationDetailService _StaffNotificationDetailService;
         private readonly IUserNotificationDetailService _UserNotificationDetailService;
         private readonly IUserPaymentInformationService _UserPaymentInformationService;
+        private readonly IFeeService _FeeService;
         private string UTCCode = "";
         public Common(IUserService UserService
             , IItemService ItemService
@@ -55,7 +57,8 @@ namespace Business_Logic.Modules.CommonModule
             , INotificationTypeService NotificationTypeService
             , IStaffNotificationDetailService StaffNotificationDetailService
             , IUserNotificationDetailService UserNotificationDetailService
-            , IUserPaymentInformationService UserPaymentInformationService)
+            , IUserPaymentInformationService UserPaymentInformationService
+            , IFeeService FeeService)
         {
             _UserService = UserService;
             _ItemService = ItemService;
@@ -68,6 +71,7 @@ namespace Business_Logic.Modules.CommonModule
             _StaffNotificationDetailService = StaffNotificationDetailService;
             _UserNotificationDetailService = UserNotificationDetailService;
             _UserPaymentInformationService = UserPaymentInformationService;
+            _FeeService = FeeService;
         }
 
         public async Task SendEmailBeginAuction(Session session)
@@ -701,44 +705,88 @@ namespace Business_Logic.Modules.CommonModule
             return Winner.ElementAt(0);
         }
 
-        public async Task<BookingItem> ReAuction(UpdateItemRequest reAuctionRequest)
+        public async Task<Item> ReAuction(UpdateItemRequest reAuctionRequest)
         {
             try
             {
                 var getItem = await _ItemService.GetItemByID(reAuctionRequest.ItemId);
                 var item = getItem.ElementAt(0);
                 var AuctionTime = (reAuctionRequest.AuctionHour * 60) + reAuctionRequest.AuctionMinute;
-                if (item.Name == reAuctionRequest.ItemName
-                    && item.DescriptionDetail == reAuctionRequest.Description
-                    && item.Quantity == reAuctionRequest.Quantity
-                    && item.Deposit == reAuctionRequest.Deposit
-                    && item.AuctionTime == AuctionTime
-                    && item.FirstPrice == reAuctionRequest.FirstPrice
-                    && item.StepPrice == reAuctionRequest.StepPrice)
+                var session = await _SessionService.GetSessionsByItem(item.Id);
+                var fee = session.ElementAt(0).Fee;
+                var listFee = await _FeeService.GetFeesIsValid();
+                var sortFee = listFee.OrderByDescending(x => x.Max).ToList();
+                var lowestFeeMin = sortFee.ElementAt(sortFee.Count() - 1).Min;
+                var lowestFeeMax = sortFee.ElementAt(sortFee.Count() - 1).Max;
+
+                if(item.FirstPrice != lowestFeeMin && reAuctionRequest.FirstPrice > item.FirstPrice)
                 {
-                    var session = await _SessionService.GetSessionsByItem(item.Id);
-                    var reAutionBeginNow = new ReAuctionRequest()
-                    {
-                        ItemId = reAuctionRequest.ItemId,
-                        AuctionTime = AuctionTime,
-                        FinalPrice = reAuctionRequest.FirstPrice,
-                        SessionId = session.ElementAt(0).Id
-                    };
-                    await _SessionService.ReAuction(reAutionBeginNow);
+                    throw new Exception(ErrorMessage.ItemError.FIRST_PRICE_REAUCTION_INVALID);
                 }
 
+                if (reAuctionRequest.StepPrice > reAuctionRequest.FirstPrice*0.1 || reAuctionRequest.StepPrice < reAuctionRequest.FirstPrice * 0.05)
+                {
+                    throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
+                }
+
+                if (reAuctionRequest.ItemName.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+                }
+
+                var reAutionBeginNow = new ReAuctionRequest()
+                {
+                    ItemId = reAuctionRequest.ItemId,
+                    AuctionTime = AuctionTime,
+                    FinalPrice = reAuctionRequest.FirstPrice,
+                    SessionId = session.ElementAt(0).Id
+                };
 
                 await _ItemService.UpdateItem(reAuctionRequest);
 
-                var bookingItem = await _BookingItemService.GetBookingItemByItem(item.Id);
+                await _SessionService.ReAuction(reAutionBeginNow);
 
-                var bookingRequest = new UpdateBookingItemRequest()
+                var result = await _ItemService.GetItemByID(reAuctionRequest.ItemId);
+
+                return result.ElementAt(0);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error at update type: " + ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<BookingItem> ReAuctionItem(UpdateItemRequest reAuctionRequest)
+        {
+            try
+            {
+                var getItem = await _ItemService.GetItemByID(reAuctionRequest.ItemId);
+                var item = getItem.ElementAt(0);
+                var AuctionTime = (reAuctionRequest.AuctionHour * 60) + reAuctionRequest.AuctionMinute;
+
+                if (reAuctionRequest.StepPrice > reAuctionRequest.FirstPrice * 0.1 || reAuctionRequest.StepPrice < reAuctionRequest.FirstPrice * 0.05)
                 {
-                    Id = bookingItem.ElementAt(0).Id,
+                    throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
+                }
+
+                if (reAuctionRequest.ItemName.Length > 50)
+                {
+                    throw new Exception(ErrorMessage.CommonError.NAME_OUT_OF_LENGHT);
+                }
+
+                await _ItemService.UpdateItem(reAuctionRequest);
+
+                var BookingItem = await _BookingItemService.GetBookingItemByItem(item.Id);
+                var BookingItemRequest = new UpdateBookingItemRequest()
+                {
+                    Id = BookingItem.ElementAt(0).Id,
                     Status = (int)BookingItemEnum.Waiting
                 };
 
-                var result = await _BookingItemService.UpdateStatusBookingItem(bookingRequest);
+                var result = await _BookingItemService.UpdateStatusBookingItem(BookingItemRequest);
+
+
                 return result;
             }
             catch (Exception ex)

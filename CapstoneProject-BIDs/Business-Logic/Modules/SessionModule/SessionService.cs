@@ -361,34 +361,26 @@ namespace Business_Logic.Modules.SessionModule
                     throw new Exception(ErrorMessage.CommonError.INVALID_REQUEST);
                 }
 
-                var newSession = new Session();
-
-                newSession.Id = Guid.NewGuid();
-                newSession.ItemId = SessionRequest.ItemId;
-                newSession.Name = Session.Name;
-
                 var fee = await _FeeService.GetAll();
 
                 foreach (var i in fee)
                 {
                     if (i.Min <= SessionRequest.FinalPrice && i.Max >= SessionRequest.FinalPrice)
                     {
-                        newSession.FeeId = i.Id;
+                        Session.FeeId = i.Id;
                         break;
                     }
                 }
 
-                newSession.SessionRuleId = Session.SessionRuleId;
                 DateTime dateTime = DateTime.UtcNow;
-                newSession.BeginTime = dateTime.AddHours(7);
-                newSession.EndTime = dateTime.AddMinutes((7 * 60) + SessionRequest.AuctionTime);
-                newSession.FinalPrice = SessionRequest.FinalPrice;
-                newSession.CreateDate = dateTime.AddHours(7);
-                newSession.UpdateDate = dateTime.AddHours(7);
-                newSession.Status = (int)SessionStatusEnum.InStage;
+                Session.BeginTime = dateTime.AddHours(7);
+                Session.EndTime = dateTime.AddMinutes((7 * 60) + SessionRequest.AuctionTime);
+                Session.FinalPrice = SessionRequest.FinalPrice;
+                Session.UpdateDate = dateTime.AddHours(7);
+                Session.Status = (int)SessionStatusEnum.InStage;
 
-                await _SessionRepository.AddAsync(newSession);
-                return newSession;
+                await _SessionRepository.UpdateAsync(Session);
+                return Session;
             }
             catch (Exception ex)
             {

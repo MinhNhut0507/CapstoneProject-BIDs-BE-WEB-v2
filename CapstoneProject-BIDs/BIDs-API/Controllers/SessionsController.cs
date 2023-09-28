@@ -24,6 +24,7 @@ using Business_Logic.Modules.UserModule.Response;
 using BIDs_API.PaymentPayPal.Interface;
 using Business_Logic.Modules.PaymentUserModule.Interface;
 using Business_Logic.Modules.StaffModule.Interface;
+using Business_Logic.Modules.ItemModule.Request;
 
 namespace BIDs_API.Controllers
 {
@@ -40,6 +41,7 @@ namespace BIDs_API.Controllers
         private readonly IHubContext<NotificationHub> _notiHubContext;
         private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
         private readonly IHubContext<StaffNotificationDetailHub> _staffNotiHubContext;
+        private readonly IHubContext<ItemHub> _itemHubContext;
         private readonly IPayPalPayment _payPal;
         private readonly IPaymentUserService _paymentUserService;
         private readonly IStaffService _StaffService;
@@ -53,6 +55,7 @@ namespace BIDs_API.Controllers
             , IHubContext<NotificationHub> notiHubContext
             , IHubContext<UserNotificationDetailHub> userNotiHubContext
             , IHubContext<StaffNotificationDetailHub> staffNotiHubContext
+            , IHubContext<ItemHub> itemHubContext
             , IPayPalPayment payPal
             , IPaymentUserService paymentUserService
             , IStaffService StaffService)
@@ -68,6 +71,7 @@ namespace BIDs_API.Controllers
             _paymentUserService = paymentUserService;
             _StaffService = StaffService;
             _staffNotiHubContext = staffNotiHubContext;
+            _itemHubContext = itemHubContext;
         }
 
         // GET api/<ValuesController>
@@ -95,7 +99,7 @@ namespace BIDs_API.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("by_id")]
-        public async Task<ActionResult<IEnumerable<SessionResponse>>> GetSessionByID([FromQuery] Guid? id)
+        public async Task<ActionResult<IEnumerable<SessionWinnerResponse>>> GetSessionByID([FromQuery] Guid? id)
         {
             try
             {
@@ -106,8 +110,56 @@ namespace BIDs_API.Controllers
                 }
                 var response = list.Select
                            (
-                             emp => _mapper.Map<Session, SessionResponse>(emp)
+                             emp => _mapper.Map<Session, SessionResponseComplete>(emp)
                            );
+                var user = new Users();
+                var Response = new List<SessionWinnerResponse>();
+                for (int i = 0; i < response.Count(); i++)
+                {
+                    if (response.ElementAt(i).Status == (int)SessionStatusEnum.InStage || response.ElementAt(i).Status == (int)SessionStatusEnum.NotStart)
+                    {
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = "Không có người thắng cuộc"
+                        };
+                        Response.Add(test);
+                        break;
+                    }
+                    var checkFail = await _Common.CheckSessionJoining(response.ElementAt(i).SessionId);
+                    if(checkFail == false)
+                    {
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = "Không có người thắng cuộc"
+                        };
+                        Response.Add(test);
+                        break;
+                    }
+                    var check = await _Common.CheckSessionIncrease(response.ElementAt(i).SessionId);
+                    if (check == true)
+                    {
+
+                        user = await _Common.GetUserWinning(response.ElementAt(i).SessionId);
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                    else
+                    {
+                        user = await _Common.GetUserWinningByJoining(response.ElementAt(i).SessionId);
+                        var test = new SessionWinnerResponse()
+                        {
+                            sessionResponseCompletes = response.ElementAt(i),
+                            winner = user.Email
+                        };
+                        Response.Add(test);
+                    }
+                }
                 return Ok(response);
             }
             catch
@@ -1654,10 +1706,10 @@ namespace BIDs_API.Controllers
                 await _payPal.PaymentStaffReturnDeposit(session.Id);
                 var checkJoining = await _Common.CheckSessionJoining(session.Id);
                 var winner = new Users();
-                if(checkJoining == true)
+                if (checkJoining == true)
                 {
                     var checkIncrease = await _Common.CheckSessionIncrease(session.Id);
-                    if(checkIncrease == true)
+                    if (checkIncrease == true)
                     {
                         winner = await _Common.GetUserWinning(session.Id);
                     }
@@ -1760,7 +1812,7 @@ namespace BIDs_API.Controllers
 
         [AllowAnonymous]
         [HttpPut("session_status_to_error_item")]
-        public async Task<IActionResult> PutSessionStatusErrorItem([FromQuery] string reason ,[FromBody] UpdateSessionStatusRequest updateSessionRequest)
+        public async Task<IActionResult> PutSessionStatusErrorItem([FromQuery] string reason, [FromBody] UpdateSessionStatusRequest updateSessionRequest)
         {
             try
             {
@@ -1831,6 +1883,30 @@ namespace BIDs_API.Controllers
             }
         }
 
+        // PUT api/<ValuesController>/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("re_auction")]
+        public async Task<IActionResult> ReAuctionItem([FromBody] UpdateItemRequest updateItemRequest)
+        {
+            try
+            {
+                var item = await _Common.ReAuction(updateItemRequest);
+                await _itemHubContext.Clients.All.SendAsync("ReceiveItemUpdate", item);
+                var session = await _SessionService.GetSessionsByItem(item.Id);
+                await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", session.ElementAt(0));
+                string message = "Bạn vừa đăng bán lại thành công sản phẩm có tên là " + item.Name + ". Sản phẩm của bạn đã được lên sàn đấu giá với tên phiên đấu giá là " + session.ElementAt(0).Name + ", bạn có thể xem phiên đấu giá sản phẩm của bạn ở trang chủ.";
+                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Session, message, item.UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
         // DELETE api/<ValuesController>/5
         [Authorize(Roles = "Admin,Staff,Dev")]
         [HttpDelete]
@@ -1856,7 +1932,7 @@ namespace BIDs_API.Controllers
                 var response = await _payPal.CheckAndUpdateOrderComplete(userId);
                 var session = await _SessionService.GetSessionByID(response.SessionID);
                 var deposit = session.ElementAt(0).Fee.DepositFee * session.ElementAt(0).Item.FirstPrice;
-                var listPayment = await _paymentUserService.GetPaymentUserBySessionAndUser(response.SessionID,userId);
+                var listPayment = await _paymentUserService.GetPaymentUserBySessionAndUser(response.SessionID, userId);
                 //if (response.Status != "APPROVED")
                 //{
                 //    return Ok(response.Status);
@@ -1868,7 +1944,7 @@ namespace BIDs_API.Controllers
                 else
                 {
                     var sortPayment = listPayment.OrderByDescending(x => x.Amount);
-                    if((session.ElementAt(0).FinalPrice - deposit) == sortPayment.ElementAt(0).Amount)
+                    if ((session.ElementAt(0).FinalPrice - deposit) == sortPayment.ElementAt(0).Amount)
                     {
                         var updateSessionStatus = new UpdateSessionStatusRequest()
                         {

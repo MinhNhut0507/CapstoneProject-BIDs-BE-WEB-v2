@@ -249,7 +249,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             var checkDulicate = await _SessionDetailRepository.GetFirstOrDefaultAsync(x => x.UserId == jonningRequest.UserId && x.Price == Session.ElementAt(0).Item.FirstPrice);
             if (checkDulicate != null)
             {
-                return newSessionDetail;
+                return null;
             }
 
             newSessionDetail.Id = Guid.NewGuid();
@@ -304,7 +304,7 @@ namespace Business_Logic.Modules.SessionDetailModule
             var checkDulicate = await _SessionDetailRepository.GetFirstOrDefaultAsync(x => x.UserId == jonningRequest.UserId && x.Price == Session.ElementAt(0).Item.FirstPrice);
             if(checkDulicate != null)
             {
-                return newSessionDetail;
+                return null;
             }
 
             newSessionDetail.Id = Guid.NewGuid();

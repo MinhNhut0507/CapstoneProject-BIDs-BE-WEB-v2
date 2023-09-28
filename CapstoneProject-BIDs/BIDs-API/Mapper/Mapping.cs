@@ -150,6 +150,8 @@ namespace BIDs_API.Mapper
                 .ForMember(x => x.DepositFee, d => d.MapFrom(s => s.Fee.DepositFee))
                 .ForMember(x => x.Deposit, d => d.MapFrom(s => s.Item.Deposit))
                 .ForMember(x => x.FinalPrice, d => d.MapFrom(s => s.FinalPrice))
+                .ForMember(x => x.UpdateDate, d => d.MapFrom(s => s.UpdateDate))
+                .ForMember(x => x.CreateDate, d => d.MapFrom(s => s.CreateDate))
                 .ForMember(x => x.Status, d => d.MapFrom(s => s.Status));
 
             CreateMap<Session, SessionResponse>()

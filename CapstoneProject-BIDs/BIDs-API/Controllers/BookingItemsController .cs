@@ -371,33 +371,6 @@ namespace BIDs_API.Controllers
         //    }
         //}
 
-        // PUT api/<ValuesController>/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("re_auction")]
-        public async Task<IActionResult> ReAuction([FromBody] UpdateItemRequest updateItemRequest)
-        {
-            try
-            {
-                var BookingItem = await _Common.ReAuction(updateItemRequest);
-                var item = await _ItemService.GetItemByID(updateItemRequest.ItemId);
-                await _hubContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem);
-                await _itemHubContext.Clients.All.SendAsync("ReceiveItemUpdate", item);
-                string message = "Bạn vừa đăng bán lại thành công sản phẩm có tên là " + item.ElementAt(0).Name + ". Sản phẩm của bạn đang được nhân viên hệ thống xác nhận và sẽ có kết quả trong vòng 3 ngày kể từ ngày tạo. Bạn có thể xem lại thông tin sản phẩm ở chi tiết sản phẩm.";
-                var userNoti = await _Common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
-                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
-                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
-                string messageStaff = "Bạn có đơn đăng ký sản phẩm mới cần được duyệt. Vui lòng truy cập mục đơn đăng ký sản phẩm để duyệt đơn.";
-                var staffNoti = await _Common.StaffNotification(10, (int)NotificationTypeEnum.Item, messageStaff, BookingItem.StaffId);
-                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", staffNoti.Notification);
-                await _staffNotiHubContext.Clients.All.SendAsync("ReceiveStaffNotificationDetailAdd", staffNoti.StaffNotificationDetail);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         // POST api/<ValuesController>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

@@ -26,6 +26,7 @@ namespace BIDs_API.Controllers
         private readonly IItemService _ItemService;
         private readonly IHubContext<NotificationHub> _notiHubContext;
         private readonly IHubContext<UserNotificationDetailHub> _userNotiHubContext;
+        private readonly IHubContext<StaffNotificationDetailHub> _staffNotiHubContext;
         public readonly ICommon _common;
 
         public ItemsController(IItemService ItemService
@@ -35,6 +36,7 @@ namespace BIDs_API.Controllers
             , IHubContext<ItemHub> hubContext
             , IHubContext<NotificationHub> notiHubContext
             , IHubContext<UserNotificationDetailHub> userNotiHubContext
+            , IHubContext<StaffNotificationDetailHub> staffNotiHubContext
             , ICommon common)
         {
             _mapper = mapper;
@@ -44,6 +46,7 @@ namespace BIDs_API.Controllers
             _common = common;
             _notiHubContext = notiHubContext;
             _userNotiHubContext = userNotiHubContext;
+            _staffNotiHubContext = staffNotiHubContext;
             _ItemService = ItemService;
         }
 
@@ -120,7 +123,7 @@ namespace BIDs_API.Controllers
         }
 
         // GET api/<ValuesController>/abc
-        [Authorize(Roles = "Staff,Admin,Dev")]
+        //[Authorize(Roles = "Staff,Admin,Dev")]
         [HttpGet("by_category_name")]
         public async Task<ActionResult<IEnumerable<ItemResponse>>> GetItemByCategoryName([FromQuery] string name)
         {
@@ -261,6 +264,34 @@ namespace BIDs_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        // PUT api/<ValuesController>/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("re_auction_item")]
+        public async Task<IActionResult> ReAuctionItem([FromBody] UpdateItemRequest updateItemRequest)
+        {
+            try
+            {
+                var BookingItem = await _common.ReAuctionItem(updateItemRequest);
+                var item = await _ItemService.GetItemByID(updateItemRequest.ItemId);
+                await _hubContext.Clients.All.SendAsync("ReceiveBookingItemUpdate", BookingItem);
+                await _hubContext.Clients.All.SendAsync("ReceiveItemUpdate", item);
+                string message = "Bạn vừa đăng bán lại thành công sản phẩm có tên là " + item.ElementAt(0).Name + ". Sản phẩm của bạn đang được nhân viên hệ thống xác nhận và sẽ có kết quả trong vòng 3 ngày kể từ ngày tạo. Bạn có thể xem lại thông tin sản phẩm ở chi tiết sản phẩm.";
+                var userNoti = await _common.UserNotification(10, (int)NotificationTypeEnum.Item, message, item.ElementAt(0).UserId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", userNoti.Notification);
+                await _userNotiHubContext.Clients.All.SendAsync("ReceiveUserNotificationDetailAdd", userNoti.UserNotificationDetail);
+                string messageStaff = "Bạn có đơn đăng ký sản phẩm mới cần được duyệt. Vui lòng truy cập mục đơn đăng ký sản phẩm để duyệt đơn.";
+                var staffNoti = await _common.StaffNotification(10, (int)NotificationTypeEnum.Item, messageStaff, BookingItem.StaffId);
+                await _notiHubContext.Clients.All.SendAsync("ReceiveNotificationAdd", staffNoti.Notification);
+                await _staffNotiHubContext.Clients.All.SendAsync("ReceiveStaffNotificationDetailAdd", staffNoti.StaffNotificationDetail);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         //// DELETE api/<ValuesController>/5
         //[HttpDelete("{id}")]
