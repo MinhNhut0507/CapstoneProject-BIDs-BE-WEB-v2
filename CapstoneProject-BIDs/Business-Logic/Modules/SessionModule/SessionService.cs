@@ -199,10 +199,10 @@ namespace Business_Logic.Modules.SessionModule
 
             var item = await _ItemService.GetItemByID(SessionRequest.ItemId);
 
-            //if (checkSession != null)
-            //{
-            //    throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
-            //}
+            if (checkSession != null)
+            {
+                throw new Exception(ErrorMessage.SessionError.SESSION_EXISTED);
+            }
 
             if (SessionRequest.SessionName.Length > 50)
             {
