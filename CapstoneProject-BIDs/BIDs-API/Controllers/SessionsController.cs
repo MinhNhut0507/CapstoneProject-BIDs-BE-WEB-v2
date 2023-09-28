@@ -160,7 +160,7 @@ namespace BIDs_API.Controllers
                         Response.Add(test);
                     }
                 }
-                return Ok(response);
+                return Ok(Response);
             }
             catch
             {

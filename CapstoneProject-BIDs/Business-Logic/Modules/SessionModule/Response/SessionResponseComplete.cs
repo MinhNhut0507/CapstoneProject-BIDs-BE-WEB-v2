@@ -35,6 +35,7 @@ namespace Business_Logic.Modules.SessionModule.Response
         public DateTime BeginTime { get; set; }
         public DateTime EndTime { get; set; }
         public double FinalPrice { get; set; }
+        public double StepPrice { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
         public int Status { get; set; }
