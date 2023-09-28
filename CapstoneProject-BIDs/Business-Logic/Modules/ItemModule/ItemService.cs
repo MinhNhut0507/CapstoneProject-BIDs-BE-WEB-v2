@@ -238,7 +238,7 @@ namespace Business_Logic.Modules.ItemModule
                 //}
 
                 if (ItemRequest.StepPrice > (ItemRequest.FirstPrice * 0.05)
-                && ItemRequest.StepPrice < (ItemRequest.FirstPrice * 0.1))
+                || ItemRequest.StepPrice < (ItemRequest.FirstPrice * 0.1))
                 {
                     throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
                 }

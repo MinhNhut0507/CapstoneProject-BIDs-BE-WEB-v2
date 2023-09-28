@@ -724,7 +724,8 @@ namespace Business_Logic.Modules.CommonModule
                     throw new Exception(ErrorMessage.ItemError.FIRST_PRICE_REAUCTION_INVALID);
                 }
 
-                if (reAuctionRequest.StepPrice > reAuctionRequest.FirstPrice*0.1 || reAuctionRequest.StepPrice < reAuctionRequest.FirstPrice * 0.05)
+                if (reAuctionRequest.StepPrice > (reAuctionRequest.FirstPrice*0.1) 
+                    || reAuctionRequest.StepPrice < (reAuctionRequest.FirstPrice*0.05))
                 {
                     throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
                 }
@@ -765,7 +766,8 @@ namespace Business_Logic.Modules.CommonModule
                 var item = getItem.ElementAt(0);
                 var AuctionTime = (reAuctionRequest.AuctionHour * 60) + reAuctionRequest.AuctionMinute;
 
-                if (reAuctionRequest.StepPrice > reAuctionRequest.FirstPrice * 0.1 || reAuctionRequest.StepPrice < reAuctionRequest.FirstPrice * 0.05)
+                if (reAuctionRequest.StepPrice > (reAuctionRequest.FirstPrice*0.1) 
+                    || reAuctionRequest.StepPrice < (reAuctionRequest.FirstPrice*0.05))
                 {
                     throw new Exception(ErrorMessage.ItemError.INVALID_STEP_PRICE);
                 }
