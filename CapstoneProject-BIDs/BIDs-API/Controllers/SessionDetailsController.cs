@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using BIDs_API.SignalR;
+using Business_Logic.Modules.CommonModule.Interface;
 using Business_Logic.Modules.SessionDetailModule.Interface;
 using Business_Logic.Modules.SessionDetailModule.Request;
 using Business_Logic.Modules.SessionDetailModule.Response;
 using Business_Logic.Modules.SessionModule.Interface;
+using Business_Logic.Modules.UserModule.Response;
 using Data_Access.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,18 +24,21 @@ namespace BIDs_API.Controllers
         private readonly IHubContext<SessionHub> _hubSessionContext;
         private readonly IMapper _mapper;
         private readonly ISessionService _SessionService;
+        private readonly ICommon _common;
 
         public SessionDetailsController(ISessionDetailService SessionDetailService
             , IHubContext<SessionDetailHub> hubSessionDetailContext
             , IHubContext<SessionHub> hubSessionContext
             , IMapper mapper
-            , ISessionService SessionService)
+            , ISessionService SessionService
+            , ICommon common)
         {
             _SessionDetailService = SessionDetailService;
             _hubSessionDetailContext = hubSessionDetailContext;
             _mapper = mapper;
             _SessionService = SessionService;
             _hubSessionContext = hubSessionContext;
+            _common = common;
         }
 
         // GET api/<ValuesController>
@@ -149,6 +154,35 @@ namespace BIDs_API.Controllers
                            );
                 var sort = response.OrderByDescending(s => s.Price);
                 return Ok(sort);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // GET api/<ValuesController>/abc
+        [HttpGet("winner")]
+        public async Task<ActionResult<Users>> GetWinner([FromQuery]Guid sessionId)
+        {
+            try
+            {
+                var checkJoin = await _common.CheckSessionJoining(sessionId);
+                if (checkJoin == false)
+                {
+                    return Ok();
+                }
+                var checkIncrease = await _common.CheckSessionIncrease(sessionId);
+                if (checkIncrease == false)
+                {
+                    var list = await _common.GetUserWinningByJoining(sessionId);
+                    return Ok(_mapper.Map<UserResponse>(list));
+                }
+                else
+                {
+                    var list = await _common.GetUserWinning(sessionId);
+                    return Ok(_mapper.Map<UserResponse>(list));
+                }
             }
             catch
             {
