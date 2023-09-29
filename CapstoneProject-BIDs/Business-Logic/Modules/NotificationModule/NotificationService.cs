@@ -95,7 +95,7 @@ namespace Business_Logic.Modules.NotificationModule
         {
             try
             {
-                if (NotificationDeleteID != null)
+                if (NotificationDeleteID == Guid.Empty)
                 {
                     throw new Exception(ErrorMessage.CommonError.ID_IS_NULL);
                 }

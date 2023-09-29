@@ -68,6 +68,7 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                var listAfterRemove = new List<UserNotificationDetail>();
                 foreach (var userNoti in list)
                 {
                     if (userNoti.Notification.ExpireDate <= DateTime.UtcNow.AddHours(7))
@@ -75,9 +76,12 @@ namespace BIDs_API.Controllers
                         await _UserNotificationDetailService.Delete(userNoti.Notification.Id, userId);
                         await _notificationService.DeleteNotification(userNoti.Notification.Id);
                     }
-                    list.Remove(userNoti);
+                    else
+                    {
+                        listAfterRemove.Add(userNoti);
+                    }
                 }
-                var response = list.Select
+                var response = listAfterRemove.Select
                            (
                              emp => _mapper.Map<UserNotificationDetail, UserNotificationDetailResponse>(emp)
                            );

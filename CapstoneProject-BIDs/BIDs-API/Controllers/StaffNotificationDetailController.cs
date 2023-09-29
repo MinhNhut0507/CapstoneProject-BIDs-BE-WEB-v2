@@ -77,6 +77,7 @@ namespace BIDs_API.Controllers
                 {
                     return NotFound();
                 }
+                var listAfterRemove = new List<StaffNotificationDetail>();
                 foreach (var staffNoti in list)
                 {
                     if (staffNoti.Notification.ExpireDate <= DateTime.UtcNow.AddHours(7))
@@ -84,9 +85,12 @@ namespace BIDs_API.Controllers
                         await _StaffNotificationDetailService.Delete(staffNoti.Notification.Id, staffId);
                         await _notificationService.DeleteNotification(staffNoti.Notification.Id);
                     }
-                    list.Remove(staffNoti);
+                    else
+                    {
+                        listAfterRemove.Add(staffNoti);
+                    }
                 }
-                var response = list.Select
+                var response = listAfterRemove.Select
                            (
                              emp => _mapper.Map<StaffNotificationDetail, StaffNotificationDetailResponse>(emp)
                            );

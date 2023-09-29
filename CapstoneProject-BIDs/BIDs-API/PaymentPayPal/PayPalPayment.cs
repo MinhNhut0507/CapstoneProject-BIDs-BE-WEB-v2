@@ -730,12 +730,12 @@ namespace BIDs_API.PaymentPayPal
 
                     string status = jsonObject["status"].ToString();
                     JToken payerToken = jsonObject["payer"];
-                    //string payerEmail = payerToken["email_address"].ToString();
+                    string payerEmail = payerToken["email_address"].ToString();
                     var updatePaymentUser = new UpdatePaymentUserStatusRequest()
                     {
                         TransactionId = userPayment.PayPalTransactionId,
                         Status = status,
-                        //PayPalAccount = payerEmail
+                        PayPalAccount = payerEmail
                     };
 
                     var paymentUser = await _paymentUserService.UpdatePaymentUser(updatePaymentUser);
