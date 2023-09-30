@@ -1239,6 +1239,7 @@ namespace Business_Logic.Modules.CommonModule
                         reportPaymentUser.PaymentReport.Add(Payment);
                     }
                 }
+                reportPaymentUser.PaymentReport.OrderByDescending(x => x.PaymentTime);
                 return reportPaymentUser;
             }
             catch (Exception ex)
@@ -1323,6 +1324,7 @@ namespace Business_Logic.Modules.CommonModule
                         reportPaymentUser.PaymentReport.Add(Payment);
                     }
                 }
+                reportPaymentUser.PaymentReport.OrderByDescending(x => x.PaymentTime);
                 return reportPaymentUser;
             }
             catch (Exception ex)
@@ -1406,6 +1408,7 @@ namespace Business_Logic.Modules.CommonModule
                         reportPaymentUser.PaymentReport.Add(Payment);
                     }
                 }
+                reportPaymentUser.PaymentReport.OrderByDescending(x => x.PaymentTime);
                 return reportPaymentUser;
             }
             catch (Exception ex)
