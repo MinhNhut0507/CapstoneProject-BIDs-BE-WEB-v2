@@ -69,7 +69,7 @@ namespace Business_Logic.Modules.UserModule
             {
                 throw new Exception(ErrorMessage.CommonError.NAME_IS_NULL);
             }
-            var user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Email == email);
+            var user = await _UserRepository.GetFirstOrDefaultAsync(x => x.Email == email, includeProperties: "UserPaymentInformations");
             if (user == null)
             {
                 throw new Exception(ErrorMessage.UserError.USER_NOT_FOUND);

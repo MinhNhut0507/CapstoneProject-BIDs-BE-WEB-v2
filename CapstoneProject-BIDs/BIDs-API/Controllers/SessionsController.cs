@@ -107,11 +107,15 @@ namespace BIDs_API.Controllers
         {
             try
             {
-                var list = await _SessionService.GetSessionByID(id);
                 var listSessionDetail = await _SessionDetailService.GetSessionDetailBySession(id);
-                var sort = listSessionDetail.OrderByDescending(x => x.Price);
-                await _SessionService.UpdatePriceSession(id, sort.ElementAt(0).Price);
-                await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", list.ElementAt(0));
+                if(listSessionDetail.Count != 0)
+                {
+                    var sort = listSessionDetail.OrderByDescending(x => x.Price);
+                    await _SessionService.UpdatePriceSession(id, sort.ElementAt(0).Price);
+                    var Update = await _SessionService.GetSessionByID(id);
+                    await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", Update.ElementAt(0));
+                }
+                var list = await _SessionService.GetSessionByID(id);
                 if (list == null)
                 {
                     return NotFound();
