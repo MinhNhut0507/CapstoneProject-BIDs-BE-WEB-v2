@@ -31,7 +31,7 @@ namespace Business_Logic.Modules.ItemModule.Request
             RuleFor(x => x.Deposit).NotNull();
             RuleFor(x => x.FirstPrice).NotEmpty().NotNull();
             RuleFor(x => x.StepPrice).NotEmpty().NotNull();
-            RuleFor(x => x.TypeOfSession).NotEmpty().NotNull();
+            RuleFor(x => x.TypeOfSession);
         }
     }
 }
