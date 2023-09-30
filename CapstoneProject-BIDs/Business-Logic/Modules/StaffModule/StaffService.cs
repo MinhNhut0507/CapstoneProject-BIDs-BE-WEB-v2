@@ -422,7 +422,7 @@ namespace Business_Logic.Modules.StaffModule
 
                 string sendto = UserBan.Email;
                 string subject = "[BIDs] - Dịch vụ tài khoản";
-                string content = "Tài khoản " + UserBan.Name + " đã bị khóa vì vi phạm điều luật của hệ thống chúng tôi, bạn sẽ không thể sử dụng dịch vụ của hệ thống chúng tôi! ";
+                string content = "Tài khoản " + UserBan.Name + " đã bị khóa vì lí do: " + Reason + ", bạn sẽ không thể sử dụng dịch vụ của hệ thống chúng tôi! ";
 
                 UserBan.Status = (int)UserStatusEnum.Ban;
                 await _UserRepository.UpdateAsync(UserBan);

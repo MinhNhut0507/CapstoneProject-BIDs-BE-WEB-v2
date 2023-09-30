@@ -13,7 +13,7 @@ namespace Business_Logic.Modules.BookingItemModule.Request
         public CreateBookingItemRequestValidator()
         {
             RuleFor(x => x.ItemId).NotEmpty().NotNull();
-            RuleFor(x => x.Status).NotEmpty().NotNull();
+            RuleFor(x => x.Status);
         }
     }
 }

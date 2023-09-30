@@ -25,6 +25,7 @@ using BIDs_API.PaymentPayPal.Interface;
 using Business_Logic.Modules.PaymentUserModule.Interface;
 using Business_Logic.Modules.StaffModule.Interface;
 using Business_Logic.Modules.ItemModule.Request;
+using Business_Logic.Modules.SessionDetailModule.Interface;
 
 namespace BIDs_API.Controllers
 {
@@ -34,6 +35,7 @@ namespace BIDs_API.Controllers
     public class SessionsController : ControllerBase
     {
         private readonly ISessionService _SessionService;
+        private readonly ISessionDetailService _SessionDetailService;
         private readonly IHubContext<SessionHub> _hubSessionContext;
         private readonly IMapper _mapper;
         private readonly ICommon _Common;
@@ -47,6 +49,7 @@ namespace BIDs_API.Controllers
         private readonly IStaffService _StaffService;
 
         public SessionsController(ISessionService SessionService
+            , ISessionDetailService SessionDetailService
             , IHubContext<SessionHub> hubSessionContext
             , IMapper mapper
             , ICommon Common
@@ -61,6 +64,7 @@ namespace BIDs_API.Controllers
             , IStaffService StaffService)
         {
             _SessionService = SessionService;
+            _SessionDetailService = SessionDetailService;
             _hubSessionContext = hubSessionContext;
             _mapper = mapper;
             _Common = Common;
@@ -104,6 +108,10 @@ namespace BIDs_API.Controllers
             try
             {
                 var list = await _SessionService.GetSessionByID(id);
+                var listSessionDetail = await _SessionDetailService.GetSessionDetailBySession(id);
+                var sort = listSessionDetail.OrderByDescending(x => x.Price);
+                await _SessionService.UpdatePriceSession(id, sort.ElementAt(0).Price);
+                await _hubSessionContext.Clients.All.SendAsync("ReceiveSessionUpdate", list.ElementAt(0));
                 if (list == null)
                 {
                     return NotFound();

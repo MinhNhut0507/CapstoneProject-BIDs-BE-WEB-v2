@@ -16,7 +16,7 @@ namespace BIDs_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Staff,User")]
+    [Authorize]
     public class BookingItemsController : ControllerBase
     {
         private readonly IBookingItemService _BookingItemService;
