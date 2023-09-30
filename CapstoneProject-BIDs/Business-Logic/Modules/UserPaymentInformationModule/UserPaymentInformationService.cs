@@ -95,10 +95,6 @@ namespace Business_Logic.Modules.UserPaymentInformationModule
 
             await _UserPaymentInformationRepository.AddAsync(newUserPaymentInformation);
 
-            var user = await _UserService.GetUserByID(UserPaymentInformationRequest.UserId);
-
-            await _UserService.UpdateRoleAccount(user.ElementAt(0).Email);
-
             return newUserPaymentInformation;
         }
 
