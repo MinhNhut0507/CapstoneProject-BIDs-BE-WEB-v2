@@ -320,7 +320,7 @@ namespace BIDs_API.PaymentPayPal
             double exchangeRate = await _common.Exchange();
             var sessionList = await _sessionService.GetSessionByID(sessionId);
             var session = sessionList.ElementAt(0);
-            var surcharge = session.Fee.Surcharge * session.Item.FirstPrice;
+            var surcharge = session.Fee.Surcharge * session.FinalPrice;
             var bookingItem = await _bookingItemService.GetBookingItemByItem(session.ItemId);
             var staffId = bookingItem.ElementAt(0).StaffId;
             var user = bookingItem.ElementAt(0).Item.User;
